@@ -45,15 +45,3 @@ class MessageAction
 	end
 end
 
-class Message
-
-attr_reader :name, :identification, :place, :message
-
-	def initialize(msg)
-		@name
-		@identification
-		@place
-		@message
-	end
-
-end
