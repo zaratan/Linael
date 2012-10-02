@@ -57,46 +57,38 @@ class PrivMessage < Message
 
 end
 
-class Join < Message
+class AbstractAct < Message
 
 	@@motif=/\A:([^!])!~(\S*)\s#{@@type}\s:(.*)\z/
-	@@type="JOIN"
+	@@type="Act"
 
 	def initialize(msg)
+		if self.match(msg)
+			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
+		else
+			super("","","")
+		end
 
 	end
 
 end
 
-class Nick < Message
+class Nick < AbstractAct
 
-	@@motif=/\A:([^!])!~(\S*)\s#{@@type}\s:(.*)\z/
 	@@type="NICK"
 
-	def initialize(msg)
-
-	end
 end
 
-class Part < Message
+class Part < AbstractAct
 
-	@@motif=/\A:([^!])!~(\S*)\s#{@@type}\s(.*)\z/
 	@@type="PART"
 
-	def initialize(msg)
-
-	end
-
 end
 
-class Join < Message
+class Join < AbstractAct
 
-	@@motif=/\A:([^!])!~(\S*)\s#{@@type}\s:(.*)\z/
 	@@type="JOIN"
 
-	def initialize(msg)
-
-	end
 end
 
 class Mode < Message
