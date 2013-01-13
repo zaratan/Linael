@@ -1,7 +1,7 @@
 class Message
 
-@@type="MESSAGE"
-@@motif=/\A.*\z/
+Type="MESSAGE"
+Motif=/\A.*\z/
 
 attr_reader :sender, :identification, :message
 
@@ -12,19 +12,26 @@ attr_reader :sender, :identification, :message
 
 	end
 	
-	def	match(msg)
-		return msg.match(@@motif)
+
+	def	self.match(msg)
+		return msg =~ self::Motif
+	end
+	
+
+	def to_s
+		"<#{@sender}(#{@identification})> #{@message}"
 	end
 
 end
 
 class Ping < Message
 
-@@type="PING"
-@@motif=/\APING :(.*)\z/
+Type="PING"
+Motif=/\APING :(.*)\n\z/
 
 	def initialize(msg)
-		if Ping.match(msg) then
+		if Motif =~ msg then
+			
 			super("#{$~[1]}","","")
 		else
 			super("","","")
@@ -36,13 +43,13 @@ end
 
 class PrivMessage < Message
 
-	@@type="PRIVMSG"
-	@@motif=/\A:([^!]*)!~(\S*)\s#{@@type}\s(\S*)\s:(.*)\z/
+	Type="PRIVMSG"
+	Motif=/\A:([^!]*)!~(\S*)\s#{self::Type}\s(\S*)\s:(.*)\n\z/
 
 	attr_reader :place
 
 	def initialize(msg)
-		if PrivMessage.match(msg) then 
+		if Motif =~ msg then 
 			@place="#{$~[3]}"
 			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
 		else
@@ -51,20 +58,36 @@ class PrivMessage < Message
 		end
 	end
 
-	def is_private_message()
-		return !@place.match /\A#.*\z/
+	def private_message?
+		!@place.match '^#.*$'
+	end
+
+	def who
+		@sender
+	end
+
+	def to_s
+		"@#{@place}: <#{@sender}(#{@identification})> #{@message}"
+	end
+
+end
+
+class PrivMessageAct < PrivMessage
+
+	def action
+		@message.sub(/^ACTION\s/,"")
 	end
 
 end
 
 class AbstractAct < Message
 
-	@@motif=/\A:([^!])!~(\S*)\s#{@@type}\s:(.*)\z/
-	@@type="Act"
+	Motif=/\A:([^!])!~(\S*)\s#{self::Type}\s:(.*)\n\z/
+	Type="Act"
 
 	def initialize(msg)
-		if self.match(msg)
-			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
+		if Motif =~ msg then
+			super("#{$~[1]}","#{$~[2]}","#{$~[3]}")
 		else
 			super("","","")
 		end
@@ -75,28 +98,64 @@ end
 
 class Nick < AbstractAct
 
-	@@type="NICK"
+	Type="NICK"
+
+	def who
+		@sender	
+	end
+
+	def newNick
+		@message
+	end
 
 end
 
 class Part < AbstractAct
 
-	@@type="PART"
+	Motif=/\A:([^!])!~(\S*)\s#{self::Type}\s(.*)\n\z/
+	Type="PART"
+
+	def who
+		@sender
+	end
+
+	def from
+		@message
+	end
+		
 
 end
 
 class Join < AbstractAct
 
-	@@type="JOIN"
+	Type="JOIN"
+
+	def who
+		@sender
+	end
+
+	def where
+		@message
+	end
 
 end
 
 class Mode < Message
 
-	@@motif=/\A:([^!])!~(\S*)\s#{@@type}\s(\S*)\s(.*)\z/
-	@@type="MODE"
+	Motif=/\A:([^!])!(\S*)\s#{self::Type}\s(\S*)\s(.*)\n\z/
+	Type="MODE"
+	
+	attr_reader :place
 
-	def initialize
+	def initialize(msg)
+		if Motif =~ msg then
+			@place = "#{$~[3]}"
+			$~[2].sub(/^~/,"")
+			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
+		else
+			@place = ""
+			super("","","")
+		end
 
 	end
 end

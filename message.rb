@@ -1,13 +1,27 @@
 require './irc.rb'
+require './mess.rb'
 
 class MessageAction
 
-	
+	include Action
 
 	def handleKeepAlive(msg)
-		if msg.match(/^PING :(.*)$/) then
-			@action.irc.send "PONG #{$~[1]}"
-			
+		if Ping.match(msg) then
+			msgPing = Ping.new msg
+			ping msgPing.sender
+			return true
+		end
+		return false
+	end
+
+	def handlePrivMsg(msg)
+		if PrivMessage.match(msg) then
+			privmsg = PrivMessage.new msg
+			if (privmsg.message =~ /^!/) then
+				talk("zaratan",privmsg.message)
+				match_cmd(privmsg.message.sub(/^!/,""))	
+			end
+			puts privmsg
 			return true
 		end
 		return false
@@ -16,32 +30,28 @@ class MessageAction
 	def isCommand(msg)
 		if msg.match(/^:[^:]*:!(.*)$/) then
 			match_cmd("#{$~[1]}")
-			@action.talk("zaratan","#{$~[1]}")
 			return true
 		end
 		return false
 	end
 
-	def initialize(action)
+	def initialize irc
 		@toDo=[:handleKeepAlive,
-				:isCommand]
-		@act={/\AhelloAll/ => [:say_hello,"#zarabotte"]}
-		@action=action
+				:handlePrivMsg]		
+		@irc=irc
 	end
 
 
 
-	def match_cmd(cmd)
-		@act.detect {|k, t| self.send(t[0],t.drop(1)) if cmd.match(k)} 
+	def match_cmd(cmd)		
+		say_hello("#zarabotte") if cmd.match(/\AhelloAll/)
 	end
 
 	def say_hello(chan)
-		chan.each {|i| @action.talk(i,"Hello all!")}
-		return true
+		talk(chan,"Hello all!")
 	end
 
 	def handle_msg(msg)
 		@toDo.detect{|m| self.send(m,msg)}
 	end
 end
-

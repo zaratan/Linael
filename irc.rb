@@ -24,7 +24,7 @@ class IRC
 
 end
 
-class Action
+module Action
 
 attr_reader :irc
 
@@ -38,6 +38,10 @@ attr_reader :irc
 
 	def talk(dest,msg)
 		@irc.send("PRIVMSG #{dest} :#{msg}")
+	end
+
+	def ping(dest)
+		@irc.send "PONG #{dest}"
 	end
 
 end
