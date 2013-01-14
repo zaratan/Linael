@@ -14,6 +14,8 @@ attr_reader :sender, :identification, :message
 	
 
 	def	self.match(msg)
+		puts msg
+		puts self::Motif
 		return msg =~ self::Motif
 	end
 	
@@ -86,7 +88,7 @@ class AbstractAct < Message
 	Type="Act"
 
 	def initialize(msg)
-		if Motif =~ msg then
+		if self::Motif =~ msg then
 			super("#{$~[1]}","#{$~[2]}","#{$~[3]}")
 		else
 			super("","","")
@@ -108,12 +110,16 @@ class Nick < AbstractAct
 		@message
 	end
 
+	def to_s
+		"#{who} (#{@identification}) is now #{newNick}"
+	end
+
 end
 
 class Part < AbstractAct
 
-	Motif=/\A:([^!])!~(\S*)\s#{self::Type}\s(.*)\n\z/
 	Type="PART"
+	Motif=/\A:([^!]*)!~(\S*)\s#{self::Type}\s(.*)\n\z/
 
 	def who
 		@sender
@@ -123,6 +129,9 @@ class Part < AbstractAct
 		@message
 	end
 		
+	def to_s
+		"#{who} (#{@identification}) has leave #{from}"
+	end
 
 end
 
@@ -138,19 +147,23 @@ class Join < AbstractAct
 		@message
 	end
 
+	def to_s
+		"#{who} (#{}) has joined #{where}"
+	end
+
 end
 
 class Mode < Message
 
-	Motif=/\A:([^!])!(\S*)\s#{self::Type}\s(\S*)\s(.*)\n\z/
 	Type="MODE"
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s(\S*)\s(.*)\n\z/
 	
 	attr_reader :place
 
 	def initialize(msg)
 		if Motif =~ msg then
 			@place = "#{$~[3]}"
-			$~[2].sub(/^~/,"")
+			$~[2].sub!(/^~/,"") if $~[2] =~ /^~/
 			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
 		else
 			@place = ""
@@ -158,6 +171,12 @@ class Mode < Message
 		end
 
 	end
+
+	def to_s
+		"#{@sender} (#{@identification}) has changed mode on #{@place} : #{@message}"
+	end
+
+
 end
 
 

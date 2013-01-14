@@ -14,6 +14,16 @@ class MessageAction
 		return false
 	end
 
+	def handleMode(msg)
+		if Mode.match(msg) then
+			mode = Mode.new msg			
+
+			puts mode
+			return true
+		end
+		return false
+	end
+
 	def handlePrivMsg(msg)
 		if PrivMessage.match(msg) then
 			privmsg = PrivMessage.new msg
@@ -27,21 +37,45 @@ class MessageAction
 		return false
 	end
 
-	def isCommand(msg)
-		if msg.match(/^:[^:]*:!(.*)$/) then
-			match_cmd("#{$~[1]}")
+	def handleNick(msg)
+		if Nick.match(msg) then
+			nick = Nick.new msg
+
+			puts nick
 			return true
 		end
 		return false
 	end
 
+	def handleJoin(msg)
+		if Join.match(msg) then
+			join = Join.new msg
+
+			puts join
+			return true
+		end
+		return false
+	end
+
+	def handlePart(msg)
+		if Part.match(msg) then
+			part = Part.new msg
+
+			puts part
+			return true
+		end
+		return false
+	end	
+
 	def initialize irc
 		@toDo=[:handleKeepAlive,
+				:handleMode,
+				:handleNick,
+				:handleJoin,
+				:handlePart,
 				:handlePrivMsg]		
 		@irc=irc
 	end
-
-
 
 	def match_cmd(cmd)		
 		say_hello("#zarabotte") if cmd.match(/\AhelloAll/)
