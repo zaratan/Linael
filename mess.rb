@@ -14,8 +14,6 @@ attr_reader :sender, :identification, :message
 	
 
 	def	self.match(msg)
-		puts msg
-		puts self::Motif
 		return msg =~ self::Motif
 	end
 	
@@ -43,10 +41,25 @@ Motif=/\APING :(.*)\n\z/
 
 end
 
+#FIXME ca marche pas
+class Version < Message
+
+Type="VERSION"
+Motif=/:([^!]*)![^:]*:VER/
+	def initialize(msg)
+		if Motif =~ msg then
+			super("#{$~[1]}","","")
+		else
+			super("","","")
+		end
+	end
+
+end
+
 class PrivMessage < Message
 
 	Type="PRIVMSG"
-	Motif=/\A:([^!]*)!~(\S*)\s#{self::Type}\s(\S*)\s:(.*)\n\z/
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s(\S*)\s:(.*)/
 
 	attr_reader :place
 
@@ -84,11 +97,11 @@ end
 
 class AbstractAct < Message
 
-	Motif=/\A:([^!])!~(\S*)\s#{self::Type}\s:(.*)\n\z/
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s:(.*)\n\z/
 	Type="Act"
 
-	def initialize(msg)
-		if self::Motif =~ msg then
+	def initialize(msg,motif)
+		if motif =~ msg then
 			super("#{$~[1]}","#{$~[2]}","#{$~[3]}")
 		else
 			super("","","")
@@ -101,6 +114,11 @@ end
 class Nick < AbstractAct
 
 	Type="NICK"
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s:(.*)/
+
+	def initialize(msg)
+		super(msg,Motif)
+	end
 
 	def who
 		@sender	
@@ -119,7 +137,11 @@ end
 class Part < AbstractAct
 
 	Type="PART"
-	Motif=/\A:([^!]*)!~(\S*)\s#{self::Type}\s(.*)\n\z/
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s(.*)/
+
+	def initialize(msg)
+		super(msg,Motif)
+	end
 
 	def who
 		@sender
@@ -135,9 +157,39 @@ class Part < AbstractAct
 
 end
 
+class Kick < Message
+	Type="KICK"
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s(\S*)\s(\S*)\s:(.*)/
+
+	attr_reader :place, :who
+
+	def initialize(msg)
+
+		if Motif =~ msg then
+			@place=$~[3]
+			@who=$~[4]
+			super($~[1],$~[2],$~[5])
+		else			
+			super("","","")
+		end
+
+		def to_s
+			"#{@who} was kicked from #{@place} by #{@sender}(#{@identification}) because:#{@message}"
+		end
+
+	end
+	
+
+end
+
 class Join < AbstractAct
 
 	Type="JOIN"
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s:(.*)/
+
+	def initialize(msg)
+		super(msg,Motif)
+	end
 
 	def who
 		@sender
@@ -148,7 +200,7 @@ class Join < AbstractAct
 	end
 
 	def to_s
-		"#{who} (#{}) has joined #{where}"
+		"#{who} (#{@identification}) has joined #{where}"
 	end
 
 end
@@ -156,14 +208,14 @@ end
 class Mode < Message
 
 	Type="MODE"
-	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s(\S*)\s(.*)\n\z/
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s(\S*)\s(.*)/
 	
 	attr_reader :place
 
 	def initialize(msg)
 		if Motif =~ msg then
 			@place = "#{$~[3]}"
-			$~[2].sub!(/^~/,"") if $~[2] =~ /^~/
+#$~[2].sub!(/^~/,"") if $~[2] =~ /^~/
 			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
 		else
 			@place = ""

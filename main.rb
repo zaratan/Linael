@@ -13,9 +13,9 @@ def main_loop(irc,msg_handler)
 	end
 end
 
-irc=IRC.new("irc.iiens.net",6667,"Zar_A_Bottes")
+irc=IRC.new("irc.rizon.net",6667,"Linael")
 irc.connect
 action=MessageAction.new(irc)	
-action.join_channel("#Zarabotte")
+action.join_channel("#Zaratan")
 action.talk("zaratan","ca marche")
 main_loop(irc,action)

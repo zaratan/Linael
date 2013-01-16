@@ -14,6 +14,15 @@ class MessageAction
 		return false
 	end
 
+	def handleVersion(msg)
+		if Version.match(msg) then
+			versionMsg = Version.new msg
+			version msg.sender
+			return true
+		end
+		return false
+	end
+
 	def handleMode(msg)
 		if Mode.match(msg) then
 			mode = Mode.new msg			
@@ -67,18 +76,33 @@ class MessageAction
 		return false
 	end	
 
+	def handleKick(msg)
+		if Kick.match(msg) then
+			kick = Kick.new msg
+
+			puts kick
+			return true
+		end
+		return false
+	end
+
 	def initialize irc
 		@toDo=[:handleKeepAlive,
+				:handleVersion,
 				:handleMode,
 				:handleNick,
 				:handleJoin,
 				:handlePart,
+				:handleKick,
 				:handlePrivMsg]		
 		@irc=irc
 	end
 
 	def match_cmd(cmd)		
 		say_hello("#zarabotte") if cmd.match(/\AhelloAll/)
+		if cmd.match(/join (.*)/) then
+			join_channel($~[1])
+		end
 	end
 
 	def say_hello(chan)

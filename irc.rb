@@ -44,5 +44,9 @@ attr_reader :irc
 		@irc.send "PONG #{dest}"
 	end
 
+	def version(dest)
+		@irc.send "NOTICE #{dest} :Zar a Bottes v0.1"
+	end
+
 end
 
