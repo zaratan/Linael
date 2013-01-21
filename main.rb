@@ -2,6 +2,7 @@
 
 require 'socket'
 require './irc.rb'
+require './log.rb'
 require './message.rb'
 require './mess.rb'
 
@@ -15,7 +16,7 @@ end
 
 irc=IRC.new("irc.rizon.net",6667,"Linael")
 irc.connect
-action=MessageAction.new(irc,[])	
+action=MessageAction.new(irc,[IrcLog])	
 action.join_channel("#Zaratan")
 action.talk("zaratan","ca marche")
 main_loop(irc,action)

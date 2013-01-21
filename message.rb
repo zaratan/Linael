@@ -90,7 +90,7 @@ class MessageAction
 
 	attr_accessor :kickAct,:partAct,:joinAct,:nickAct,:msgAct,:modeAct,:cmdAct
 
-	def initialize irc modules
+	def initialize(irc,modules)
 		@toDo=[:handleKeepAlive,
 				:handleVersion,
 				:handleMode,
@@ -100,7 +100,8 @@ class MessageAction
 				:handleKick,
 				:handlePrivMsg]		
 		@irc=irc
-		@modules=modules
+		@modules=[]
+		modules.each {|klass| @modules << klass.new(self);puts @modules}
 		@kickAct=[]
 		@partAct=[]
 		@joinAct=[]
@@ -108,7 +109,7 @@ class MessageAction
 		@msgAct=[]
 		@modeAct=[]
 		@cmdAct=[]
-		modules.each {|mod| mod.startMod self}
+		@modules.each {|mod| puts mod;mod.startMod}
 	end
 
 	def match_cmd(cmd)		
