@@ -1,33 +1,62 @@
 class ModuleIRC
 
-	def addKickMethod(instance,nom)
-		@runner.kickAct << Proc.new {|msg| instance.send(nom,msg)}
+	def addKickMethod(instance,nom,ident)
+		@runner.kickAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+	end
+
+	def delKickMethod(instance,ident)
+		@runner.kickAct.delete(instance.class::Name+ident)
 	end
 	
-	def addNickMethod(instance,nom)
-		@runner.nickAct << Proc.new {|msg| instance.send(nom,msg)}
+	def addNickMethod(instance,nom,ident)
+		@runner.nickAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
 	end
 
-	def addJoinMethod(instance,nom)
-		@runner.joinAct << Proc.new {|msg| instance.send(nom,msg)}
+	def delNickMethod(instance,ident)
+		@runner.nickAct.delete(instance.class::Name+ident)
 	end
 
-	def addPartMethod(instance,nom)
-		@runner.partAct << Proc.new {|msg| instance.send(nom,msg)}
+	def addJoinMethod(instance,nom,ident)
+		@runner.joinAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
 	end
 
-	def addMsgMethod(instance,nom)
-		@runner.msgAct << Proc.new {|msg| instance.send(nom,msg)}
+	def delJoinMethod(instance,ident)
+		@runner.joinAct.delete(instance.class::Name+ident)
 	end
 
-	def addModeMethod(instance,nom)
-		@runner.modeAct << Proc.new {|msg| instance.send(nom,msg)}
+	def addPartMethod(instance,nom,ident)
+		@runner.partAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
 	end
 
-	def addCmdMethod(instance,nom)
-		@runner.cmdAct << Proc.new {|msg| instance.send(nom,msg)}
+	def delPartMethod(instance,ident)
+		@runner.partAct.delete(instance.class::Name+ident)
+	end
+
+	def addMsgMethod(instance,nom,ident)
+		@runner.msgAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+	end
+
+	def delMsgMethod(instance,ident)
+		@runner.msgAct.delete(instance.class::Name+ident)
+	end
+
+	def addModeMethod(instance,nom,ident)
+		@runner.modeAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+	end
+
+	def delModeMethod(instance,ident)
+		@runner.modeAct.delete(instance.class::Name+ident)
+	end
+
+	def addCmdMethod(instance,nom,ident)
+		@runner.cmdAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
 	end
 		
+	def delCmdMethod(instance,ident)
+		@runner.cmdAct.delete(instance.class::Name+ident)
+	end
+	
+	Name=""
 
 	def startMod()
 		
@@ -42,6 +71,17 @@ class ModuleIRC
 		@runner=runner
 	end
 
+	def answer(privMsg,ans)
+		if(privMsg.private_message?)
+			@runner.talk(privMsg.who,ans)
+		else
+			@runner.talk(privMsg.place,ans)
+		end
+	end
+
 	attr_reader :runner
 
+end
+
+module Modules
 end

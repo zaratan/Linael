@@ -28,7 +28,7 @@ class MessageAction
 	def handleMode(msg)
 		if Mode.match(msg) then
 			mode = Mode.new msg			
-			@modeAct.each {|act| act.call mode}
+			@modeAct.values.each {|act| act.call mode}
 			return true
 		end
 		return false
@@ -37,13 +37,12 @@ class MessageAction
 	def handlePrivMsg(msg)
 		if PrivMessage.match(msg) then
 			privmsg = PrivMessage.new msg
-			if (privmsg.message =~ /^!/) then
+			if (privmsg.command?) then
 				talk("zaratan",privmsg.message)
-				match_cmd(privmsg.message.sub(/^!/,""))	
-				@cmdAct.each {|act| act.call privmsg}
+				@cmdAct.values.each {|act| act.call privmsg}
 				return true
 			end
-			@msgAct.each {|act| act.call privmsg}
+			@msgAct.values.each {|act| act.call privmsg}
 			return true
 		end
 		return false
@@ -54,7 +53,7 @@ class MessageAction
 	def handleNick(msg)
 		if Nick.match(msg) then
 			nick = Nick.new msg
-			@nickAct.each {|act| act.call nick}
+			@nickAct.values.each {|act| act.call nick}
 			return true
 		end
 		return false
@@ -63,7 +62,7 @@ class MessageAction
 	def handleJoin(msg)
 		if Join.match(msg) then
 			join = Join.new msg
-			@joinAct.each {|act| act.call join}
+			@joinAct.values.each {|act| act.call join}
 			
 			return true
 		end
@@ -73,7 +72,7 @@ class MessageAction
 	def handlePart(msg)
 		if Part.match(msg) then
 			part = Part.new msg
-			@partAct.each {|act| act.call part}
+			@partAct.values.each {|act| act.call part}
 			return true
 		end
 		return false
@@ -82,7 +81,7 @@ class MessageAction
 	def handleKick(msg)
 		if Kick.match(msg) then
 			kick = Kick.new msg
-			@kickAct.each {|act| act.call kick}
+			@kickAct.values.each {|act| act.call kick}
 			return true
 		end
 		return false
@@ -101,15 +100,15 @@ class MessageAction
 				:handlePrivMsg]		
 		@irc=irc
 		@modules=[]
-		modules.each {|klass| @modules << klass.new(self);puts @modules}
-		@kickAct=[]
-		@partAct=[]
-		@joinAct=[]
-		@nickAct=[]
-		@msgAct=[]
-		@modeAct=[]
-		@cmdAct=[]
-		@modules.each {|mod| puts mod;mod.startMod}
+		modules.each {|klass| @modules << klass.new(self)}
+		@kickAct=Hash.new
+		@partAct=Hash.new
+		@joinAct=Hash.new
+		@nickAct=Hash.new
+		@msgAct=Hash.new
+		@modeAct=Hash.new
+		@cmdAct=Hash.new
+		@modules.each {|mod| mod.startMod}
 	end
 
 	def match_cmd(cmd)		

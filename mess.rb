@@ -81,6 +81,10 @@ class PrivMessage < Message
 		@sender
 	end
 
+	def command?
+		@message.match '^!.*$'
+	end
+
 	def to_s
 		"@#{@place}: <#{@sender}(#{@identification})> #{@message}"
 	end
