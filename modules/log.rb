@@ -1,5 +1,3 @@
-require "./module.rb"
-
 class Modules::Log < ModuleIRC
 	
 	Name="log"	

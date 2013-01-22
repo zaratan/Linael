@@ -1,12 +1,13 @@
 class Modules::Module < ModuleIRC
 
-attr_reader :modules
+attr_reader :modules,:authModule
 
 Name="module"
 
 def initialize(runner)
 	@dir = Dir.new("./modules")
 	@modules=Hash.new
+	@authModule=[]
 	super runner
 end
 
@@ -26,7 +27,6 @@ end
 
 def addModule privMsg
 	if (module? privMsg) &&
-		(authorized? privMsg) &&
 		(add? privMsg)
 		privMsg.message.match /^!modules\sadd\s([A-z0-9]*)/
 		modName = "#{$~[1]}"
@@ -37,10 +37,15 @@ def addModule privMsg
 			if (@modules.has_key?(klass::Name))
 				answer(privMsg,"Module already loaded, please unload first")	
 			else
-				instKlass = klass.new(@runner)
-				@modules[klass::Name] = instKlass
-				instKlass.startMod
-				answer(privMsg,"Module #{modName} loaded!")
+				if (klass::requireAuth? && authModule.empty?)
+					answer(privMsg,"You need at least one authMethod to load this module")
+				else
+					instKlass = klass.new(@runner)
+					@modules[klass::Name] = instKlass
+					@authModule << klass::Name if klass::auth?
+					instKlass.startMod
+					answer(privMsg,"Module #{modName} loaded!")
+				end
 			end
 		end
 	end
@@ -48,7 +53,6 @@ end
 
 def delModule privMsg
 if (module? privMsg) &&
-		(authorized? privMsg) &&
 		(del? privMsg)
 		privMsg.message.match /^!modules\sdel\s([A-z0-9]*)/
 		modName = "#{$~[1]}"
@@ -57,10 +61,15 @@ if (module? privMsg) &&
 			else
 				@modules[modName].endMod
 				@modules.delete(modName)
+				@authModule.delete(modName)
 				answer(privMsg,"Module #{modName} unloaded!")
 			end
 
 end
+end
+
+def self.requireAuth?
+	true
 end
 
 def add? privMsg
@@ -87,11 +96,9 @@ end
 def startMod()
 	@modules[self.class::Name] = self
 	addCmdMethod(self,:whichModule,":whichModule")
-	addCmdMethod(self,:addModule,":addModule")
-	addCmdMethod(self,:delModule,":delModule")
+	addAuthCmdMethod(self,:addModule,":addModule")
+	addAuthCmdMethod(self,:delModule,":delModule")
 end
 
-def endMod()
-end
 
 end

@@ -55,7 +55,33 @@ class ModuleIRC
 	def delCmdMethod(instance,ident)
 		@runner.cmdAct.delete(instance.class::Name+ident)
 	end
+
+	def addAuthMethod(instance,nom,ident)
+		@runner.authMeth[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+	end
+		
+	def delAuthMethod(instance,ident)
+		@runner.authMeth.delete(instance.class::Name+ident)
+	end
+
+	def addAuthCmdMethod(instance,nom,ident)
+		@runner.cmdActAuth[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+	end
+		
+	def delAuthCmdMethod(instance,ident)
+		@runner.cmdActAuth.delete(instance.class::Name+ident)
+	end
+
 	
+
+	def self.requireAuth?
+		false
+	end
+
+	def self.auth?
+		false
+	end
+
 	Name=""
 
 	def startMod()

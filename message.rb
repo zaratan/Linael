@@ -38,8 +38,10 @@ class MessageAction
 		if PrivMessage.match(msg) then
 			privmsg = PrivMessage.new msg
 			if (privmsg.command?) then
-				talk("zaratan",privmsg.message)
 				@cmdAct.values.each {|act| act.call privmsg}
+				if (@authMeth.values.all? {|auth| auth.call privmsg})
+					@cmdActAuth.values.each {|act| act.call privmsg}
+				end
 				return true
 			end
 			@msgAct.values.each {|act| act.call privmsg}
@@ -87,7 +89,15 @@ class MessageAction
 		return false
 	end
 
-	attr_accessor :kickAct,:partAct,:joinAct,:nickAct,:msgAct,:modeAct,:cmdAct
+	attr_accessor :kickAct,
+					:partAct,
+					:joinAct,
+					:nickAct,
+					:msgAct,
+					:modeAct,
+					:cmdAct,
+					:authMeth,
+					:cmdActAuth
 
 	def initialize(irc,modules)
 		@toDo=[:handleKeepAlive,
@@ -108,18 +118,9 @@ class MessageAction
 		@msgAct=Hash.new
 		@modeAct=Hash.new
 		@cmdAct=Hash.new
+		@authMeth=Hash.new
+		@cmdActAuth=Hash.new
 		@modules.each {|mod| mod.startMod}
-	end
-
-	def match_cmd(cmd)		
-		say_hello("#zarabotte") if cmd.match(/\AhelloAll/)
-		if cmd.match(/join (.*)/) then
-			join_channel($~[1])
-		end
-	end
-
-	def say_hello(chan)
-		talk(chan,"Hello all!")
 	end
 
 	def handle_msg(msg)
