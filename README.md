@@ -1,0 +1,4 @@
+Linael
+======
+
+Modulable IRC Bot
