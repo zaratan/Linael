@@ -97,7 +97,8 @@ class MessageAction
 					:modeAct,
 					:cmdAct,
 					:authMeth,
-					:cmdActAuth
+					:cmdActAuth,
+					:irc
 
 	def initialize(irc,modules)
 		@toDo=[:handleKeepAlive,

@@ -36,6 +36,18 @@ attr_reader :irc
 		@irc.send("JOIN #{chan}")
 	end
 
+	def part_channel(chan)
+		@irc.send("PART #{chan}")
+	end
+
+	def quit_channel(msg)
+		@irc.send("QUIT :#{msg}")
+	end
+
+	def kick_channel(chan,who,message)
+		@irc.send("KICK #{chan} #{who} :#{message}")
+	end
+
 	def talk(dest,msg)
 		@irc.send("PRIVMSG #{dest} :#{msg}")
 	end

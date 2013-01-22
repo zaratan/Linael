@@ -1,5 +1,7 @@
 class ModuleIRC
 
+	include Action
+
 	def addKickMethod(instance,nom,ident)
 		@runner.kickAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
 	end
@@ -95,13 +97,14 @@ class ModuleIRC
 
 	def initialize(runner)
 		@runner=runner
+		@irc=runner.irc
 	end
 
 	def answer(privMsg,ans)
 		if(privMsg.private_message?)
-			@runner.talk(privMsg.who,ans)
+			talk(privMsg.who,ans)
 		else
-			@runner.talk(privMsg.place,ans)
+			talk(privMsg.place,ans)
 		end
 	end
 
