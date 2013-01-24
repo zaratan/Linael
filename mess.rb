@@ -219,7 +219,6 @@ class Mode < Message
 	def initialize(msg)
 		if Motif =~ msg then
 			@place = "#{$~[3]}"
-#$~[2].sub!(/^~/,"") if $~[2] =~ /^~/
 			super("#{$~[1]}","#{$~[2]}","#{$~[4]}")
 		else
 			@place = ""

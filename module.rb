@@ -95,6 +95,10 @@ class ModuleIRC
 
 	end	
 
+	def help()
+		""
+	end
+
 	def initialize(runner)
 		@runner=runner
 		@irc=runner.irc
