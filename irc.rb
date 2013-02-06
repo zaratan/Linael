@@ -59,6 +59,14 @@ attr_reader :irc
 	def version(dest)
 		@irc.send "NOTICE #{dest} :Zar a Bottes v0.1"
 	end
+	
+	def answer(privMsg,ans)
+		if(privMsg.private_message?)
+			talk(privMsg.who,ans)
+		else
+			talk(privMsg.place,ans)
+		end
+	end
 
 end
 

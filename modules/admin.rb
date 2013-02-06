@@ -6,6 +6,13 @@ def self.requireAuth?
 	true
 end
 
+attr_reader :chan
+
+def initialize(runner)
+	@chan = []
+	super runner
+end
+
 def startMod
 	addAuthCmdMethod(self,:join,":join")
 	addAuthCmdMethod(self,:part,":part")
@@ -25,8 +32,9 @@ end
 def join privMsg
 	if (module? privMsg) &&
 		(join? privMsg)
-		if privMsg.message =~ /^!admin\sjoin\s(#[\S]*)/
+		if privMsg.message =~ /^!admin\sjoin\s(#[\S]*)/ 
 			answer(privMsg,"Oki doki! i'll join #{$~[1]}")	
+			@chan << $~[1] unless @chan.include? $~[1]
 			join_channel $~[1]
 		end
 	end
@@ -36,9 +44,15 @@ def part privMsg
 	if (module? privMsg) &&
 		(part? privMsg)
 		if privMsg.message =~ /^!admin\spart\s(#[\S]*)/
-			answer(privMsg,"Oki doki! i'll part #{$~[1]}")	
-			talk($~[1],"cya all!")
-			part_channel $~[1]
+			if @chan.include? $~[1] then
+				answer(privMsg,"Oki doki! i'll part #{$~[1]}")	
+				talk($~[1],"cya all!")
+				@chan.delete $~[1]
+				part_channel $~[1]
+			else
+				answer(privMsg,"Sorry, I'm not on #{$~[1]}")	
+
+			end
 		end
 	end
 

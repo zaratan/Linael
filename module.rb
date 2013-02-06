@@ -35,7 +35,7 @@ class ModuleIRC
 	end
 
 	def addMsgMethod(instance,nom,ident)
-		@runner.msgAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+		@runner.msgAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg) if actAuthorized?(instance,msg)}
 	end
 
 	def delMsgMethod(instance,ident)
@@ -51,7 +51,7 @@ class ModuleIRC
 	end
 
 	def addCmdMethod(instance,nom,ident)
-		@runner.cmdAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+		@runner.cmdAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg) if actAuthorized?(instance,msg)}
 	end
 		
 	def delCmdMethod(instance,ident)
@@ -65,16 +65,35 @@ class ModuleIRC
 	def delAuthMethod(instance,ident)
 		@runner.authMeth.delete(instance.class::Name+ident)
 	end
+	
+	def addNoticeMethod(instance,nom,ident)
+		@runner.noticeAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+	end
+		
+	def delNoticeMethod(instance,ident)
+		@runner.noticeAct.delete(instance.class::Name+ident)
+	end
 
 	def addAuthCmdMethod(instance,nom,ident)
-		@runner.cmdActAuth[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
+		@runner.cmdActAuth[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg) if actAuthorized?(instance,msg)}
 	end
 		
 	def delAuthCmdMethod(instance,ident)
 		@runner.cmdActAuth.delete(instance.class::Name+ident)
 	end
 
+	def actAuthorized?(instance,msg)
+		moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
+		mod = moduleAdmin.modules[instance.class::Name]
+		result = true
+		result &= !mod.inBlackList?(msg.place) 
+		result &= mod.inWhiteList?(msg.place) 
+		result
+	end
 	
+	def getModule(name)
+		@runner.modules.detect {|mod| mod.class == Modules::Module}.modules[name]
+	end
 
 	def self.requireAuth?
 		false
@@ -84,7 +103,15 @@ class ModuleIRC
 		false
 	end
 
+	def self.requiredMod
+		[]
+	end
+
 	Name=""
+
+	Help=[]
+
+	Constructor="Zaratan"
 
 	def startMod()
 		
@@ -104,13 +131,6 @@ class ModuleIRC
 		@irc=runner.irc
 	end
 
-	def answer(privMsg,ans)
-		if(privMsg.private_message?)
-			talk(privMsg.who,ans)
-		else
-			talk(privMsg.place,ans)
-		end
-	end
 
 	attr_reader :runner
 

@@ -1,11 +1,13 @@
 class Modules::Talk < ModuleIRC
 
+Name="talk"
+
 def startMod
 	addAuthCmdMethod(self,:talking,":talking")
 end
 
 def endMod
-	delAuthMethod(self,":talking")
+	delAuthCmdMethod(self,":talking")
 end
 
 

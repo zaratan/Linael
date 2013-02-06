@@ -50,6 +50,15 @@ class MessageAction
 		return false
 	end
 
+	def handleNotice(msg)
+		if Notice.match(msg)
+			notice = Notice.new msg
+			@noticeAct.values.each {|act| act.call notice}
+			return true
+		end
+		false
+	end
+
 	
 
 	def handleNick(msg)
@@ -98,7 +107,9 @@ class MessageAction
 					:cmdAct,
 					:authMeth,
 					:cmdActAuth,
-					:irc
+					:noticeAct,
+					:irc,
+					:modules
 
 	def initialize(irc,modules)
 		@toDo=[:handleKeepAlive,
@@ -106,6 +117,7 @@ class MessageAction
 				:handleMode,
 				:handleNick,
 				:handleJoin,
+				:handleNotice,
 				:handlePart,
 				:handleKick,
 				:handlePrivMsg]		
@@ -116,6 +128,7 @@ class MessageAction
 		@partAct=Hash.new
 		@joinAct=Hash.new
 		@nickAct=Hash.new
+		@noticeAct=Hash.new
 		@msgAct=Hash.new
 		@modeAct=Hash.new
 		@cmdAct=Hash.new
@@ -125,6 +138,11 @@ class MessageAction
 	end
 
 	def handle_msg(msg)
-		@toDo.detect{|m| self.send(m,msg)}
+		begin
+			@toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 
+						  :undef => :replace, :replace => ''))}
+		rescue Exception
+			puts $!	
+		end
 	end
 end

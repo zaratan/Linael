@@ -1,4 +1,5 @@
 #!/usr/bin/ruby
+# encoding: utf-8
 
 require 'active_support/inflector'
 require 'socket'

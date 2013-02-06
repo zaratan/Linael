@@ -41,6 +41,22 @@ Motif=/\APING :(.*)\n\z/
 
 end
 
+class Notice < Message
+
+Type="NOTICE"
+Motif=/\A:([^!]*)![^:]*NOTICE[^:]*:(.*)/
+
+	def initialize(msg)
+		if Motif =~ msg then
+			
+			super($~[1],"",$~[2])
+		else
+			super("","","")
+		end
+	end
+
+end
+
 #FIXME ca marche pas
 class Version < Message
 

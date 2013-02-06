@@ -1,13 +1,183 @@
+class Modules::ModuleType
+
+	include Action
+
+	def initialize runner,params
+		
+		@whiteList=nil
+		@blackList=nil
+		
+		if !params[:privMsg].nil?
+			@name = params[:klass]::Name
+			@runner = runner
+			@irc = runner.irc
+			begin
+				instKlass = params[:klass].new(@runner)
+				instKlass.startMod
+				@instance = instKlass
+			rescue Exception
+				answer(params[:privMsg],"Problem when loading the module")
+				talk(params[:privMsg].who,$!)
+				raise $!
+			end
+		else
+			@name=params[:name]
+			@irc=irc
+			@instance=params[:instance]
+		end
+	end
+
+	attr_accessor :name,:irc,:instance
+
+	def inBlackList?(chan)
+		chan = chan.downcase
+		@blackList.include?(chan) if blackList?
+	end
+
+	def inWhiteList?(chan)
+		chan = chan.downcase
+		if whiteList?
+			@whiteList.include?(chan) 
+		else
+			true
+		end
+	end
+
+	def blackList?
+		!@blackList.nil?
+	end
+
+	def whiteList?
+		!@whiteList.nil?
+	end
+
+	def destroy!
+		@instance.endMod
+		true
+	end
+
+	def whiteList(chan)
+		@whiteList = [] unless whiteList?
+		@whiteList << chan.downcase
+	end
+
+	def blackList(chan)
+		@blackList = [] unless blackList?
+		@blackList << chan.downcase
+	end
+
+	def unWhiteList(chan)
+		@whiteList.delete(chan)
+		@whiteList = nil if @whiteList.empty?
+	end
+
+	def unBlackList(chan)
+		@blackList.delete(chan)
+		@blackList = nil if @blackList.empty?
+	end
+
+	def ==(mod)
+		@name == mod.name
+	end
+
+end
+
+
+
+class Modules::ModuleList
+
+include Enumerable
+include Action
+
+def initialize runner
+	@modules=[]
+	@runner=runner
+	@irc=runner.irc
+	@dir = Dir.new("./modules")
+	@authModule = []
+end
+
+attr_accessor :modules,:authModules
+
+def each(&block)
+	@modules.each &block
+end
+
+def remove(modName,privMsg)
+	begin
+		if (!has_key?(modName))
+			answer(privMsg,"Module not loaded")	
+		else
+			@modules = @modules.delete_if do |mod| 
+				mod.destroy! if mod.name == modName
+			end
+			@authModule.delete(modName)
+			answer(privMsg,"Module #{modName} unloaded!")
+		end
+	rescue Exception
+		answer(privMsg,"Problem when deleting the module")
+		talk(privMsg.who,$!)
+	end
+end
+
+def addMod(mod)
+	@modules << mod
+end
+
+def add(modName,privMsg)
+	begin
+		if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
+			load "./modules/#{modName}.rb"
+			klass = "modules/#{modName}".camelize.constantize
+			if (has_key?(klass::Name))
+				answer(privMsg,"Module already loaded, please unload first")	
+			else
+				if (klass::requireAuth? && @authModule.empty?)
+					answer(privMsg,"You need at least one authMethod to load this module")
+				else
+					if matchRequirement?(klass.requiredMod)
+						mod = Modules::ModuleType.new(@runner,klass: klass,privMsg: privMsg)
+						addMod(mod)
+						@authModule << klass::Name if klass::auth?
+						answer(privMsg,"Module #{modName} loaded!")
+					else
+						answer(privMsg,"You do not have loaded all the modules required for this module.")
+						answer(privMsg,"Here is the list of requirement: #{klass.requiredMod.join " - "}.")
+					end
+				end
+			end
+		end
+	rescue Exception
+		puts $!
+		answer(privMsg,"Problem when loading the module")
+		talk(privMsg.who,$!)
+	end
+end
+
+def has_key?(key)
+	any? {|mod| mod.name == key}
+end
+
+def matchRequirement?(modules)
+	modules.all? {|mod| has_key?(mod)}
+end
+
+def [](name)
+	detect {|mod| mod.name == name}
+end
+
+end
+
+
 class Modules::Module < ModuleIRC
 
-attr_reader :modules,:authModule
+attr_reader :modules
 
 Name="module"
 
 def initialize(runner)
 	@dir = Dir.new("./modules")
-	@modules=Hash.new
-	@authModule=[]
+	@modules=Modules::ModuleList.new(runner)
 	super runner
 end
 
@@ -30,52 +200,19 @@ def addModule privMsg
 		(add? privMsg)
 		if privMsg.message.match /^!modules\sadd\s([A-z0-9]*)/
 			modName = "#{$~[1]}"
-			addModule_aux modName,privMsg	
+			@modules.add modName,privMsg
 		end
 	end
 end
 
-def addModule_aux(modName,privMsg)
-	if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
-		load "./modules/#{modName}.rb"
-		klass = "modules/#{modName}".camelize.constantize
-		if (@modules.has_key?(klass::Name))
-			answer(privMsg,"Module already loaded, please unload first")	
-		else
-			if (klass::requireAuth? && authModule.empty?)
-				answer(privMsg,"You need at least one authMethod to load this module")
-			else
-				instKlass = klass.new(@runner)
-				@modules[klass::Name] = instKlass
-				@authModule << klass::Name if klass::auth?
-				instKlass.startMod
-				answer(privMsg,"Module #{modName} loaded!")
-			end
-		end
-	end
-
-end
-
-def delModule privMsg
+def delModule(privMsg)
 if (module? privMsg) &&
 		(del? privMsg)
 		if privMsg.message.match /^!modules\sdel\s([A-z0-9]*)/
 			modName = "#{$~[1]}"
-			delModule_aux modName,privMsg
+			@modules.remove(modName,privMsg)
 		end
 end
-end
-
-def delModule_aux(modName,privMsg)
-	if (!@modules.has_key?(modName))
-		answer(privMsg,"Module not loaded")	
-	else
-		@modules[modName].endMod
-		@modules.delete(modName)
-		@authModule.delete(modName)
-		answer(privMsg,"Module #{modName} unloaded!")
-	end
-
 end
 
 def reloadModule privMsg
@@ -92,10 +229,8 @@ if (module? privMsg) &&
 			return
 		end
 		
-		delModule_aux modName,privMsg
-		addModule_aux modName,privMsg
-		
-
+		@modules.remove modName,privMsg
+		@modules.add modName,privMsg
 
 	end
 
@@ -132,7 +267,7 @@ def module? privMsg
 end
 
 def startMod()
-	@modules[self.class::Name] = self
+	@modules.addMod(Modules::ModuleType.new(@runner,instance: self,name: Name))
 	addCmdMethod(self,:whichModule,":whichModule")
 	addAuthCmdMethod(self,:addModule,":addModule")
 	addAuthCmdMethod(self,:delModule,":delModule")
