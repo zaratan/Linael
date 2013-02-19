@@ -1,5 +1,62 @@
 #encoding: utf-8
 
+class Modules::ModuleType
+	def inBlackList?(chan)
+		chan = chan.downcase
+		@blackList.include?(chan) if blackList?
+	end
+
+	def inWhiteList?(chan)
+		chan = chan.downcase
+		if whiteList?
+			@whiteList.include?(chan) 
+		else
+			true
+		end
+	end
+
+	def blackList?
+		!@blackList.nil?
+	end
+
+	def whiteList?
+		!@whiteList.nil?
+	end
+	def whiteList(chan)
+		@whiteList = [] unless whiteList?
+		@whiteList << chan.downcase
+	end
+
+	def blackList(chan)
+		@blackList = [] unless blackList?
+		@blackList << chan.downcase
+	end
+
+	def unWhiteList(chan)
+		@whiteList.delete(chan)
+		@whiteList = nil if @whiteList.empty?
+	end
+
+	def unBlackList(chan)
+		@blackList.delete(chan)
+		@blackList = nil if @blackList.empty?
+	end
+
+end
+
+class ModuleIRC
+
+	def actAuthorized?(instance,msg)
+		moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
+		mod = moduleAdmin.modules[instance.class::Name]
+		result = true
+		result &= !mod.inBlackList?(msg.place) 
+		result &= mod.inWhiteList?(msg.place) 
+		result
+	end
+
+end
+
 class Modules::Blacklist < ModuleIRC
 
 Name="blacklist"

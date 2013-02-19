@@ -4,9 +4,6 @@ class Modules::ModuleType
 
 	def initialize runner,params
 		
-		@whiteList=nil
-		@blackList=nil
-		
 		if !params[:privMsg].nil?
 			@name = params[:klass]::Name
 			@runner = runner
@@ -29,52 +26,12 @@ class Modules::ModuleType
 
 	attr_accessor :name,:irc,:instance
 
-	def inBlackList?(chan)
-		chan = chan.downcase
-		@blackList.include?(chan) if blackList?
-	end
-
-	def inWhiteList?(chan)
-		chan = chan.downcase
-		if whiteList?
-			@whiteList.include?(chan) 
-		else
-			true
-		end
-	end
-
-	def blackList?
-		!@blackList.nil?
-	end
-
-	def whiteList?
-		!@whiteList.nil?
-	end
 
 	def destroy!
 		@instance.endMod
 		true
 	end
 
-	def whiteList(chan)
-		@whiteList = [] unless whiteList?
-		@whiteList << chan.downcase
-	end
-
-	def blackList(chan)
-		@blackList = [] unless blackList?
-		@blackList << chan.downcase
-	end
-
-	def unWhiteList(chan)
-		@whiteList.delete(chan)
-		@whiteList = nil if @whiteList.empty?
-	end
-
-	def unBlackList(chan)
-		@blackList.delete(chan)
-		@blackList = nil if @blackList.empty?
-	end
 
 	def ==(mod)
 		@name == mod.name

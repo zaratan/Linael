@@ -11,11 +11,11 @@ class Modules::Name < ModuleIRC
 
 	Help=[
 		"Module: Name",
-		"",
+		" ",
 		"=====Fonctions=====",
 		"!name       => display a random name from a database",
 		"!name types => display the different types of names available",
-		"",
+		" ",
 		"=====Options=====",
 		"!name -g{m|f} -s[1-4] -[0-9] -a -tType1,Type2,...",
 		"    -g    : Gender male or female",

@@ -83,12 +83,7 @@ class ModuleIRC
 	end
 
 	def actAuthorized?(instance,msg)
-		moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
-		mod = moduleAdmin.modules[instance.class::Name]
-		result = true
-		result &= !mod.inBlackList?(msg.place) 
-		result &= mod.inWhiteList?(msg.place) 
-		result
+		true
 	end
 	
 	def getModule(name)

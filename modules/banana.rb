@@ -36,12 +36,24 @@ User=[
 	"tantraa"
 ]
 
+Help=[
+	"Module: Banana",
+	" ",
+	"=====Fonctions=====",
+	"!banana                       => sing the banana song",
+	"!banana -[add|del] username   => add/del a user for this module"
+]
+
 def startMod
 	addCmdMethod(self,:song,":song")
+	addAuthCmdMethod(self,:addUser,":addUser")
+	addAuthCmdMethod(self,:delUser,":delUser")
 end
 
 def endMod
 	delCmdMethod(self,":song")
+	delAuthCmdMethod(self,":addUser")
+	delAuthCmdMethod(self,":delUser")
 end
 
 
@@ -51,9 +63,22 @@ def song privMsg
 	end
 end
 
+def addUser privMsg
+	if (privMsg.message =~ /!banana.*-add\s*(\S*)/)
+		answer(privMsg,"Oki doki! #{$~[1]} can now banana :)")
+		User << $~[1].downcase
+	end
+end
+
+def delUser privMsg
+	if (privMsg.message =~ /!banana\s*-del\s*(\S*)/)
+		answer(privMsg,"Oki doki! #{$~[1]} won't banana anymore :(")
+		User.delete $~[1].downcase
+	end
+end
 
 def module? privMsg
-	(privMsg.message.encode.downcase =~ /^!banana/) && ((privMsg.who.downcase =~ /nayo|zaratan|lilin|grunthi|alya|zag|sayaelis|unau|tantraa/) || (privMsg.private_message?))
+	(privMsg.message.encode.downcase =~ /^!banana[^A-z]*$/) && ((User.detect {|user| privMsg.who.downcase.match(user)}) || (privMsg.private_message?))
 end
 
 end
