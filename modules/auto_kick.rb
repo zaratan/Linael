@@ -41,13 +41,9 @@ def endMod
 end
 
 def autokick joinMsg
-		puts joinMsg.where.downcase
-		puts @akick["#zaratan"]
-		puts @akick[joinMsg.where.downcase]
 	if !@akick[joinMsg.where.downcase].nil?
-		puts @akick[joinMsg.where.downcase]
 		if @akick[joinMsg.where.downcase].detect {|regexp| ((joinMsg.who.downcase.match regexp) || (joinMsg.identification.downcase.match regexp))}
-			talk(joinMsg.where,"sorry #{joinMsg.who} you are akick from #{joinMsg.where}")
+			talk(joinMsg.where,"sorry #{joinMsg.who} you are akick from #{joinMsg.where}.")
 			kick_channel(joinMsg.where,joinMsg.who,"sorry ♥")
 		end
 	end
@@ -55,12 +51,14 @@ end
 
 def addAkick privMsg
 	if privMsg.message =~ /!akick\s-add\s(#\S*)\s(\S*)/
+		answer(privMsg,"Oki doki! #{$~[2]} will be auto kick on #{$~[1]}."
 		addAkickRule $~[1].downcase,$~[2].downcase
 	end
 end
 
 def delAkick privMsg
 	if privMsg.message =~ /!akick\s-del\s(#\S*)\s(\d*)/
+		answer(privMsg,"Oki doki! I'll no longuer match rule #{$~[2]} on #{$~[1]}."
 		delAkickRule $~[1].downcase,($~[2].to_i)
 	end
 end
