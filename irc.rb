@@ -56,6 +56,10 @@ attr_reader :irc
 		@irc.send "PONG #{dest}"
 	end
 
+	def mode_channel(who,mode,arg="")
+		@irc.send "MODE #{who} #{mode} #{arg}"
+	end
+
 	def version(dest)
 		@irc.send "NOTICE #{dest} :Zar a Bottes v0.1"
 	end

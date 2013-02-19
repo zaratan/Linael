@@ -17,6 +17,8 @@ def startMod
 	addAuthCmdMethod(self,:join,":join")
 	addAuthCmdMethod(self,:part,":part")
 	addAuthCmdMethod(self,:kick,":kick")
+	addAuthCmdMethod(self,:mode,":mode")
+	addAuthCmdMethod(self,:reload,":reload")
 	addAuthCmdMethod(self,:quickKick,":quickKick")
 	addAuthCmdMethod(self,:die,":die")
 end
@@ -25,6 +27,8 @@ def endMod
 	delAuthMethod(self,":join")
 	delAuthMethod(self,":part")
 	delAuthMethod(self,":kick")
+	delAuthMethod(self,":mode")
+	delAuthMethod(self,":reload")
 	delAuthMethod(self,":quickKick")
 	delAuthMethod(self,":die")
 end
@@ -71,7 +75,23 @@ def die privMsg
 end
 
 def mode privMsg
+	if (mode? privMsg)
+		if privMsg.message =~ /!admin\smode\s(#\S*)\s(\S*)\s(\S*)/
+			answer(privMsg,"oki doki! i'll change mode #{$~[2]} #{$~[3]} on #{$~[1]}")
+			mode_channel($~[1],$~[2],$~[3])
+		elsif privMsg.message =~ /!admin\smode\s(#\S*)\s(\S*)/
+			answer(privMsg,"oki doki! i'll change mode #{$~[2]} on #{$~[1]}")
+			mode_channel($~[1],$~[2])
+		end
+	end
+end
 
+def reload privMsg
+	if (reload? privMsg)
+		if privMsg.message =~ /!admin\sreload\s(\S*)/
+			load $~[1]
+		end
+	end
 end
 
 def quickKick privMsg
@@ -169,6 +189,14 @@ end
 
 def die? privMsg
 	privMsg.message.match '^!admin\sdie'
+end
+
+def mode? privMsg
+	privMsg.message =~ /^!admin\smode\s/
+end
+
+def reload? privMsg
+	privMsg.message =~/^!admin\sreload\s/
 end
 
 end

@@ -205,7 +205,7 @@ end
 class Join < AbstractAct
 
 	Type="JOIN"
-	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s:(.*)/
+	Motif=/\A:([^!]*)!(\S*)\s#{self::Type}\s:(\S*)/
 
 	def initialize(msg)
 		super(msg,Motif)
