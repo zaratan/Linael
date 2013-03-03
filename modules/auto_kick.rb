@@ -14,7 +14,6 @@ Help=[
 	"-add   : add a rule of auto kick. can match nick or vhost. Can match regexp with *",
 	"-del   : delete the rule by its number",
 	"-show  : print the rule for the chan"
-
 ]
 
 def self.requireAuth?
@@ -51,14 +50,14 @@ end
 
 def addAkick privMsg
 	if privMsg.message =~ /!akick\s-add\s(#\S*)\s(\S*)/
-		answer(privMsg,"Oki doki! #{$~[2]} will be auto kick on #{$~[1]}."
+		answer(privMsg,"Oki doki! #{$~[2]} will be auto kick on #{$~[1]}.")
 		addAkickRule $~[1].downcase,$~[2].downcase
 	end
 end
 
 def delAkick privMsg
 	if privMsg.message =~ /!akick\s-del\s(#\S*)\s(\d*)/
-		answer(privMsg,"Oki doki! I'll no longuer match rule #{$~[2]} on #{$~[1]}."
+		answer(privMsg,"Oki doki! I'll no longuer match rule #{$~[2]} on #{$~[1]}.")
 		delAkickRule $~[1].downcase,($~[2].to_i)
 	end
 end
