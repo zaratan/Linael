@@ -50,40 +50,39 @@ module Linael
     end
 
     def answer(privMsg,ans)
-      
-  f(privMsg.private_message?)
+      if(privMsg.private_message?)
         talk(privMsg.who,ans)
       else
         talk(privMsg.place,ans)
       end
     end
 
-#    def join_channel(chan)
-#      @irc.send_msg("JOIN #{chan}")
-#    end
-#
-#    def part_channel(chan)
-#      @irc.send_msg("PART #{chan}")
-#    end
-#
-#    def quit_channel(msg)
-#      @irc.send_msg("QUIT :#{msg}")
-#    end
-#
-#    def kick_channel(chan,who,message)
-#      @irc.send_msg("KICK #{chan} #{who} :#{message}")
-#    end
-#    def ping(dest)
-#      @irc.send_msg "PONG #{dest}"
-#    end
-#
-#    def mode_channel(who,mode,arg="")
-#      @irc.send "MODE #{who} #{mode} #{arg}"
-#    end
-#
-#    def version(dest)
-#      @irc.send_msg "NOTICE #{dest} :Linael v0.2"
-#    end
+    #    def join_channel(chan)
+    #      @irc.send_msg("JOIN #{chan}")
+    #    end
+    #
+    #    def part_channel(chan)
+    #      @irc.send_msg("PART #{chan}")
+    #    end
+    #
+    #    def quit_channel(msg)
+    #      @irc.send_msg("QUIT :#{msg}")
+    #    end
+    #
+    #    def kick_channel(chan,who,message)
+    #      @irc.send_msg("KICK #{chan} #{who} :#{message}")
+    #    end
+    #    def ping(dest)
+    #      @irc.send_msg "PONG #{dest}"
+    #    end
+    #
+    #    def mode_channel(who,mode,arg="")
+    #      @irc.send "MODE #{who} #{mode} #{arg}"
+    #    end
+    #
+    #    def version(dest)
+    #      @irc.send_msg "NOTICE #{dest} :Linael v0.2"
+    #    end
 
   end
 end
