@@ -32,8 +32,7 @@ module Linael
 
     def method_missing(name, *args)
       if name =~ /(.*)_channel/
-        define_method(name) do
-          arg = args[0]
+        define_method(name) do |arg|
           msg = "#{$1.upcase} "
           msg += "#{arg[:dest]} " unless arg[:dest].nil?
           msg += "#{arg[:who]} " unless arg[:who].nil?
@@ -41,6 +40,7 @@ module Linael
           msg += ":#{arg[:msg]} " unless arg[:msg].nil?
           send_msg msg
         end      
+        return self.send name,args[0]
       end
       super
     end
@@ -50,7 +50,8 @@ module Linael
     end
 
     def answer(privMsg,ans)
-      if(privMsg.private_message?)
+      
+  f(privMsg.private_message?)
         talk(privMsg.who,ans)
       else
         talk(privMsg.place,ans)
