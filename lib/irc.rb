@@ -3,7 +3,7 @@
 module Linael
 
   module IRC
-    
+
     def send_msg(msg)
       @irc_socket.puts "#{msg}\n"
     end
@@ -13,11 +13,11 @@ module Linael
       send_msg "USER #{nick} 0 * :Linael"
       send_msg "NICK #{nick}"
     end
-    
+
     def main_loop(msg_handler)
-	    while line = get_msg
-		    msg_handler.handle_msg(line)
-	    end
+      while line = get_msg
+        msg_handler.handle_msg(line)
+      end
     end
 
     def get_msg()
@@ -44,7 +44,19 @@ module Linael
       end
       super
     end
-    
+
+    def talk(dest,msg)
+      privmsg_channel {dest: dest, msg: msg}
+    end
+
+    def answer(privMsg,ans)
+      if(privMsg.private_message?)
+        talk(privMsg.who,ans)
+      else
+        talk(privMsg.place,ans)
+      end
+    end
+
 #    def join_channel(chan)
 #      @irc.send_msg("JOIN #{chan}")
 #    end
@@ -60,11 +72,6 @@ module Linael
 #    def kick_channel(chan,who,message)
 #      @irc.send_msg("KICK #{chan} #{who} :#{message}")
 #    end
-
-    def talk(dest,msg)
-      privmsg_channel {dest: dest, msg: msg}
-    end
-
 #    def ping(dest)
 #      @irc.send_msg "PONG #{dest}"
 #    end
@@ -76,14 +83,6 @@ module Linael
 #    def version(dest)
 #      @irc.send_msg "NOTICE #{dest} :Linael v0.2"
 #    end
-
-    def answer(privMsg,ans)
-      if(privMsg.private_message?)
-        talk(privMsg.who,ans)
-      else
-        talk(privMsg.place,ans)
-      end
-    end
 
   end
 end
