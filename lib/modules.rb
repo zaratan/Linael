@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ModuleIRC
 
 	include Action
