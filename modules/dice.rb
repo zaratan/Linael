@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Modules::Dice < ModuleIRC
 	
 	Name="dice"	

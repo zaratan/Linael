@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class Modules::Talk < ModuleIRC
 
 Name="talk"
