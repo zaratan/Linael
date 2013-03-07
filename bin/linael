@@ -16,6 +16,6 @@ module Linael
   include IRC
 
   connect("irc.rizon.net",6667,"Linael")
-  action=MessageAction.new(@irc,[Modules::Module])	
+  action=MessageAction.new([Modules::Module])	
   main_loop(action)
 end

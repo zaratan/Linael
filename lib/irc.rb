@@ -5,11 +5,11 @@ module Linael
   module IRC
 
     def send_msg(msg)
-      @irc_socket.puts "#{msg}\n"
+      $linael_irc_socket.puts "#{msg}\n"
     end
 
     def connect(server,port,nick)
-      @irc_socket = TCPSocket.open(server, port)
+      $linael_irc_socket = TCPSocket.open(server, port)
       send_msg "USER #{nick} 0 * :Linael"
       send_msg "NICK #{nick}"
     end
@@ -21,7 +21,7 @@ module Linael
     end
 
     def get_msg()
-      return @irc_socket.gets
+      return $linael_irc_socket.gets
     end
 
   end

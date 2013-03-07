@@ -1,10 +1,6 @@
 # -*- encoding : utf-8 -*-
-require './irc.rb'
-require './mess.rb'
-
-class MessageAction
-
-
+module Linael
+class Handler
 
   include Action
 
@@ -12,15 +8,6 @@ class MessageAction
     if Ping.match(msg) then
       msgPing = Ping.new msg
       ping msgPing.sender
-      return true
-    end
-    return false
-  end
-
-  def handleVersion(msg)
-    if Version.match(msg) then
-      versionMsg = Version.new msg
-      version msg.sender
       return true
     end
     return false
@@ -112,17 +99,17 @@ class MessageAction
     :irc,
     :modules
 
-  def initialize(irc,modules)
-    @toDo=[:handleKeepAlive,
-           :handleVersion,
-           :handleMode,
-           :handleNick,
-           :handleJoin,
-           :handleNotice,
-           :handlePart,
-           :handleKick,
-           :handlePrivMsg]		
-    @irc=irc
+    @to_handle=[Pong,Mode,Nick,Join,Notice,Part,Kick,PrivMessage]
+
+  def initialize(modules)
+    @toDo={handleKeepAlive: Pong,
+           handleMode: Mode,
+           handleNick: Nick,
+           handleJoin: Join,
+           handleNotice: Notice,
+           handlePart: Part,
+           handleKick: Kick, 
+           handlePrivMsg: PrivMessage}		
     @modules=[]
     modules.each {|klass| @modules << klass.new(self)}
     @kickAct=Hash.new
@@ -146,4 +133,5 @@ class MessageAction
       puts $!	
     end
   end
+end
 end
