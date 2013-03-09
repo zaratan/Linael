@@ -36,7 +36,7 @@ module Linael
       if !@akick[joinMsg.where.downcase].nil?
         if @akick[joinMsg.where.downcase].detect {|regexp| ((joinMsg.who.downcase.match regexp) || (joinMsg.identification.downcase.match regexp))}
           talk(joinMsg.where,"sorry #{joinMsg.who} you are akick from #{joinMsg.where}.")
-          kick_channel(joinMsg.where,joinMsg.who,"sorry ♥")
+          kick_channel({dest:joinMsg.where,who:joinMsg.who,msg:"sorry ♥"})
         end
       end
     end

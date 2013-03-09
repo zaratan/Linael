@@ -1,30 +1,24 @@
 # -*- encoding : utf-8 -*-
-class Modules::Log < ModuleIRC
-	
-	Name="log"	
+module Linael
+  class Modules::Log < ModuleIRC
 
-	def log(msg)
-		puts msg
-	end
+    Name="log"	
 
-	def startMod()
-		addMsgMethod(self,:log,":log")
-		addCmdMethod(self,:log,":log")
-		addKickMethod(self,:log,":log")
-		addNickMethod(self,:log,":log")
-		addPartMethod(self,:log,":log")
-		addJoinMethod(self,:log,":log")
-		addModeMethod(self,:log,":log")
-	end
+    Help=["Module: Log"," ","Log every recognized message in the console"]
 
-	def endMod()
-		delMsgMethod(self,":log")
-		delCmdMethod(self,":log")
-		delNickMethod(self,":log")
-		delKickMethod(self,":log")
-		delPartMethod(self,":log")
-		delJoinMethod(self,":log")
-		delModeMethod(self,":log")
-	end
+    def log(msg)
+      p msg
+    end
 
+    def startMod()
+      add_module({msg:  [:log],
+                  cmd:  [:log],
+                  kick: [:log],
+                  nick: [:log],
+                  part: [:log],
+                  join: [:log],
+                  mode: [:log]})
+    end
+
+  end
 end

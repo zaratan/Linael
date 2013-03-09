@@ -1,26 +1,22 @@
 # -*- encoding : utf-8 -*-
-class Modules::Mac < ModuleIRC
+module Linael
+  class Modules::Mac < ModuleIRC
 
-Name="mac"
+    Name="mac"
 
-def startMod
-	addMsgMethod(self,:macboue,":macboue")
-end
+    def startMod
+      add_module :msg => [:macboue]
+    end
 
-def endMod
-	delMsgMethod(self,":macboue")
-end
+    def macboue privMsg
+      if (module? privMsg)
+        answer(privMsg,"#{privMsg.who}: Apple, c'est de la boue :)")
+      end
+    end
 
+    def module? privMsg
+      privMsg.message.downcase =~ /\smac\s|^mac\s/
+    end
 
-def macboue privMsg
-	if (module? privMsg)
-		answer(privMsg,"#{privMsg.who}: Apple, c'est de la boue :)")
-	end
-end
-
-
-def module? privMsg
-	privMsg.message.downcase =~ /\smac\s|^mac\s/
-end
-
+  end
 end
