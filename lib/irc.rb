@@ -31,9 +31,9 @@ module Linael
 
     include IRC
 
-    def method_missing(name, *args)
+    def method_missing(name, *args, &block)
       if name =~ /(.*)_channel/
-        define_singleton_method(name) do |arg|
+        self.class.send("define_method",name) do |arg|
           msg = "#{$1.upcase} "
           msg += "#{arg[:dest]} " unless arg[:dest].nil?
           msg += "#{arg[:who]} " unless arg[:who].nil?

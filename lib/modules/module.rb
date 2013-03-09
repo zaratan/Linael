@@ -62,7 +62,7 @@ module Linael
     end
 
     def remove(modName,privMsg)
-      begin
+      #begin
         if (!has_key?(modName))
           answer(privMsg,"Module not loaded")	
         else
@@ -72,10 +72,10 @@ module Linael
           @authModule.delete(modName)
           answer(privMsg,"Module #{modName} unloaded!")
         end
-      rescue Exception
-        answer(privMsg,"Problem when deleting the module")
-        talk(privMsg.who,$!)
-      end
+      #rescue Exception
+        #answer(privMsg,"Problem when deleting the module")
+        #talk(privMsg.who,$!)
+      #end
     end
 
     def addMod(mod)
@@ -86,14 +86,14 @@ module Linael
       begin
         if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
           load "./lib/modules/#{modName}.rb"
-          klass = "modules/#{modName}".camelize.constantize
+          klass = "linael/modules/#{modName}".camelize.constantize
           if (has_key?(klass::Name))
             answer(privMsg,"Module already loaded, please unload first")	
           else
-            if (!klass.require_auth.nil? && @authModule.empty?)
+            if (klass.require_auth && @authModule.empty?)
               answer(privMsg,"You need at least one authMethod to load this module")
             else
-              if matchRequirement?(klass.requiredMod)
+              if matchRequirement?(klass.required_mod)
                 mod = Modules::ModuleType.new(@runner,klass: klass,privMsg: privMsg)
                 addMod(mod)
                 @authModule << klass::Name if klass::auth?
@@ -199,7 +199,9 @@ module Linael
       privMsg.message =~ /^!modules\sreload/
     end
 
-    requireAuth = true
+    def self.require_auth  
+      true 
+    end
 
     def add? privMsg
       privMsg.message.match '^!modules\sadd'

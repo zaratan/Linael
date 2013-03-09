@@ -18,7 +18,7 @@ module Linael
         privmsg = PrivMessage.new msg
         if (privmsg.command?) then
           @cmdAct.values.each {|act| act.call privmsg}
-          if (@authMeth.values.all? {|auth| auth.call privmsg})
+          if (@authAct.values.all? {|auth| auth.call privmsg})
             @cmdAuthAct.values.each {|act| act.call privmsg}
           end
           return true
@@ -31,7 +31,7 @@ module Linael
 
     attr_accessor :msgAct,
       :cmdAct,
-      :authMeth,
+      :authAct,
       :cmdAuthAct,
       :modules
 
@@ -64,7 +64,7 @@ module Linael
       Handler.to_handle.each {|klass| p klass.name;instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
       @msgAct=Hash.new
       @cmdAct=Hash.new
-      @authMeth=Hash.new
+      @authAct=Hash.new
       @cmdAuthAct=Hash.new
       @modules=[]
       modules.each {|klass| @modules << klass.new(self)}
@@ -72,12 +72,12 @@ module Linael
     end
 
     def handle_msg(msg)
-      begin
+      #begin
         Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 
                                                                         :undef => :replace, :replace => ''))}
-      rescue Exception
-        puts $!	
-      end
+      #rescue Exception
+        #puts $!	
+      #end
     end
 
   end
