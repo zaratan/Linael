@@ -1,136 +1,56 @@
 # -*- encoding : utf-8 -*-
-class ModuleIRC
+module Linael
+  class ModuleIRC
 
-  include Action
+    include Action
 
-  def addKickMethod(instance,nom,ident)
-    @runner.kickAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
+    def add_module_irc_behavior type
+      define_singleton_method ("add_#{type}_behavior") do |instance,nom,ident|
+        procToAdd = Proc.new {|msg| instance.send(nom,msg) if (instance.methods.grep /act_authorized\?/).empty? or actAuthorized?(instance,msg)}
+        (@runner.send "#{type}Act")[(instance.class::Name+ident).to_sym]= procToAdd
+        @behavior = Hash.new if @behavior.nil?
+        @behavior[type] = ident
+      end
+      define_singleton_method("del_#{type}_behavior") do |instance,ident|
+        (@runner.send "#{type}Act").delete((instance.class::Name+ident).to_sym)
+        @behavior.delete_if {|k,v| v == ident} 
+      end
+    end
 
-  def delKickMethod(instance,ident)
-    @runner.kickAct.delete(instance.class::Name+ident)
-  end
+    def module(name)
+      @runner.modules.detect {|mod| mod.class == Modules::Module}.modules[name]
+    end
 
-  def addNickMethod(instance,nom,ident)
-    @runner.nickAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
+    Name=""
 
-  def delNickMethod(instance,ident)
-    @runner.nickAct.delete(instance.class::Name+ident)
-  end
+    Help=[]
 
-  def addJoinMethod(instance,nom,ident)
-    @runner.joinAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
+    Constructor="Zaratan"
 
-  def delJoinMethod(instance,ident)
-    @runner.joinAct.delete(instance.class::Name+ident)
-  end
+    def initialize(runner)
+      @runner=runner
+      @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
+    end
 
-  def addPartMethod(instance,nom,ident)
-    @runner.partAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
+    def add_module(method_hash)
+      method_hash.each do |k,v|
+        self.methods.grep(/add_#{k.to_s}_behavior/) do |name| 
+          v.each do |behav|
+            self.send (name.to_sym),self,behav,behav.to_s
+          end
+        end
+      end
+    end
 
-  def delPartMethod(instance,ident)
-    @runner.partAct.delete(instance.class::Name+ident)
-  end
+    def stopMod()
+      self.behavior.each {|type,ident| self.send "del_#{type}_behavior",ident}
+    end
 
-  def addMsgMethod(instance,nom,ident)
-    @runner.msgAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg) if actAuthorized?(instance,msg)}
-  end
-
-  def delMsgMethod(instance,ident)
-    @runner.msgAct.delete(instance.class::Name+ident)
-  end
-
-  def addModeMethod(instance,nom,ident)
-    @runner.modeAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
-
-  def delModeMethod(instance,ident)
-    @runner.modeAct.delete(instance.class::Name+ident)
-  end
-
-  def addCmdMethod(instance,nom,ident)
-    @runner.cmdAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg) if actAuthorized?(instance,msg)}
-  end
-
-  def delCmdMethod(instance,ident)
-    @runner.cmdAct.delete(instance.class::Name+ident)
-  end
-
-  def addAuthMethod(instance,nom,ident)
-    @runner.authMeth[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
-
-  def delAuthMethod(instance,ident)
-    @runner.authMeth.delete(instance.class::Name+ident)
-  end
-
-  def addNoticeMethod(instance,nom,ident)
-    @runner.noticeAct[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg)}
-  end
-
-  def delNoticeMethod(instance,ident)
-    @runner.noticeAct.delete(instance.class::Name+ident)
-  end
-
-  def addAuthCmdMethod(instance,nom,ident)
-    @runner.cmdActAuth[instance.class::Name+ident] = Proc.new {|msg| instance.send(nom,msg) if actAuthorized?(instance,msg)}
-  end
-
-  def delAuthCmdMethod(instance,ident)
-    @runner.cmdActAuth.delete(instance.class::Name+ident)
-  end
-
-  def actAuthorized?(instance,msg)
-    true
-  end
-
-  def getModule(name)
-    @runner.modules.detect {|mod| mod.class == Modules::Module}.modules[name]
-  end
-
-  def self.requireAuth?
-    false
-  end
-
-  def self.auth?
-    false
-  end
-
-  def self.requiredMod
-    []
-  end
-
-  Name=""
-
-  Help=[]
-
-  Constructor="Zaratan"
-
-  def startMod()
+    attr_accessor :behavior
+    attr_reader :runner
 
   end
 
-
-  def endMod()
-
-  end	
-
-  def help()
-    ""
+  module Modules
   end
-
-  def initialize(runner)
-    @runner=runner
-    @irc=runner.irc
-  end
-
-
-  attr_reader :runner
-
-end
-
-module Modules
 end

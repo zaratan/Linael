@@ -4,23 +4,24 @@ module Linael
 
   module IRC
 
-    def send_msg(msg)
+    def self.send_msg(msg)
       $linael_irc_socket.puts "#{msg}\n"
     end
 
-    def connect(server,port,nick)
+    def self.connect(server,port,nick)
       $linael_irc_socket = TCPSocket.open(server, port)
       send_msg "USER #{nick} 0 * :Linael"
       send_msg "NICK #{nick}"
     end
 
-    def main_loop(msg_handler)
+    def self.main_loop(msg_handler)
       while line = get_msg
+        p line
         msg_handler.handle_msg(line)
       end
     end
 
-    def get_msg()
+    def self.get_msg()
       return $linael_irc_socket.gets
     end
 
@@ -32,13 +33,13 @@ module Linael
 
     def method_missing(name, *args)
       if name =~ /(.*)_channel/
-        define_method(name) do |arg|
+        define_singleton_method(name) do |arg|
           msg = "#{$1.upcase} "
           msg += "#{arg[:dest]} " unless arg[:dest].nil?
           msg += "#{arg[:who]} " unless arg[:who].nil?
           msg += "#{arg[:args]} " unless arg[:args].nil?
           msg += ":#{arg[:msg]} " unless arg[:msg].nil?
-          send_msg msg
+          IRC::send_msg msg
         end      
         return self.send name,args[0]
       end
@@ -46,7 +47,7 @@ module Linael
     end
 
     def talk(dest,msg)
-      privmsg_channel {dest: dest, msg: msg}
+      privmsg_channel({dest: dest, msg: msg})
     end
 
     def answer(privMsg,ans)
