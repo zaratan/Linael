@@ -11,7 +11,7 @@ module Linael
     ]
 
     def startMod
-      add_module :cmd => :help
+      add_module :cmd => [:help]
     end
 
     def help privMsg
@@ -37,7 +37,7 @@ module Linael
     end
 
     def initialize(runner)
-      @dir = Dir.new("./modules")
+      @dir = Dir.new("./lib/modules")
       super runner
     end
 

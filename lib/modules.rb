@@ -21,7 +21,7 @@ module Linael
       end
     end
 
-    def module(name)
+    def mod(name)
       @runner.modules.detect {|mod| mod.class == Modules::Module}.modules[name]
     end
 

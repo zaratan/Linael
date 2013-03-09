@@ -119,8 +119,8 @@ module Linael
 
       if (Options.blackList? privMsg.message)
         options = Options.new privMsg
-        modModule = getModule("module")
-        modAdmin = getModule("admin")
+        modModule = mod("module")
+        modAdmin = mod("admin")
         if (modModule.instance.modules.has_key?(options.module))
           mod=modModule.instance.modules[options.module]
           if (options.add?)

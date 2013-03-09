@@ -26,9 +26,9 @@ module Linael
     end
 
     def startMod
-      add_module({cmdAuth: [:addAKick,
-                            :delAKick,
-                            :printAKick],
+      add_module({cmdAuth: [:addAkick,
+                            :delAkick,
+                            :printAkick],
                   join:[:autokick]})
     end
 

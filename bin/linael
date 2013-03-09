@@ -15,7 +15,7 @@ module Linael
 
   include IRC
 
-  IRC::connect("irc.rizon.net",6667,"LinaelTest")
+  IRC::connect("irc.rizon.net",6667,"Linael")
   action=Handler.new([Modules::Module])	
   IRC::main_loop(action)
 end

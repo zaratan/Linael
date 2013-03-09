@@ -62,7 +62,7 @@ module Linael
     end
 
     def remove(modName,privMsg)
-      #begin
+      begin
         if (!has_key?(modName))
           answer(privMsg,"Module not loaded")	
         else
@@ -72,10 +72,10 @@ module Linael
           @authModule.delete(modName)
           answer(privMsg,"Module #{modName} unloaded!")
         end
-      #rescue Exception
-        #answer(privMsg,"Problem when deleting the module")
-        #talk(privMsg.who,$!)
-      #end
+      rescue Exception
+        answer(privMsg,"Problem when deleting the module")
+        talk(privMsg.who,$!)
+      end
     end
 
     def addMod(mod)
