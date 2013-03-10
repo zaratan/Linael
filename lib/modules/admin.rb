@@ -78,19 +78,16 @@ module Linael
       end
     end
 
-  end
-  class Modules::Admin::Options < ModulesOptions
-    
+  class Options < ModulesOptions
     generate_to_catch  :join   => /^!admin_join\s|^!join\s|^!j\s/,
               :part   => /^!admin_part\s|^!part\s/,
               :kick   => /^!admin_kick\s|^!kick\s|^!k\s/,
               :die    => /^!admin_die\s/,
               :mode   => /^!admin_mode\s|^!mode\s/,
               :reload => /^!admin_reload\s/
-
     generate_chan
     generate_who
     generate_reason
-
+  end
   end
 end

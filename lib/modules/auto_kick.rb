@@ -42,22 +42,25 @@ module Linael
     end
 
     def addAkick privMsg
-      if privMsg.message =~ /!akick\s-add\s(#\S*)\s(\S*)/
-        answer(privMsg,"Oki doki! #{$~[2]} will be auto kick on #{$~[1]}.")
-        addAkickRule $~[1].downcase,$~[2].downcase
+      if Options.akick_add? privMsg.message
+        options = Options.new privMsg
+        answer(privMsg,"Oki doki! #{options.who} will be auto kick on #{options.chan}.")
+        addAkickRule options.chan.downcase,options.who.downcase
       end
     end
 
     def delAkick privMsg
-      if privMsg.message =~ /!akick\s-del\s(#\S*)\s(\d*)/
-        answer(privMsg,"Oki doki! I'll no longuer match rule #{$~[2]} on #{$~[1]}.")
-        delAkickRule $~[1].downcase,($~[2].to_i)
+      if Options.akick_del? privMsg.message
+        options = Options.new privMsg
+        answer(privMsg,"Oki doki! I'll no longuer match rule #{options.who} on #{options.chan}.")
+        delAkickRule options.chan.downcase,(options.who.to_i)
       end
     end
 
     def printAkick privMsg
-      if privMsg.message =~ /!akick\s-show\s(#\S*)/
-        printRules $~[1].downcase,privMsg.who
+      if Options.akick_show? privMsg.message
+        options = Options.new privMsg
+        printRules options.chan.downcase,privMsg.who
       end
     end
 
@@ -80,6 +83,17 @@ module Linael
       if !@akick[where].nil?
         @akick[where].each_with_index {|rule,index| talk(who,"#{(index + 1)} - #{rule}")}
       end
+    end
+
+  
+    class Options < ModulesOptions
+      generate_to_catch :akick_add  => /^!akick\s-add/,
+                        :akick_del  => /^!akick\s-del/,
+                        :akick_show => /^!akick\s-show/
+
+      generate_chan
+      generate_who
+
     end
 
   end
