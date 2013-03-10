@@ -74,7 +74,8 @@ module Linael
     def reload privMsg
       if (reload? privMsg)
         if privMsg.message =~ /!admin\sreload\s(\S*)/
-          load $~[1]
+          answer(privMsg,"Oki doki! Upgrading myself!") if load $~[1]
+
         end
       end
     end

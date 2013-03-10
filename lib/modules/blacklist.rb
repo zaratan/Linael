@@ -46,7 +46,7 @@ module Linael
 
   class ModuleIRC
 
-    def actAuthorized?(instance,msg)
+    def act_authorized?(instance,msg)
       moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
       mod = moduleAdmin.modules[instance.class::Name]
       result = true
@@ -80,8 +80,8 @@ module Linael
 
       if (Options.whiteList? privMsg.message)
         options = Options.new privMsg
-        modModule = getModule("module")
-        modAdmin = getModule("admin")
+        modModule = mod("module")
+        modAdmin = mod("admin")
         if (modModule.instance.modules.has_key?(options.module))
           mod=modModule.instance.modules[options.module]
           if (options.add?)

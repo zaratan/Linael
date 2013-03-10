@@ -6,7 +6,7 @@ module Linael
 
     def add_module_irc_behavior type
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
-        procToAdd = Proc.new {|msg| instance.send(nom,msg) if (instance.methods.grep /act_authorized\?/).empty? or actAuthorized?(instance,msg)}
+        procToAdd = Proc.new {|msg| instance.send(nom,msg) if (instance.methods.grep /act_authorized\?/).empty? or act_authorized?(instance,msg)}
         (@runner.send "#{type}Act")[(instance.class::Name+ident).to_sym]= procToAdd
         @behavior = Hash.new if !@behavior
         @behavior[type] = [] if !@behavior[type]
