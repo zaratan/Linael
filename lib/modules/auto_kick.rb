@@ -90,10 +90,8 @@ module Linael
       generate_to_catch :akick_add  => /^!akick\s-add/,
                         :akick_del  => /^!akick\s-del/,
                         :akick_show => /^!akick\s-show/
-
       generate_chan
       generate_who
-
     end
 
   end
