@@ -107,6 +107,11 @@ module Linael
                     :default_meth => :from_who
     end
 
+    def self.generate_what
+      generate_meth :name         => "what",
+                    :regexp       => /\s+([^\s#][^\s#]*)\s*/
+    end
+
     def self.generate_reason
       generate_meth :name   => "reason",
                     :regexp => /\s+:(.*)/
