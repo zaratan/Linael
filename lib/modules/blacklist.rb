@@ -1,46 +1,34 @@
 # -*- encoding : utf-8 -*-
 module Linael
   class Modules::ModuleType
-    def inBlackList?(chan)
-      chan = chan.downcase
-      @blackList.include?(chan) if blackList?
+    
+    attr_accessor :blackList,:whiteList
+
+    def in_blacklist?(chan)
+      @blackList.include?(chan.downcase) if blackList?
     end
 
-    def inWhiteList?(chan)
-      chan = chan.downcase
-      if whiteList?
-        @whiteList.include?(chan) 
-      else
+    def in_whitelist?(chan)
+        return @whiteList.include?(chan.downcase) if whiteList?
         true
+    end
+
+    def self.define_anylist color
+      define_method color+"list?" do
+          send(color+"List")
+      end
+      define_method color+"list" do |chan|
+        send(color+"List").= [] unless send(color+"List?")
+        send(color+"List").<< chan.downcase
+      end
+      define_method "un_"+color+"list" do |chan|
+        send(color+"List").delete(chan)
+        send(color+"List").= nil if send(color+"List").empty?
       end
     end
 
-    def blackList?
-      !@blackList.nil?
-    end
-
-    def whiteList?
-      !@whiteList.nil?
-    end
-    def whiteList(chan)
-      @whiteList = [] unless whiteList?
-      @whiteList << chan.downcase
-    end
-
-    def blackList(chan)
-      @blackList = [] unless blackList?
-      @blackList << chan.downcase
-    end
-
-    def unWhiteList(chan)
-      @whiteList.delete(chan)
-      @whiteList = nil if @whiteList.empty?
-    end
-
-    def unBlackList(chan)
-      @blackList.delete(chan)
-      @blackList = nil if @blackList.empty?
-    end
+    define_anylist "black"
+    define_anylist "white"
 
   end
 
@@ -50,8 +38,8 @@ module Linael
       moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
       mod = moduleAdmin.modules[instance.class::Name]
       result = true
-      result &= !mod.inBlackList?(msg.place) 
-      result &= mod.inWhiteList?(msg.place) 
+      result &= !mod.in_blacklist?(msg.place) 
+      result &= mod.in_whitelist?(msg.place) 
       result
     end
 
@@ -74,122 +62,56 @@ module Linael
       ["module","admin"]
     end
 
-
-
     def whiteList privMsg
-
-      if (Options.whiteList? privMsg.message)
-        options = Options.new privMsg
-        modModule = mod("module")
-        modAdmin = mod("admin")
-        if (modModule.instance.modules.has_key?(options.module))
-          mod=modModule.instance.modules[options.module]
-          if (options.add?)
-            if (options.all?)
-              modAdmin.instance.chan.each do |chan| 
-                talk(privMsg.who,"The chan #{chan} have been added to the whitelist of the module #{options.module}")
-                mod.whiteList(chan)
-              end
-
-            else
-              mod.whiteList(options.chan)	
-              talk(privMsg.who,"The chan #{options.chan} have been added to the whitelist of the module #{options.module}")
-            end
-          end
-          if (options.del?)
-            if (options.all?)
-              modAdmin.instance.chan.each do |chan| 
-                mod.unWhiteList(chan)
-                talk(privMsg.who,"The chan #{chan} have been deleted from the whitelist of the module #{options.module}")
-              end
-            else
-              mod.unWhiteList(options.chan)
-              talk(privMsg.who,"The chan #{options.chan} have been deleted from the whitelist of the module #{options.module}")
-            end
-          end
-        else
-
-          answer(privMsg,"The module #{options.module} is not loaded :(")
-        end
+      if Options.whitelist? privMsg.message
+        act_anylist privMsg,"whitelist"
       end
-
     end
 
     def blackList privMsg
-
-      if (Options.blackList? privMsg.message)
-        options = Options.new privMsg
-        modModule = mod("module")
-        modAdmin = mod("admin")
-        if (modModule.instance.modules.has_key?(options.module))
-          mod=modModule.instance.modules[options.module]
-          if (options.add?)
-            if (options.all?)
-              modAdmin.instance.chan.each do |chan| 
-                talk(privMsg.who,"The chan #{chan} have been added to the blacklist of the module #{options.module}")
-                mod.blackList(chan)
-              end
-
-            else
-              mod.blackList(options.chan)	
-              talk(privMsg.who,"The chan #{options.chan} have been added to the blacklist of the module #{options.module}")
-            end
-          end
-          if (options.del?)
-            if (options.all?)
-              modAdmin.instance.chan.each do |chan| 
-                mod.unBlackList(chan)
-                talk(privMsg.who,"The chan #{chan} have been deleted from the blacklist of the module #{options.module}")
-              end
-            else
-              mod.unBlackList(options.chan)
-              talk(privMsg.who,"The chan #{options.chan} have been deleted from the blacklist of the module #{options.module}")
-            end
-          end
-        else
-
-          answer(privMsg,"The module #{options.module} is not loaded :(")
-        end
+      if Options.blacklist? privMsg.message
+        act_anylist privMsg,"blacklist"
       end
     end
 
-
-
-  end
-
-  class Modules::Blacklist::Options
-
-    def initialize privMsg
-      @message = privMsg.message
+    def act_anylist privMsg,colorlist
+        options = Options.new privMsg
+        if (mod("module").instance.modules.has_key?(options.who))
+          mod=mod("module").instance.modules[options.who]
+          toAdd = options.chan
+          toAdd = mod("admin").instance.chan if options.all?
+          if (options.type == "add")
+            modify_status colorlist,"added",toAdd,options,true
+          end
+          if (options.type == "del")
+            modify_status colorlist,"deleted",toAdd,options,false
+          end
+        else
+          answer(privMsg,"The module #{options.module} is not loaded :(")
+        end
     end
 
-    def add?
-      @message =~ /\s-add\s/
+    def modify_status method,action_string,toAdd,options,add?
+      toAdd.each do |chan|
+        talk(privMsg.who,"The chan #{chan} have been #{action_string} from the #{method} of the module #{options.who}")
+        mod.send("un_"+method,chan) unless add?
+        mod.send(method,chan) if add?
+      end
     end
 
-    def del?
-      @message =~ /\s-del\s/
-    end
+    class Options < ModulesOptions
 
-    def self.blackList? message
-      message =~ /^!blacklist\s|^!bl\s/
-    end
+      generate_to_catch :blacklist => /^!blacklist\s|^!bl\s/,
+                        :whitelist => /^!whitelist\s|^!wl\s/
 
-    def self.whiteList? message
-      message =~ /^!whitelist\s|^!wl\s/
-    end
+      generate_type
+      generate_chan
+      generate_who
 
-    def all?
-      @message =~ /\s-all\s/
-    end
+      def all?
+        @message =~ /\s-all\s/
+      end
 
-    def module
-      $~[1] if @message =~ /\s([A-z0-9]*)\s/
     end
-
-    def chan
-      $~[1] if @message =~ /\s(#\S*)\s/
-    end
-
   end
 end

@@ -142,7 +142,7 @@ module Linael
 
 
     def whichModule privMsg
-      if (module? privMsg) && (list? privMsg)
+      if Options.module_show? privMsg.message
         @dir.each do |file| 
           if file.match /^[A-z]/
             file.sub!(/\.rb$/,"")
@@ -154,74 +154,41 @@ module Linael
     end
 
     def addModule privMsg
-      if (module? privMsg) &&
-        (add? privMsg)
-        if privMsg.message.match /^!modules\sadd\s([A-z0-9]*)/
-          modName = "#{$~[1]}"
-          @modules.add modName,privMsg
-        end
+      if Options.module_add? privMsg.message
+        options = Options.new privMsg
+        modName = options.who
+        @modules.add modName,privMsg
       end
     end
 
     def delModule(privMsg)
-      if (module? privMsg) &&
-        (del? privMsg)
-        if privMsg.message.match /^!modules\sdel\s([A-z0-9]*)/
-          modName = "#{$~[1]}"
-          @modules.remove(modName,privMsg)
-        end
+      if Options.module_del? privMsg.message
+        options = Options.new privMsg
+        modName = options.who
+        @modules.remove modName,privMsg
       end
     end
 
     def reloadModule privMsg
-      if (module? privMsg) &&
-        (reload? privMsg)
-        if privMsg.message =~ /^!modules\sreload\s([A-z0-9]*)/
-          modName = $~[1]
-          if (!@modules.has_key?(modName))
-            answer(privMsg,"Module not loaded")
-            return
-          end
-          if !(@dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName})
-            answer(privMsg,"The module don't exist")
-            return
-          end
-
-          @modules.remove modName,privMsg
-          @modules.add modName,privMsg
-
+      if Options.module_reload? privMsg.message
+        options = Options.new privMsg
+        modName = options.who
+        if (!@modules.has_key?(modName))
+          answer(privMsg,"Module not loaded")
+          return
+        end
+        if !(@dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName})
+          answer(privMsg,"The module don't exist")
+          return
         end
 
+        @modules.remove modName,privMsg
+        @modules.add modName,privMsg
       end
-    end
-
-    def reload? privMsg
-      privMsg.message =~ /^!modules\sreload/
     end
 
     def self.require_auth  
       true 
-    end
-
-    def add? privMsg
-      privMsg.message.match '^!modules\sadd'
-    end
-
-    def del? privMsg
-      privMsg.message.match '^!modules\sdel'
-    end
-
-
-    def list? privMsg
-      privMsg.message.match '^!modules\slist'
-    end
-
-    def authorized? privMsg
-      privMsg.who == "Zaratan" && (privMsg.identification.match '^~Zaratan@.*$')
-    end
-
-    def module? privMsg
-      privMsg.message.match '^!modules\s.*$' 
     end
 
     def startMod()
@@ -232,6 +199,13 @@ module Linael
                             :reloadModule]})
     end
 
+    class Options < ModulesOptions
+      generate_to_catch :module_add     => /^!module\s-add\s/,
+                        :module_del     => /^!module\s-del\s/,
+                        :module_show    => /^!module\s-show\s/,
+                        :module_reload  => /^!module\s-reload\s/
+      generate_who
+    end
 
   end
 end
