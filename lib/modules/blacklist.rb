@@ -12,13 +12,13 @@ module Linael
         return @whiteList.include?(chan.downcase) if whiteList?
         true
     end
-
-    def self.define_anylist color
+    
+    ["black","white"].each do |color|
       define_method color+"list?" do
           send(color+"List")
       end
       define_method color+"list" do |chan|
-        send(color+"List").= [] unless send(color+"List?")
+        (send(color+"List")).= [] unless send(color+"List?")
         send(color+"List").<< chan.downcase
       end
       define_method "un_"+color+"list" do |chan|
@@ -26,9 +26,6 @@ module Linael
         send(color+"List").= nil if send(color+"List").empty?
       end
     end
-
-    define_anylist "black"
-    define_anylist "white"
 
   end
 
