@@ -103,7 +103,7 @@ module Linael
 
     def self.generate_who
       generate_meth :name         => "who",
-                    :regexp       => /\s+([^\s-#][^\s#]*)\s*/,
+                    :regexp       => /\s+([^\s\-#][^\s#]*)\s*/,
                     :default_meth => :from_who
     end
 
