@@ -10,32 +10,25 @@ module Linael
     end
 
     def identify privMsg
-      if (module? privMsg)
-        if (privMsg.message =~ /^!identify\s(\S*)\s/)
-          talk("nickserv","identify #{$~[1]}")
-          @ident=true
-        end
+      if Options.identify? privMsg.message
+        options = Options.new privMsg
+        talk("nickserv","identify #{options.who}")
       end
     end
 
     def askOp privMsg
-      puts @ident
-      if (privMsg.message =~ /!op\s(#\S*)\s(\S*)/) && (@ident)
-
-        user=$~[2]
-        place=$~[1]
-        talk("chanserv","op #{place} #{user}")
+      if Options.askOp? privMsg.message
+        options = Options.new privMsg
+        talk("chanserv","op #{options.chan} #{options.who}")
       end
     end
 
+    class Options < ModulesOptions
+      generate_to_catch :identify => /^!identify\s/,
+                        :askOp    => /^!op\s/
 
-    def module? privMsg
-      privMsg.message.encode.downcase =~ /^!identify\s/
-    end
-
-    def initialize runner
-      @ident=false
-      super runner
+      generate_chan
+      generate_who
     end
 
   end

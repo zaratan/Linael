@@ -2,7 +2,7 @@
 module Linael
   class ModuleIRC
 
-    include Action
+    include Actior
 
     def add_module_irc_behavior type
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
