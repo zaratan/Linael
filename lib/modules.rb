@@ -114,12 +114,27 @@ module Linael
 
     def self.generate_reason
       generate_meth :name   => "reason",
-                    :regexp => /\s+:(.*)/
+                    :regexp => /\s+:([^\n\r]*)/
     end
 
     def self.generate_type
       generate_meth :name   => "type",
                     :regexp => /\s-(\S*)\s/
+    end
+
+    def self.generate_value args
+      args.each do |name,regexp|
+        generate_meth :name   => name.to_s,
+                      :regexp => regexp
+      end
+    end
+
+    def self.generate_match args
+      args.each do |name,regexp|
+        generate_meth :name    => name.to_s + "?",
+                      :regexp  => Regexp.new("(" + regexp.to_s + ")"),
+                      :default => false
+      end
     end
 
   end

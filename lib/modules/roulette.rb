@@ -4,7 +4,7 @@ module Linael
 
     Name="roulette"	
 
-    Help="Auto kick people who lose on roulette"
+    Help=["Auto kick people who lose on roulette"]
 
     def kick_on_lose privMsg
       if privMsg.message =~ /^(\S*):\schamber.*6.*BANG/ and privMsg.who == "marvin"

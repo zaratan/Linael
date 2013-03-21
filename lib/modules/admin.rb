@@ -58,6 +58,9 @@ module Linael
         mode_channel  :dest => options.chan,
                       :who  => options.what,
                       :args => options.reason
+                      p options.chan
+                      p options.what
+                      p options.reason
         answer(privMsg,"Oki doki! I'll change mode #{options.what} #{options.reason+" " unless options.reason.empty?}on #{options.chan}")
       end
     end
