@@ -6,7 +6,8 @@ module Linael
     Name="identify"
 
     def startMod
-      add_module :cmdAuth => [:identify,:askOp]
+      add_module :cmdAuth => [:identify,:askOp],
+                 :cmd     => [:askVoice]
     end
 
     def identify privMsg
@@ -23,9 +24,17 @@ module Linael
       end
     end
 
+    def askVoice privMsg
+      if Options.askVoice? privMsg.message
+        options = Options.new privMsg
+        talk("chanserv","voice #{privMsg.place} #{options.who}")
+      end
+    end
+
     class Options < ModulesOptions
       generate_to_catch :identify => /^!identify\s/,
-                        :askOp    => /^!op\s/
+                        :askOp    => /^!op\s/,
+                        :askVoice => /^!voice\s/
 
       generate_chan
       generate_who

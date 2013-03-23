@@ -98,6 +98,10 @@ class PrivMessage < Message
     @sender
   end
 
+  def where
+    @place
+  end
+
   def command?
     @message.match '^!.*$'
   end
