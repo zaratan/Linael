@@ -137,6 +137,11 @@ module Linael
       end
     end
 
+    def self.generate_all
+      generate_meth :name   => "all",
+                    :regexp => /\s(.*)/
+    end
+
   end
 
 end
