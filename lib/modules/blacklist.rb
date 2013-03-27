@@ -18,7 +18,7 @@ module Linael
           send(color+"List")
       end
       define_method color+"list" do |chan|
-        (send(color+"List")).= [] unless send(color+"List?")
+        (send(color+"List=",[])) unless send(color+"list?")
         send(color+"List").<< chan.downcase
       end
       define_method "un_"+color+"list" do |chan|
@@ -77,6 +77,7 @@ module Linael
           mod=mod("module").instance.modules[options.who]
           toAdd = [options.chan]
           toAdd = mod("admin").instance.chan if options.all?
+          p mod("admin").instance.chan
           if (options.type == "add")
             modify_status colorlist,"added",toAdd,options,mod,true
           end
@@ -91,7 +92,7 @@ module Linael
     def modify_status method,action_string,toAdd,options,mod,do_add
       toAdd.each do |chan|
         talk(options.from_who,"The chan #{chan} have been #{action_string} from the #{method} of the module #{options.who}")
-        mod.send("un_"+method,chan) unless do_add
+        mod.send(("un_"+method),chan) unless do_add
         mod.send(method,chan) if do_add
       end
     end

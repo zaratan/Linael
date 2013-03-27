@@ -2,7 +2,7 @@
 module Linael
   class ModuleIRC
 
-    include Actior
+    include Action
 
     def add_module_irc_behavior type
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
@@ -81,7 +81,7 @@ module Linael
     def self.generate_to_catch meths
       meths.each do |key,regex|
         self.class.send("define_method","#{key.to_s}?") do |message|
-          message =~ regex
+          message.downcase =~ regex
         end
       end
     end
