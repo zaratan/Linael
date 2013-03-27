@@ -5,13 +5,13 @@ module Linael
     Name="morse"
 
     def startMod
-      add_module :cmd => :morse
+      add_module :cmd => [:morse]
     end
 
     def morse privMsg
       if Options.morse? privMsg.message
         options = Options.new privMsg
-        answer(privMsg,options.all.split("").map{|c| MorseHash[c]}.join(" "))
+        answer(privMsg,options.all.split(//).map{|c| MorseHash[c]}.join(" "))
       end
     end
 
