@@ -13,14 +13,13 @@ module Linael
 			options = Options.new privMsg
 			measures = options.all.split(" ")
 			if measures.size == 3 && measures.each{|x| x.is_a? Integer}
-				measures.each{|x| x = x**2}
-				if measures.max == measures.reduce(:+) - mesures.max
+				if measures.max**2 == measures.collect{|x| x**2}.reduce(:+) - measures.max**2
 					answer(privMsg,"Your triangle is right-angled.")
 				else
-					answer(privMsg,"Your triangle isn’t tight-angled.")
+					answer(privMsg,"Your triangle isn't right-angled.")
 				end
 			else
-				answer(privMsg,"There’s an error. Try again with three integers.")
+				answer(privMsg,"There's an error. Try again with three integers.")
 			end
 		end
 	end
