@@ -8,10 +8,10 @@ module Linael
 			"Module: Code",
 			" ",
 			"=====Fonctions=====",
-			"!name [string you want to code] => display your string, replacing each letter with the one following it in the alphabet",
+			"!code [string you want to code] => display your string, replacing each letter with the one following it in the alphabet",
 			" ",
 			"=====Options=====",
-			"!name -s[a-z] -t[a-z]",
+			"!code -s[a-z] -t[a-z]",
 			"      -s    : Source letter (default: a)",
 			"      -t    : Target letter (default: b)"
 		]
@@ -23,7 +23,8 @@ module Linael
 		def code privMsg
 			if Options.code? privMsg.message
 				options = Options.new privMsg
-				answer(privMsg,options.all.split(//).map{|c| AlphabetArray[c + (options.target.index - options.source.index)]})
+        gap = options.target.index - options.source.index
+				answer(privMsg,options.all.split(//).map{|c| AlphabetArray[c + gap]})
 			end
 		end
 
@@ -33,29 +34,11 @@ module Linael
 		class Options < ModulesOptions
 
 			generate_to_catch :code => /^!code\s/
-
-			def initialize privMsg
-				@message = privMsg.message
-			end
-
-			def source
-				if @message =~ /\s-s([a-z])\s/
-					$~[1]
-				else
-					"a"
-				end
-			end
-
-			def target
-				if @message =~ /\s-t([a-z])\s/
-					$~[1]
-				else
-					"b"
-				end
-			end
-
+			generate_meth :name => "source", :regexp => /\s-s(a-z)\s/, :default => "a"
+			generate_meth :name => "target", :regexp => /\s-t(a-z)\s/, :default => "b"
+      
 			def all
-				@message.slice! /^!code -s([a-z]) -t([a-z]) /
+				@message.slice /^!code -s([a-z]) -t([a-z]) /
 			end
 		end
 	end
