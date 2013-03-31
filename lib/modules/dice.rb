@@ -30,7 +30,6 @@ module Linael
 
     attr_reader :value
 
-    number = "[0-9]{1,3}"
 
     def initialize dice
       @value = rand(dice) + 1
@@ -50,6 +49,8 @@ module Linael
     def to_much?
       number > 20
     end
+    
+    number = "[0-9]{1,3}"
 
     generate_value :number => Regexp.new("("+number+")"+"d"+number),
                    :dice   => Regexp.new(number + "d" + "("+number+")")
