@@ -21,14 +21,8 @@ module Linael
       end
     end
 
-    def link? privMsg
-      privMsg.message =~ /http:\/\/(?:www\.)?youtu.*?\/(\S+)/
-      @id = $1.gsub("watch?v=", "")
-    end
-
     class Options < ModulesOptions
       generate_to_catch :link => /http[s]?:\/\/(?:www\.)?youtu.*\?/
-
       generate_value :id => /http[s]?:\/\/(?:www\.)?youtu.*watch\?v=([^&]*)/
 
     end
