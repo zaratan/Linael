@@ -14,7 +14,7 @@ module Linael
     end
 
     def youtube privMsg
-      if (Options.link? privMsg.message
+      if (Options.link? privMsg.message and privMsg.who !="Internets")
         options = Options.new privMsg
         open("http://www.youtube.com/watch?v=#{options.id}").read =~ /<title>(.*?)<\/title>/
         answer(privMsg,HTMLEntities.new.decode("#{privMsg.who}: #{$1}"))
