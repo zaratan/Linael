@@ -13,9 +13,6 @@ module Linael
         @behavior[type] << ident
       end
       self.class.send("define_method",("del_#{type}_behavior")) do |instance,ident|
-        p instance
-        p ident
-        p (@runner.send "#{type}Act")
         (@runner.send "#{type}Act").delete((instance.class::Name+ident).to_sym)
         @behavior.delete_if {|k,v| v == ident} 
       end
@@ -90,7 +87,7 @@ module Linael
       define_method args[:name] do
         return $1 if message =~ args[:regexp]
         return self.send args[:default_meth] if args[:default_meth]
-        return args[:default] if args[:default]
+        return args[:default] unless args[:default].nil?
         ""
       end
     end
@@ -126,6 +123,14 @@ module Linael
       args.each do |name,regexp|
         generate_meth :name   => name.to_s,
                       :regexp => regexp
+      end
+    end
+
+    def self.generate_value_with_default args
+      args.each do |name,arg|
+        generate_meth :name    => name.to_s,
+                      :regexp  => arg[:regexp],
+                      :default => arg[:default]
       end
     end
 
