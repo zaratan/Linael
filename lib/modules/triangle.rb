@@ -13,8 +13,9 @@ module Linael
   	def triangle privMsg
   		if Options.triangle? privMsg.message
   			options = Options.new privMsg
-  			measures = options.all.split(" ")
-  			if measures.size == 3 && measures.each{|x| x.is_a? Integer}
+  			measures = options.all.gsub(/\s+/," ").split(" ")
+  			if measures.size == 3 && measures.all?{|x| x.match(/^\d+$/)}
+          measures = measures.map{|n| n.to_i}
   				if measures.max**2 == measures.collect{|x| x**2}.reduce(:+) - measures.max**2
   					answer(privMsg,"Your triangle is right-angled.")
   				else
