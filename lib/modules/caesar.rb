@@ -42,8 +42,6 @@ module Linael
                                   :target => {regexp: /\s-t([a-z])\s/,default: "b"}
       
       def all
-        p @message
-        p @message.gsub(/^!caesar (-s[a-z] )?(-t[a-z] )?/,"").gsub("\r","")
         @message.gsub(/^!caesar (-s[a-z] )?(-t[a-z] )?/,"").gsub("\r","")
       end
     end
