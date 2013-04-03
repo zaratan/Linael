@@ -26,14 +26,7 @@ module Linael
     ]
 
     User=[
-      "nayo",
-      "zaratan",
-      "lilin",
-      "grunthi",
-      "alya",
-      "zag",
-      "sayaelis",
-      "tantraa"
+      "zaratan"
     ]
 
     Help=[

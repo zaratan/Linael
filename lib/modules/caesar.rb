@@ -1,7 +1,10 @@
 # -*- encoding : utf-8 -*-
 module Linael
 
-  class Modules::Caesar < ModuleIRCName="caesar"
+  class Modules::Caesar < ModuleIRC
+  
+    Name="caesar"
+    Constructor="Aranelle"
   
     Help=[
       "Module: Caesar",
@@ -17,11 +20,16 @@ module Linael
     def startMod
       add_module :cmd => [:caesar]
     end
-    def code privMsg
+    
+    def caesar privMsg
       if Options.caesar? privMsg.message
         options = Options.new privMsg
-        gap = options.target.index - options.source.index
-        answer(privMsg,options.all.split(//).map{|c| AlphabetArray[c + gap]})
+        gap = AlphabetArray.index(options.target) - AlphabetArray.index(options.source)
+        result = options.all.split(//).map do |c|
+          c = AlphabetArray[AlphabetArray.index(c) + gap] if AlphabetArray.include? c
+          c
+        end
+        answer(privMsg,result.join)
       end
     end
     
@@ -29,11 +37,14 @@ module Linael
     
     class Options < ModulesOptions
       generate_to_catch :caesar => /^!caesar\s/
-      generate_meth :name => "source", :regexp => /\s-s(a-z)\s/, :default => "a"
-      generate_meth :name => "target", :regexp => /\s-t(a-z)\s/, :default => "b"
+
+      generate_value_with_default :source => {regexp: /\s-s([a-z])\s/,default: "a"},
+                                  :target => {regexp: /\s-t([a-z])\s/,default: "b"}
       
       def all
-        @message.slice /^!caesar -s([a-z]) -t([a-z]) /
+        p @message
+        p @message.gsub(/^!caesar (-s[a-z] )?(-t[a-z] )?/,"").gsub("\r","")
+        @message.gsub(/^!caesar (-s[a-z] )?(-t[a-z] )?/,"").gsub("\r","")
       end
     end
   end

@@ -5,7 +5,7 @@ module Linael
     Name="dice"	
 
     def dice privMsg
-      if (Options.dice? privMsg)
+      if (Options.dice? privMsg.message)
         options	= Options.new privMsg
         if (!options.to_much?)
           dices=[]
@@ -23,40 +23,36 @@ module Linael
     def startMod()
       add_module :msg => [:dice]
     end
+  
+    class Options < ModulesOptions
+      
+      number = "[0-9]{1,3}"
 
-  end
+      generate_to_catch :dice => Regexp.new("^"+number+"d"+number)
 
-  class Modules::Dice::DiceLauncher
-
-    attr_reader :value
-
-
-    def initialize dice
-      @value = rand(dice) + 1
-    end
-
-    def to_s
-      @value.to_s
-    end
-
-  end
-
-  class Modules::Dice::Options
-    def initialize privMsg
-      @message = privMsg.message
-    end
-
-    def to_much?
-      number > 20
-    end
+      def to_much?
+        number.to_i > 20
+      end
     
-    number = "[0-9]{1,3}"
 
-    generate_value :number => Regexp.new("("+number+")"+"d"+number),
-                   :dice   => Regexp.new(number + "d" + "("+number+")")
+      generate_value :number => Regexp.new("("+number+")"+"d"+number),
+                     :dice   => Regexp.new(number + "d" + "("+number+")")
 
-    def self.dice? privMsg
-      privMsg.message =~ Regexp.new(number+"d"+number)
+    end
+
+    class DiceLauncher
+
+      attr_reader :value
+
+      def initialize dice
+        @value = rand(dice) + 1
+      end
+
+      def to_s
+        @value.to_s
+      end
+
     end
   end
+
 end
