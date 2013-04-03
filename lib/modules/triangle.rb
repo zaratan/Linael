@@ -9,7 +9,7 @@ module Linael
 	end
 	
 	def triangle privMsg
-		if Options.morse? privMsg.message
+		if Options.triangle? privMsg.message
 			options = Options.new privMsg
 			measures = options.all.split(" ")
 			if measures.size == 3 && measures.each{|x| x.is_a? Integer}
