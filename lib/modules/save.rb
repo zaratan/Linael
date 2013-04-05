@@ -2,12 +2,13 @@
 
 require 'yaml'
 require 'ya2yaml'
-
+module Linael
 class Modules::Save < ModuleIRC
 
   Name="save"
 
   def startMod
+    add_module :cmdAuth => [:save]
   end
 
   def self.require_auth
@@ -28,10 +29,11 @@ class Modules::Save < ModuleIRC
       mod_mod = mod("module")
       
       #fill list_to_save
-      if options.what
-        list_to_save << options.what if mod(options.what)
+      unless options.what.empty? 
+        list_to_save << options.what if options.what != "module" and mod(options.what)
       else
-        list_to_save = mod_mod.module.map{|mod| mod.class.Name}
+        list_to_save = mod_mod.instance.modules.map{|mod| mod.name}
+        list_to_save.delete("module")
       end
 
       #if list_to_save empty => error
@@ -41,22 +43,30 @@ class Modules::Save < ModuleIRC
       end
 
       #if not present create dir Linael/save
-      Dir.mkdir('../../save',755) unless Dir.exist? ('../../save')
+      Dir.mkdir('save',755) unless Dir.exist? ('save')
 
       #for each mod to save
       list_to_save.each do |mod_name|
         #ya2yamlize the mod (with begin for strange mod) 
         begin
-          to_write = mod(mod_name).ya2yaml
-        rescue Exception
+          #get instance of module
+          module_to_write = mod(mod_name).instance
+          #save runner
+          runner = module_to_write.runner
+          #delete runner from instance 'cause u DON'T want to save it
+          module_to_write.runner =nil
+          to_write=module_to_write.ya2yaml
+          #restore runner
+          module_to_write.runner=runner
+        rescue Exception 
           talk(privMsg.who,"Sorry, i can't save module #{mod_name}... It's too complicated ><")
+          #debug
+          p $!
         end
         if to_write
           #write a single file in Linael/save named #{module_name}.yaml
-          File.delete("#{mod_name}.yaml") if File.exist?("#{mod_name}.yaml")
-          File.open("#{mod_name}.yaml") do |file|
-            file.write to_write
-          end
+          #File.delete("#{mod_name}.yaml") if File.exist?("#{mod_name}.yaml")
+          File.open("save/#{mod_name}.yaml","w+") { |file| file.write to_write }
           #say everything is fine in private
           talk(privMsg.who,"Everything is perfect \o/ #{mod_name} is saved!")
         end
@@ -69,10 +79,11 @@ class Modules::Save < ModuleIRC
 
 
   class Options < ModulesOptions
-    generate_to_catch :save => /^!save\s|^!save\r|^!save\n/
+    generate_to_catch :save => /^!save\s|^!save\r|^!save\n/,
                       :load => /^!load\s|^!load\r|^!load\n/
     
     generate_what
   end
 
+end
 end

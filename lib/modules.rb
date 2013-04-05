@@ -57,8 +57,7 @@ module Linael
       self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
     end
 
-    attr_accessor :behavior
-    attr_reader :runner
+    attr_accessor :behavior,:runner
 
   end
 
