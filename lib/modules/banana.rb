@@ -25,10 +25,6 @@ module Linael
       "chi ka-ba-ba, ba-ba-naNAAAHHHH!!!!"
     ]
 
-    User=[
-      "zaratan"
-    ]
-
     Help=[
       "Module: Banana",
       " ",
@@ -52,19 +48,24 @@ module Linael
     def addUser privMsg
       if (privMsg.message =~ /!banana.*-add\s*(\S*)/)
         answer(privMsg,"Oki doki! #{$~[1]} can now banana :)")
-        User << $~[1].downcase
+        @user << $~[1].downcase
       end
     end
 
     def delUser privMsg
       if (privMsg.message =~ /!banana\s*-del\s*(\S*)/)
         answer(privMsg,"Oki doki! #{$~[1]} won't banana anymore :(")
-        User.delete $~[1].downcase
+        @user.delete $~[1].downcase
       end
     end
 
     def module? privMsg
-      (privMsg.message.encode.downcase =~ /^!banana[^A-z]*$/) && ((User.detect {|user| privMsg.who.downcase.match(user)}) || (privMsg.private_message?))
+      (privMsg.message.encode.downcase =~ /^!banana[^A-z]*$/) && ((@user.detect {|user| privMsg.who.downcase.match(user)}) || (privMsg.private_message?))
+    end
+
+    def initialize(runner)
+      @user=["zaratan"]
+      super runner
     end
 
   end

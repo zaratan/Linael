@@ -61,15 +61,17 @@ module Linael
       @modules.each &block
     end
 
+    def removeMod(modName)
+      @modules = @modules.delete_if {|mod| mod.destroy! if mod.name == modName}
+      @authModule.delete modName
+    end
+
     def remove(modName,privMsg)
       begin
-        if (!has_key?(modName))
+        unless has_key?(modName)
           answer(privMsg,"Module not loaded")	
         else
-          @modules = @modules.delete_if do |mod| 
-            mod.destroy! if mod.name == modName
-          end
-          @authModule.delete(modName)
+          removeMod(modName)
           answer(privMsg,"Module #{modName} unloaded!")
         end
       rescue Exception
