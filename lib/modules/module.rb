@@ -102,7 +102,7 @@ module Linael
                 answer(privMsg,"Module #{modName} loaded!")
               else
                 answer(privMsg,"You do not have loaded all the modules required for this module.")
-                answer(privMsg,"Here is the list of requirement: #{klass.requiredMod.join " - "}.")
+                answer(privMsg,"Here is the list of requirement: #{klass.required_mod.join(" - ")}.")
               end
             end
           end
