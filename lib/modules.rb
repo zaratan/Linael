@@ -32,6 +32,11 @@ module Linael
       nil
     end
 
+    def load_mod
+
+    end
+
+
     def self.auth?
       false
     end
@@ -93,57 +98,57 @@ module Linael
 
     def self.generate_chan
       generate_meth :name         => "chan",
-                    :regexp       => /\s(#\S*)\s/,
-                    :default_meth => :where
+        :regexp       => /\s(#\S*)\s/,
+        :default_meth => :where
     end
 
     def self.generate_who
       generate_meth :name         => "who",
-                    :regexp       => /\s+([^\s\-#][^\s#]*)\s*/,
-                    :default_meth => :from_who
+        :regexp       => /\s+([^\s\-#][^\s#]*)\s*/,
+      :default_meth => :from_who
     end
 
     def self.generate_what
       generate_meth :name         => "what",
-                    :regexp       => /\s+([^\s#][^\s#]*)\s*/
+        :regexp       => /\s+([^\s#][^\s#]*)\s*/
     end
 
     def self.generate_reason
       generate_meth :name   => "reason",
-                    :regexp => /\s+:([^\n\r]*)/
+        :regexp => /\s+:([^\n\r]*)/
     end
 
     def self.generate_type
       generate_meth :name   => "type",
-                    :regexp => /\s-(\S*)\s/
+        :regexp => /\s-(\S*)\s/
     end
 
     def self.generate_value args
       args.each do |name,regexp|
         generate_meth :name   => name.to_s,
-                      :regexp => regexp
+          :regexp => regexp
       end
     end
 
     def self.generate_value_with_default args
       args.each do |name,arg|
         generate_meth :name    => name.to_s,
-                      :regexp  => arg[:regexp],
-                      :default => arg[:default]
+          :regexp  => arg[:regexp],
+          :default => arg[:default]
       end
     end
 
     def self.generate_match args
       args.each do |name,regexp|
         generate_meth :name    => name.to_s + "?",
-                      :regexp  => Regexp.new("(" + regexp.to_s + ")"),
-                      :default => false
+          :regexp  => Regexp.new("(" + regexp.to_s + ")"),
+          :default => false
       end
     end
 
     def self.generate_all
       generate_meth :name   => "all",
-                    :regexp => /\s(.*)/
+        :regexp => /\s(.*)/
     end
 
   end

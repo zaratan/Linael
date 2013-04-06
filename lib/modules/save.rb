@@ -4,14 +4,6 @@ require 'yaml'
 require 'ya2yaml'
 module Linael
 
-  class ModuleIRC
-
-    def load_mod
-
-    end
-
-  end
-
   class Modules::Save < ModuleIRC
 
     Name="save"
