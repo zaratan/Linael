@@ -32,6 +32,7 @@ module Linael
   class ModuleIRC
 
     def act_authorized?(instance,msg)
+      return true unless msg.kind_of? PrivMessage
       moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
       mod = moduleAdmin.modules[instance.class::Name]
       result = true

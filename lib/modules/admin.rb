@@ -21,6 +21,10 @@ module Linael
       ]})
     end
 
+    def load_mod
+      @chan.each {|chan| join_channel :dest => chan}
+    end
+
     def delete_class privMsg
       if Options.delete? privMsg.message
         options = Options.new privMsg
@@ -41,10 +45,10 @@ module Linael
       if Options.part? privMsg.message
         options = Options.new privMsg
         if chan.include? options.chan
-            answer(privMsg,"Oki doki! I'll part #{options.chan}")	
-            talk(options.chan,"cya all!")
-            @chan.delete options.chan
-            part_channel :dest => options.chan
+          answer(privMsg,"Oki doki! I'll part #{options.chan}")	
+          talk(options.chan,"cya all!")
+          @chan.delete options.chan
+          part_channel :dest => options.chan
         else
           answer(privMsg,"Sorry, I'm not on #{options.chan}")	
         end
@@ -63,8 +67,8 @@ module Linael
       if Options.mode? privMsg.message
         options = Options.new privMsg
         mode_channel  :dest => options.chan,
-                      :who  => options.what,
-                      :args => options.reason
+          :who  => options.what,
+          :args => options.reason
         answer(privMsg,"Oki doki! I'll change mode #{options.what} #{options.reason+" " unless options.reason.empty?}on #{options.chan}")
       end
     end
@@ -85,19 +89,20 @@ module Linael
       end
     end
 
-  class Options < ModulesOptions
-    generate_to_catch  :join   => /^!admin_join\s|^!join\s|^!j\s/,
-              :part   => /^!admin_part\s|^!part\s/,
-              :kick   => /^!admin_kick\s|^!kick\s|^!k\s/,
-              :die    => /^!admin_die\s/,
-              :mode   => /^!admin_mode\s|^!mode\s/,
-              :reload => /^!admin_reload\s/,
-              :delete => /^!admin_delete\s/
 
-    generate_chan
-    generate_who
-    generate_reason
-    generate_what
-  end
+    class Options < ModulesOptions
+      generate_to_catch  :join   => /^!admin_join\s|^!join\s|^!j\s/,
+        :part   => /^!admin_part\s|^!part\s/,
+        :kick   => /^!admin_kick\s|^!kick\s|^!k\s/,
+        :die    => /^!admin_die\s/,
+        :mode   => /^!admin_mode\s|^!mode\s/,
+        :reload => /^!admin_reload\s/,
+        :delete => /^!admin_delete\s/
+
+      generate_chan
+      generate_who
+      generate_reason
+      generate_what
+    end
   end
 end

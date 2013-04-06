@@ -1,0 +1,21 @@
+#!/usr/bin/ruby
+# -*- encoding : utf-8 -*-
+
+require 'active_support/inflector'
+require 'socket'
+require_relative '../lib/irc.rb'
+require_relative '../lib/mess.rb'
+require_relative "../lib/modules.rb"
+require_relative '../lib/modules/module.rb'
+require_relative '../lib/message.rb'
+
+$SAFE = 0
+
+module Linael
+
+  include IRC
+
+  IRC::connect("irc.rizon.net",6667,"LinaelTest")
+  action=Handler.new([Modules::Module])	
+  IRC::main_loop(action)
+end
