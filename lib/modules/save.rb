@@ -39,7 +39,7 @@ module Linael
 
         #if list_to_save empty => error
         if list_to_save.empty?
-          talk(privMsg.who,"Sorry there is no module to save :(")
+          answer(privMsg,"Sorry there is no module to save :(")
           return
         end
 
@@ -60,7 +60,7 @@ module Linael
             #restore runner
             module_to_write.runner=runner
           rescue Exception 
-            talk(privMsg.who,"Sorry, i can't save module #{mod_name}... It's too complicated ><")
+            answer(privMsg,"Sorry, i can't save module #{mod_name}... It's too complicated ><")
             #debug
             p $!
           end
@@ -69,7 +69,7 @@ module Linael
             #File.delete("#{mod_name}.yaml") if File.exist?("#{mod_name}.yaml")
             File.open("save/#{mod_name}.yaml","w+") { |file| file.write to_write }
             #say everything is fine in private
-            talk(privMsg.who,"Everything is perfect \o/ #{mod_name} is saved!")
+            answer(privMsg,"Everything is perfect \\o/ #{mod_name} is saved!")
           end
         end
       end
@@ -121,6 +121,7 @@ module Linael
             mod.startMod
             #lauch load script
             mod.load_mod
+            answer(privMsg,"Yaye! Module #{mod_name} loaded!")
           end
         end
       end
