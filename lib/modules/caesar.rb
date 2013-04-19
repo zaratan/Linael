@@ -26,7 +26,7 @@ module Linael
         options = Options.new privMsg
         gap = AlphabetArray.index(options.target) - AlphabetArray.index(options.source)
         result = options.all.split(//).map do |c|
-          c = AlphabetArray[AlphabetArray.index(c) + gap] if AlphabetArray.include? c
+          c = AlphabetArray[(AlphabetArray.index(c) + gap) % 26] if AlphabetArray.include? c
           c
         end
         answer(privMsg,result.join)
