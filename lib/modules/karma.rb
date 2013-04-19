@@ -75,8 +75,8 @@ module Linael
 
 
     class Options < ModulesOptions
-      generate_to_catch :add_karma  => /\S\s(\+\+|\+1)/,
-                        :del_karma  => /\S\s(--|-1)/,
+      generate_to_catch :add_karma  => /\S\s*(\+\+|\+1)/,
+                        :del_karma  => /\S\s*(--|-1)/,
                         :karma      => /^!karma\s/,
                         :karma_list => /^!karma_list\s/
 
