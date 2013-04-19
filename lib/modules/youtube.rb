@@ -23,7 +23,7 @@ module Linael
 
     class Options < ModulesOptions
       generate_to_catch :link => /http[s]?:\/\/(?:www\.)?youtu.*\?/
-      generate_value :id => /http[s]?:\/\/(?:www\.)?youtu.*v=([^&]*)/
+      generate_value :id => /http[s]?:\/\/(?:www\.)?youtu.*v=([^&\s]*)/
 
     end
 
