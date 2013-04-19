@@ -30,6 +30,10 @@ module Linael
       
     end
 
+    def load_mod
+      @karma.default = 0
+    end
+
     def add_karma privMsg
       if Options.add_karma? privMsg.message
       
