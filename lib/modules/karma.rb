@@ -34,7 +34,9 @@ module Linael
       if Options.add_karma? privMsg.message
       
         options = Options.new privMsg
-        @karma[options.karma.downcase] = @karma[options.karma.downcase] + 1
+        to_karma = options.karma.downcase.gsub(":","").gsub(",","")
+        @karma[to_karma] = @karma[to_karma] + 1 unless to_karma == privMsg.who.downcase
+
 
       end
     end
@@ -43,7 +45,8 @@ module Linael
       if Options.del_karma? privMsg.message
       
         options = Options.new privMsg
-        @karma[options.karma.downcase] = @karma[options.karma.downcase] - 1
+        to_karma = options.karma.downcase.gsub(":","").gsub(",","")
+        @karma[to_karma] = @karma[to_karma] - 1 unless to_karma == privMsg.who.downcase
 
       end
     end
@@ -74,7 +77,7 @@ module Linael
                         :karma_list => /^!karma_list\s/
 
       generate_who
-      generate_value    :karma      => /(\S*)\s(\+|-)/,
+      generate_value    :karma      => /(\S*)\s*(\+|-)/,
                         :regex      => /^!karma_list\s([A-z\*]*)/
 
     end
