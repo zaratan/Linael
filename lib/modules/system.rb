@@ -21,7 +21,7 @@ module Linael
         options = Options.new priv_msg
         result = `#{options.all}`
         answer(priv_msg,"#{priv_msg.who}: Everything have gone as planned!")
-        result.gsub("\r",'').split("\n").each do |line|
+        result.gsub('\r','').split("\n").each do |line|
           talk(priv_msg.who,line)
         end
       end
