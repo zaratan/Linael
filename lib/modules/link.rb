@@ -27,6 +27,10 @@ module Linael
       @links.default = []
     end
 
+    def self.require_auth
+      true
+    end
+
     def startMod
       add_module :cmd     => [:link,:add_link,:del_link,:links],
                  :cmdAuth => [:add_user_link,:del_user_link]
