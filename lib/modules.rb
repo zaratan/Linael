@@ -81,7 +81,7 @@ module Linael
 
     def self.generate_to_catch meths
       meths.each do |key,regex|
-        self.class.send("define_method","#{key.to_s}?") do |message|
+        self.send("define_singleton_method","#{key.to_s}?") do |message|
           message.downcase =~ regex
         end
       end
