@@ -9,14 +9,14 @@ module Linael
       "Module : Karma",
       " ",
       "=====Functions=====",
-      "!karma => show your karma",
-      "!karma XXX => show the karma of XXX",
+      "!karma              => show your karma",
+      "!karma XXX          => show the karma of XXX",
       "!karma_list [regex] => private answer for karma matching regex",
-      "XXX +1 or XXX ++ => add 1 to XXX karma",
-      "XXX -1 or XXX -- => del 1 to XXX karma",
+      "XXX +1 or XXX ++    => add 1 to XXX karma",
+      "XXX -1 or XXX --    => del 1 to XXX karma",
       " ",
       "=====Options=====",
-      "!karma_list regex => an irc regex * for a wildcard"
+      "!karma_list regex   => an irc regex * for a wildcard"
     ]
 
     def initialize runner
@@ -27,7 +27,6 @@ module Linael
     def startMod
       add_module :msg => [:add_karma,:del_karma],
                  :cmd => [:karma,:karma_list]
-      
     end
 
     def load_mod
@@ -40,7 +39,6 @@ module Linael
         options = Options.new privMsg
         to_karma = options.karma.downcase.gsub(":","").gsub(",","")
         @karma[to_karma] = @karma[to_karma] + 1 unless to_karma == privMsg.who.downcase
-
 
       end
     end
