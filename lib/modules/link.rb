@@ -35,14 +35,16 @@ module Linael
     def add_link priv_msg
       if Options.add_link? priv_msg.message and user.include?(priv_msg.who.downcase)
         options = Options.new priv_msg
-
+        @links[options.id.downcase] = @link[options.id.downcase] << options.value
+        answer(priv_msg,"#{options.id} is now : #{options.value}")
       end
     end
 
     def del_link priv_msg
       if Options.del_link? priv_msg.message and user.include?(priv_msg.who.downcase)
         options = Options.new priv_msg
-
+        @links[options.id.downcase] = @links[options.id.downcase].delete_at(options.value.to_i - 1)
+        answer(priv_msg,"deleting entry number #{options.value} of #{options.id}")
       end
     end
 
