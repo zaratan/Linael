@@ -19,6 +19,7 @@ module Linael
 
     def initialize runner
       @links = Hash.new([])
+      @users = []
       super runner
     end
 
@@ -27,6 +28,27 @@ module Linael
     end
 
     def startMod
+      add_module :cmd     => [:link,:add_link,:del_link],
+                 :cmdAuth => [:add_user_link,:del_user_link]
+    end
+
+    def add_link priv_msg
+
+    end
+
+    def del_link priv_msg
+
+    end
+
+    def link priv_msg
+
+    end
+
+    def add_user_link priv_msg
+
+    end
+
+    def del_user_link priv_msg
 
     end
 
