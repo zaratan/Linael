@@ -103,7 +103,7 @@ module Linael
                         :add_user_link => /^!link_user\s+-add\s/,
                         :del_user_link => /^!link_user\s+-del\s/
 
-      generate_value    :link          => /^!link[s]?\s+([^-\s?][^?\s]*)\??/,
+      generate_value    :link          => /^!link[s]?\s+([^-\s?][^?\s]*)\s*\??/,
                         :id            => /^!link\s+-\S*\s+([^-\s?][^?\s]*)\s/,
                         :value         => /^!link\s+-\S*\s+\S*\s+([^\n\r]+)/
 
