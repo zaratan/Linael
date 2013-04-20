@@ -18,13 +18,9 @@ module Linael
     ]
 
     def initialize runner
-      @links = Hash.new([])
+      @links = Hash.new
       @users = []
       super runner
-    end
-
-    def load_mod
-      @links.default = []
     end
 
     def self.require_auth
@@ -39,7 +35,7 @@ module Linael
     def add_link priv_msg
       if Options.add_link? priv_msg.message and @users.include?(priv_msg.who.downcase)
         options = Options.new priv_msg
-        @links[options.id.downcase] = @links[options.id.downcase] << options.value
+        @links[options.id.downcase] = ((@links[options.id.downcase] || []) << options.value)
         answer(priv_msg,"#{options.id} is now : #{options.value}")
       end
     end
@@ -47,7 +43,7 @@ module Linael
     def del_link priv_msg
       if Options.del_link? priv_msg.message and @users.include?(priv_msg.who.downcase)
         options = Options.new priv_msg
-        @links[options.id.downcase].delete_at(options.value.to_i - 1)
+        (@links[options.id.downcase] || []).delete_at(options.value.to_i - 1)
         answer(priv_msg,"deleting entry number #{options.value} of #{options.id}")
       end
     end
@@ -55,8 +51,8 @@ module Linael
     def link priv_msg
       if Options.link? priv_msg.message
         options = Options.new priv_msg
-        links = @links[options.link]
-        if links.empty?
+        links = @links[options.link] || []
+        if links.empty? 
           answer(priv_msg,"#{priv_msg.who}: I'm sorry, I really don't know :(")
         else
           answer(priv_msg,"#{priv_msg.who}: #{links[Random.rand(links.size)]}")
@@ -67,7 +63,7 @@ module Linael
     def links priv_msg
       if Options.links? priv_msg.message
         options = Options.new priv_msg
-        links = @links[options.link]
+        links = @links[options.link] || []
         if links.empty?
           answer(priv_msg,"#{priv_msg.who}: I'm sorry, I really don't know :(")
         else
