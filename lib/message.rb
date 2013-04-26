@@ -72,12 +72,12 @@ module Linael
     end
 
     def handle_msg(msg)
-      begin
+      #begin
         Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 
                                                                         :undef => :replace, :replace => ''))}
-      rescue Exception
-        puts $!	
-      end
+      #rescue Exception
+      #  puts $!	
+      #end
     end
 
   end

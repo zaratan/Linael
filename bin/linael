@@ -8,6 +8,7 @@ require_relative '../lib/mess.rb'
 require_relative "../lib/modules.rb"
 require_relative '../lib/modules/module.rb'
 require_relative '../lib/message.rb'
+require_relative '../lib/DSL.rb'
 
 $SAFE = 0
 

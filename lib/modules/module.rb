@@ -11,15 +11,15 @@ module Linael
       if !params[:privMsg].nil?
         @name = params[:klass]::Name
         @runner = runner
-        begin
+        #begin
           instKlass = params[:klass].new(@runner)
           instKlass.startMod
           @instance = instKlass
-        rescue Exception
-          answer(params[:privMsg],"Problem when loading the module")
-          talk(params[:privMsg].who,$!)
-          raise $!
-        end
+        #rescue Exception
+        #  answer(params[:privMsg],"Problem when loading the module")
+        #  talk(params[:privMsg].who,$!)
+        #  raise $!
+        #end
       else
         @name=params[:name]
         @instance=params[:instance]
@@ -85,7 +85,7 @@ module Linael
     end
 
     def add(modName,privMsg)
-      begin
+      #begin
         if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
           load "./lib/modules/#{modName}.rb"
           klass = "linael/modules/#{modName}".camelize.constantize
@@ -107,11 +107,11 @@ module Linael
             end
           end
         end
-      rescue Exception
-        puts $!
-        answer(privMsg,"Problem when loading the module")
-        talk(privMsg.who,$!)
-      end
+      #rescue Exception
+      #  puts $!
+      #  answer(privMsg,"Problem when loading the module")
+      #  talk(privMsg.who,$!)
+      #end
     end
 
     def has_key?(key)
