@@ -14,7 +14,7 @@ linael :youtube, :constructor => "Vinz_" do
 
     on :msg, :youtube, /http[s]?:\/\/(?:www\.)?youtu.*\?/ do |msg,options|
         before(msg) do |msg|
-            not (@user.detect {|user| msg.who.downcase.match(user)})
+            not (@users.detect {|user| msg.who.downcase.match(user)})
         end
 
         open("http://www.youtube.com/watch?v=#{options.id}").read =~ /<title>(.*?)<\/title>/
