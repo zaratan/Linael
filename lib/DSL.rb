@@ -115,7 +115,7 @@ module Linael
         end
       end
       # Add the feature to module start
-      self.const_set("ToStart",Hash.new([])) unless defined?(ToStart)
+      self.const_set("ToStart",Hash.new([])) unless defined?(self::ToStart)
       self::ToStart[type] = self::ToStart[type] << name
     end
 
@@ -168,7 +168,7 @@ module Linael
 
     # Override of normal method
     def load_mod
-      self.class::At_load.call if defined?(self.class::At_load)
+      self.instance_eval(&self.class::At_load) if defined?(self.class::At_load)
     end
 
     # Overide of normal method
@@ -179,7 +179,7 @@ module Linael
     # Overide of normal method
     def initialize(runner)
       @runner = runner
-      self.class::At_launch.call if defined?(self.class::At_launch)
+      self.instance_eval(&self.class::At_launch) if defined?(self.class::At_launch)
       @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
       
     end
