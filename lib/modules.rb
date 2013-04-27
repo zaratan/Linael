@@ -4,6 +4,8 @@ module Linael
 
     include Action
 
+    # *Intern method, don't use it*::
+    # It's a methode made for generate the add_type_behaviour
     def add_module_irc_behavior type
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
         procToAdd = Proc.new {|msg| instance.send(nom,msg) if (instance.methods.grep /act_authorized\?/).empty? or act_authorized?(instance,msg)}
@@ -18,36 +20,56 @@ module Linael
       end
     end
 
+    # Return the current instance of a module return nil if no mod
+    # Params:
+    # +name+:: name of the module
+    #
+    #   mod("admin") #=> return admin module
+    #   mod("dfgh")  #=> nil
     def mod(name)
       @runner.modules.detect {|mod| mod.class == Modules::Module}.modules[name]
     end
 
+    # Name of the module. Must be equal to class name downcase
     Name=""
 
+    # *OLD DSL method*:: Must be overided to True if you need authentification
     def self.require_auth 
       false
     end
 
+    # *OLD DSL method*:: Must be overided if you need other modules
     def self.required_mod
       nil
     end
 
+    # *OLD DSL method*:: Must be overided if you want to do something @load
     def load_mod
 
     end
 
-
+    # *OLD DSL method*:: Must be overired to True if it's an authentification module
     def self.auth?
       false
     end
 
+    # Name of module constructor.
+    # Zaratan by defalut
+    #
+    # In new DSL should be setted in linael command.
     Constructor="Zaratan"
 
+    # *Don't really instanciate this class*::
     def initialize(runner)
       @runner=runner
       @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
     end
 
+
+    # *OLD DSL method*:: use it to declare which method tu use
+    # +method_hash+:: 
+    # * +key+:: place to load (:cmd,:join,...)
+    # * +value+:: name of the method
     def add_module(method_hash)
       method_hash.each do |k,v|
         self.methods.grep(/add_#{k.to_s}_behavior/) do |name| 
@@ -58,6 +80,7 @@ module Linael
       end
     end
 
+    # *Internal method, don't use it*
     def stopMod()
       self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
     end
@@ -69,6 +92,7 @@ module Linael
   module Modules
   end
 
+  #Super class for Options in modules. Don't use it directly since there is a new DSL for this
   class ModulesOptions
 
     attr_reader :message,:where,:from_who

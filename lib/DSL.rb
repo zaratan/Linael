@@ -4,14 +4,18 @@
 # Main function for defining a module.
 # Everything should be instide its block.
 # Params:
-#   +name+        : a symbol to name the module
-#   +config_hash+ : optional hash for configuration. the differents options available are:
-#     * +:constructor+  : A string for the name of the module maker. "Zaratan" by default
-#     * +:require_auth+ : A boolean for saying if an auth method is required or not
-#     * +:required_mod+ : A list of module names required for this module
-#     * +:auth+: A boolean telling if it's an auth module or not
+# +name+::         a symbol to name the module
+# +config_hash+:: optional hash for configuration. the differents options available are:
+# * +:constructor+:: A string for the name of the module maker. "Zaratan" by default
+# * +:require_auth+:: A boolean for saying if an auth method is required or not
+# * +:required_mod+:: A list of module names required for this module
+# * +:auth+:: A boolean telling if it's an auth module or not
 #
-#   +block+       : definition of the module. Everything here will be executed in the scope of the module.
+# +block+:: definition of the module. Everything here will be executed in the scope of the module.
+#   
+#   linael :test, constructor: "Skizzk", require_auth: true, required_mod: ["admin"] do 
+#   end 
+#   #=> produce a module named Test with Skizzk for constructor, which require at least an auth method and the module admin.
 def self.linael(name,config_hash = Hash.new,&block)
 
   # Create the class
@@ -37,11 +41,17 @@ def self.linael(name,config_hash = Hash.new,&block)
 
     # Define Options class (with some magic methods)
     self.const_set("Options",Class.new(Linael::ModulesOptions) do 
+      #Define method .chan which return the first word beging with a # . if none, return current chan
       generate_chan
+      #Define method .who which retrun the first word with no # nor ! nor - . If none return current user
       generate_who
+      #Define method .what which return first word with no # nor !
       generate_what
+      #Define method .reason which return everything after :
       generate_reason
+      #Define method .type which return the first word begining with -
       generate_type
+      #return EVERYTHING
       generate_all
     end)
 
@@ -56,6 +66,7 @@ def self.linael(name,config_hash = Hash.new,&block)
 
 end
 
+#Everything goes there
 module Linael
   
   # Fake interruption for before check
@@ -63,26 +74,25 @@ module Linael
   end
 
   # Modification of ModuleIRC class to describe the DSL methods
-  class ModuleIRC
-    
-    # Method to describe a feature of the module
+  class ModuleIRC 
+    # Method to describe a feature of the module inside a linael bloc (see Object)
     # Params:
-    #   +type+        : type of message watched by the method should be in:
-    #     * +:msg+    : any message
-    #     * +:cmd+    : any command message (begining with a !)
-    #     * +:cmdAuth+: any command which you should be auth on the bot to use
-    #     * +:join+   : any join
-    #     * +:part+   : any part
-    #     * +:kick+   : any kick
-    #     * +:auth+   : any auth asking (for :cmdAuth)
-    #     * +:mode+   : any mode change
-    #     * +:nick+   : any nick change
-    #     * +:notice+ : any notice
+    # +type+:: type of message watched by the method should be in:
+    # * +:msg+:: any message
+    # * +:cmd+:: any command message (begining with a !)
+    # * +:cmdAuth+:: any command which you should be auth on the bot to use
+    # * +:join+   :: any join
+    # * +:part+   :: any part
+    # * +:kick+   :: any kick
+    # * +:auth+   :: any auth asking (for :cmdAuth)
+    # * +:mode+   :: any mode change
+    # * +:nick+   :: any nick change
+    # * +:notice+ :: any notice
     #
-    #   +name+        : the name of the feature
-    #   +regex+       : the regex that the method should match
-    #   +config_hash+ : an optional configuration hash (for now, there is no configuration option)
-    #   +block+       : where we describe what the method should do
+    # +name+:: the name of the feature
+    # +regex+:: the regex that the method should match
+    # +config_hash+:: an optional configuration hash (for now, there is no configuration option)
+    # +block+:: where we describe what the method should do
     def self.on(type, name,regex,config_hash = Hash.new,&block)
     
       # Generate the catch of regex in Options class
@@ -110,8 +120,9 @@ module Linael
     end
 
     # Wrapper to add values regex
-    #   +key+   : is the name of the method (options.name)
-    #   +value+ : is the regex used to find the result
+    # Params:
+    # +key+:: is the name of the method (options.name)
+    # +value+:: is the regex used to find the result
     def self.value(hash)
       self::Options.class_eval do
         generate_value hash
@@ -119,10 +130,11 @@ module Linael
     end
 
     # Wrapper to add values regex with a default value
-    #   +key+   : is the name of the method (options.name)
-    #   +value+ : is a hash with 2 keys: 
-    #     * +:regexp+ : the matching regex 
-    #     * +:default+: the default value
+    # Params:
+    # +key+:: is the name of the method (options.name)
+    # +value+:: is a hash with 2 keys: 
+    # * +:regexp+:: the matching regex 
+    # * +:default+:: the default value
     def self.value_with_default(hash)
       self::Options.class_eval do
         generate_value_with_default hash
@@ -130,8 +142,9 @@ module Linael
     end
 
     # Wrapper to add matching regex to options
-    #   +key+   : is the name of the method (options.name?)
-    #   +value+ : is the regex to match
+    # Params:
+    # +key+:: is the name of the method (options.name?)
+    # +value+:: is the regex to match
     def self.match(hash)
       self::Options.class_eval do
         generate_match hash

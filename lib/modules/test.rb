@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+
+#
 linael :test,:constructor => "Skizzk",:require_auth => true,:required_mod => ["admin"] do
 
   match :happy => /happy/
