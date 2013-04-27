@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-#
+#A test module
 linael :test,:constructor => "Skizzk",:require_auth => true,:required_mod => ["admin"] do
 
   match :happy => /happy/
@@ -16,9 +16,9 @@ linael :test,:constructor => "Skizzk",:require_auth => true,:required_mod => ["a
     p "Loaded <3"
   end
 
-  on :cmd,:test,/^!test/ do |msg,options|
+  on :cmd, :test, /^!test/ do |msg,options|
 
-    before do
+    before(msg) do
       2 == 2
     end
 

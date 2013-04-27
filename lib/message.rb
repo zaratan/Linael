@@ -61,7 +61,7 @@ module Linael
 
     def initialize(modules)
       Handler.toDo << :handleKeepAlive << :handlePrivMsg
-      Handler.to_handle.each {|klass| p klass.name;instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
+      Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
       @msgAct=Hash.new
       @cmdAct=Hash.new
       @authAct=Hash.new

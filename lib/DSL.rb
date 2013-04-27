@@ -115,7 +115,8 @@ module Linael
         end
       end
       # Add the feature to module start
-      self.const_set("ToStart",Hash.new([])) unless defined?(self::ToStart)
+      self.const_set("ToStart",Hash.new) unless defined?(self::ToStart)
+      self::ToStart[type] ||= []
       self::ToStart[type] = self::ToStart[type] << name
     end
 
@@ -185,8 +186,8 @@ module Linael
     end
 
     # A method used to describe preliminary tests in a method
-    def before(&block)
-      raise InterruptLinael, "not matching" unless block.call
+    def before(msg,&block)
+      raise InterruptLinael, "not matching" unless block.call(msg)
     end
   end
 
