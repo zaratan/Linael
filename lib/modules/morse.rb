@@ -1,18 +1,8 @@
 # -*- encoding : utf-8 -*-
-module Linael
-  class Modules::Morse < ModuleIRC
-    
-    Name="morse"
+linael :morse do
 
-    def startMod
-      add_module :cmd => [:morse]
-    end
-
-    def morse privMsg
-      if Options.morse? privMsg.message
-        options = Options.new privMsg
-        answer(privMsg,options.all.split(//).map{|c| MorseHash[c]}.join(" "))
-      end
+    on :cmd, :morse, /^!morse\s/ do |msg,options|
+      answer(msg,options.all.split(//).map{|c| MorseHash[c]}.join(" "))
     end
 
     MorseHash = {"a" => "·−",
@@ -65,10 +55,4 @@ module Linael
   "8" => "−−−··", 
   "9" => "−−−−·"}
 
-    class Options < ModulesOptions
-      generate_to_catch :morse => /^!morse\s/
-      generate_all
-    end
-
-  end
 end

@@ -2,18 +2,22 @@
 
 module Linael
 
+  # mains methods of IRC
   module IRC
 
+    # Send a message in the socket
     def self.send_msg(msg)
       $linael_irc_socket.puts "#{msg}\n"
     end
 
+    # Connect to a server
     def self.connect(server,port,nick)
       $linael_irc_socket = TCPSocket.open(server, port)
       send_msg "USER #{nick} 0 * :Linael"
       send_msg "NICK #{nick}"
     end
 
+    # Main loop of the irc to keep the prog reading inside the socket
     def self.main_loop(msg_handler)
       while line = get_msg
         p line
@@ -21,16 +25,21 @@ module Linael
       end
     end
 
+    #read from socket
     def self.get_msg()
       return $linael_irc_socket.gets
     end
 
   end
 
+  #different possible action from IRC
   module Action
 
     include IRC
 
+    # Cover most of  IRC send. 
+    # Catch methods ending with _channel
+    #   kick_channel #=> a kick
     def method_missing(name, *args, &block)
       if name =~ /(.*)_channel/
         self.class.send("define_method",name) do |arg|
@@ -46,10 +55,12 @@ module Linael
       super
     end
 
+    #proxy for sendind a private_message to socket. Just for code readability
     def talk(dest,msg)
       privmsg_channel({dest: dest, msg: msg})
     end
 
+    #proxy for talk (proxyception) for readability
     def answer(privMsg,ans)
       if(privMsg.private_message?)
         talk(privMsg.who,ans)

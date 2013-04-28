@@ -1,9 +1,12 @@
 # -*- encoding : utf-8 -*-
 module Linael
+
+  # Class for main loop of Linael
   class Handler
 
     include Action
 
+    # A method to handle Ping message
     def handleKeepAlive(msg)
       if Ping.match(msg) then
         msgPing = Ping.new msg
@@ -13,6 +16,7 @@ module Linael
       return false
     end
 
+    # A method to handle private messages
     def handlePrivMsg(msg)
       if PrivMessage.match(msg) then
         privmsg = PrivMessage.new msg
@@ -29,16 +33,19 @@ module Linael
       return false
     end
 
+    #the differents type of actings
     attr_accessor :msgAct,
       :cmdAct,
       :authAct,
       :cmdAuthAct,
       :modules
 
+    # To get ToDo list
     def self.toDo
       @toDo
     end
 
+    # To get to_handle list
     def self.to_handle
       @to_handle
     end
@@ -59,6 +66,7 @@ module Linael
       @toDo << "handle_#{klass.name.downcase}".to_sym
     end
 
+    # Initialize
     def initialize(modules)
       Handler.toDo << :handleKeepAlive << :handlePrivMsg
       Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
@@ -71,13 +79,14 @@ module Linael
       @modules.each {|mod| mod.startMod}
     end
 
+    # Main method
     def handle_msg(msg)
-      #begin
+      begin
         Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 
                                                                         :undef => :replace, :replace => ''))}
-      #rescue Exception
-      #  puts $!	
-      #end
+      rescue Exception
+        puts $!	
+      end
     end
 
   end

@@ -1,46 +1,31 @@
 # -*- encoding : utf-8 -*-
 
-module Linael
-  class Modules::Help < ModuleIRC
+#A module for help
+linael :help do
 
-    Name="help"
+  help [
+    "Module Help:",
+    "!help modName => display the help for the module modName"
+  ]
 
-    Help=[
-      "Module Help:",
-      "!help modName => display the help for the module modName"
-    ]
-
-    def startMod
-      add_module :cmd => [:help]
-    end
-
-    def help privMsg
-      if Options.help? privMsg.message
-        options = Options.new privMsg
-        modName=options.what
-        if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
-          load "./lib/modules/#{modName}.rb"
-          klass = "linael/modules/#{modName}".camelize.constantize
-          unless !defined?(klass::Help) or klass::Help.empty?
-            klass::Help.each {|helpSent| answer(privMsg,helpSent)}
-          else
-            answer(privMsg,"No help for the module #{modName}. Ask #{klass::Constructor} for this :)")
-          end
-        else
-          answer(privMsg,"There is no module named #{modName}")
-        end
+  #react to !help which open class for reading Help constant
+  on :cmd, :help, /^!help\s/ do |msg,options|
+    modName=options.what
+    if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
+      load "./lib/modules/#{modName}.rb"
+      klass = "linael/modules/#{modName}".camelize.constantize
+      unless !defined?(klass::Help) or klass::Help.empty?
+        klass::Help.each {|helpSent| answer(privMsg,helpSent)}
+      else
+        answer(privMsg,"No help for the module #{modName}. Ask #{klass::Constructor} for this :)")
       end
+    else
+      answer(privMsg,"There is no module named #{modName}")
     end
-
-    def initialize(runner)
-      @dir = Dir.new("./lib/modules")
-      super runner
-    end
-
-    class Options < ModulesOptions
-      generate_to_catch :help => /^!help\s/
-      generate_what
-    end
-
   end
+
+  on_init do
+    @dir = Dir.new("./lib/modules")
+  end
+
 end

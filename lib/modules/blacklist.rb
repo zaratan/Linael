@@ -18,12 +18,12 @@ linael :blacklist, require_auth: true,required_mod: ["module","admin"] do
 
   # Manage blacklist
   on :cmdAuth, :blacklist, /^!blacklist\s|^!bl\s/ do |msg,options|
-    act_anylist msg,"blacklist"
+    act_anylist msg,"blacklist",options
   end
 
   # Manage whitelist
   on :cmdAuth, :whitelist, /^!whitelist\s|^!wl\s/ do |msg,options|
-    act_anylist msg,"whitelist"
+    act_anylist msg,"whitelist",options
   end
 
   # Manage for any color list
