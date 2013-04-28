@@ -1,22 +1,20 @@
 # -*- encoding : utf-8 -*-
-module Linael
-  class Modules::Roulette < ModuleIRC
 
-    Name="roulette"	
+#A module to auto-kick on marvin's roulette
+linael :roulette do
 
-    Help=["Auto kick people who lose on roulette"]
+  help [
+    "Auto kick people who lose on roulette",
+    "This module need marvin bot to work"
+  ]
 
-    def kick_on_lose privMsg
-      if privMsg.message =~ /^(\S*):\schamber.*6.*BANG/ and privMsg.who == "marvin"
-        p privMsg.message
-        p "#{privMsg.place} and #{$~[1]}"
-        kick_channel(privMsg.place,$~[1],"YOU LOSE!")	
-      end
+  on :msg, :kick_on_lose, /:\schamber.*6.*BANG/ do |msg,options|
+    before(msg) do |msg|
+      msg.who == "marvin"
     end
-
-    def startMod()
-      add_module :msg => [:kick_on_lose]
-    end
-
+    kick_channel(msg.place,options.who_lose,"YOU LOSE!")	
   end
+
+  value who_lose: /^(\S*):\s/
 end
+

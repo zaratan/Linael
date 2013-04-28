@@ -1,49 +1,38 @@
 # -*- encoding : utf-8 -*-
-module Linael
 
-  class Modules::Caesar < ModuleIRC
-  
-    Name="caesar"
-    Constructor="Aranelle"
-  
-    Help=[
-      "Module: Caesar",
-      " ",
-      "=====Fonctions=====",
-      "!caesar [string you want to code] => display your string, replacing each letter with the one following it in the alphabet",
-      " ",
-      "=====Options=====",
-      "!caesar -s[a-z] -t[a-z]",
-      "        -s    : Source letter (default: a)",
-      "        -t    : Target letter (default: b)"
-      ]
-    def startMod
-      add_module :cmd => [:caesar]
-    end
-    
-    def caesar privMsg
-      if Options.caesar? privMsg.message
-        options = Options.new privMsg
-        gap = AlphabetArray.index(options.target) - AlphabetArray.index(options.source)
-        result = options.all.split(//).map do |c|
-          c = AlphabetArray[(AlphabetArray.index(c) + gap) % 26] if AlphabetArray.include? c
-          c
-        end
-        answer(privMsg,result.join)
-      end
-    end
-    
-    AlphabetArray = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z)
-    
-    class Options < ModulesOptions
-      generate_to_catch :caesar => /^!caesar\s/
+# A module to make caesar code
+linael :caesar, constructor:"Aranelle" do
 
-      generate_value_with_default :source => {regexp: /\s-s([a-z])\s/,default: "a"},
-                                  :target => {regexp: /\s-t([a-z])\s/,default: "b"}
-      
-      def all
-        @message.gsub(/^!caesar (-s[a-z] )?(-t[a-z] )?/,"").gsub("\r","")
-      end
+  help [
+    "Module: Caesar",
+    " ",
+    "=====Fonctions=====",
+    "!caesar [string you want to code] => display your string, replacing each letter with the one following it in the alphabet",
+    " ",
+    "=====Options=====",
+    "!caesar -s[a-z] -t[a-z]",
+    "        -s    : Source letter (default: a)",
+    "        -t    : Target letter (default: b)"
+  ]
+
+  #encode
+  on :cmd,:caesar,/^!caesar\s/ do |msg,options|
+    gap = AlphabetArray.index(options.target) - AlphabetArray.index(options.source)
+    result = all(options).split(//).map do |c|
+      c = AlphabetArray[(AlphabetArray.index(c) + gap) % 26] if AlphabetArray.include? c
+      c
     end
+    answer(msg,result.join)
+  end
+
+  #The alphabet
+  AlphabetArray = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z)
+
+
+  value_with_default :source => {regexp: /\s-s([a-z])\s/,default: "a"},
+    :target => {regexp: /\s-t([a-z])\s/,default: "b"}
+
+  define_method "all" do |options|
+    options.all.gsub(/^!caesar\s+(-s[a-z]\s+)?(-t[a-z]\s+)?/,"").gsub("\r","")
   end
 end

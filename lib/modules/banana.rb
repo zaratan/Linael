@@ -3,6 +3,7 @@
 # Sing the banana song :)
 linael :banana,require_auth: true do 
 
+  #Lyrics of the banana song
   Lyrics=[
     "http://www.youtube.com/watch?v=vNie6hVM8ZI",
     " ",

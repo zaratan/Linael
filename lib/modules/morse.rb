@@ -5,6 +5,7 @@ linael :morse do
       answer(msg,options.all.split(//).map{|c| MorseHash[c]}.join(" "))
     end
 
+    #Morse alphabet
     MorseHash = {"a" => "·−",
     "b" => "−···", 
    "c" => "−·−·", 

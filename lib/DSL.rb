@@ -93,7 +93,7 @@ module Linael
     # +regex+:: the regex that the method should match
     # +config_hash+:: an optional configuration hash (for now, there is no configuration option)
     # +block+:: where we describe what the method should do
-    def self.on(type, name,regex,config_hash = Hash.new,&block)
+    def self.on(type, name,regex=/./,config_hash = Hash.new,&block)
     
       # Generate the catch of regex in Options class
       self::Options.class_eval do

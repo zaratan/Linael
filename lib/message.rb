@@ -79,7 +79,7 @@ module Linael
       @modules.each {|mod| mod.startMod}
     end
 
-    # Main method
+    # Main method where we dispatch message over the != modules
     def handle_msg(msg)
       begin
         Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 

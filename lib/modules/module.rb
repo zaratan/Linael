@@ -105,7 +105,8 @@ module Linael
       end
     end
 
-    attr_accessor :name,:irc,:instance
+    #name, and instance of the module
+    attr_accessor :name,:instance
 
     #halt the module
     def destroy!
@@ -126,6 +127,7 @@ module Linael
     include Enumerable
     include Action
 
+    # Initialiez the list
     def initialize runner
       @modules=[]
       @runner=runner
@@ -133,6 +135,7 @@ module Linael
       @authModule = []
     end
 
+    #list of modules and authentification modules
     attr_accessor :modules,:authModules
 
     #each
