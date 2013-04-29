@@ -1,9 +1,12 @@
 # -*- encoding : utf-8 -*-
 module Linael
+
+  # Class for main loop of Linael
   class Handler
 
     include Action
 
+    # A method to handle Ping message
     def handleKeepAlive(msg)
       if Ping.match(msg) then
         msgPing = Ping.new msg
@@ -13,6 +16,7 @@ module Linael
       return false
     end
 
+    # A method to handle private messages
     def handlePrivMsg(msg)
       if PrivMessage.match(msg) then
         privmsg = PrivMessage.new msg
@@ -29,16 +33,19 @@ module Linael
       return false
     end
 
+    #the differents type of actings
     attr_accessor :msgAct,
       :cmdAct,
       :authAct,
       :cmdAuthAct,
-      :modules
+      :master
 
+    # To get ToDo list
     def self.toDo
       @toDo
     end
 
+    # To get to_handle list
     def self.to_handle
       @to_handle
     end
@@ -59,22 +66,23 @@ module Linael
       @toDo << "handle_#{klass.name.downcase}".to_sym
     end
 
-    def initialize(modules)
+    # Initialize
+    def initialize(master_module,modules)
       Handler.toDo << :handleKeepAlive << :handlePrivMsg
-      Handler.to_handle.each {|klass| p klass.name;instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
+      Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
       @msgAct=Hash.new
       @cmdAct=Hash.new
       @authAct=Hash.new
       @cmdAuthAct=Hash.new
-      @modules=[]
-      modules.each {|klass| @modules << klass.new(self)}
-      @modules.each {|mod| mod.startMod}
+      @master = master_module.new(self)
+      @master.startMod
+      modules.each {|modName| @master.modules.add(modName)}
     end
 
+    # Main method where we dispatch message over the != modules
     def handle_msg(msg)
       begin
-        Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 
-                                                                        :undef => :replace, :replace => ''))}
+        Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => ''))}
       rescue Exception
         puts $!	
       end

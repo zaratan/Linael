@@ -1,24 +1,16 @@
 # -*- encoding : utf-8 -*-
-module Linael
-  class Modules::Log < ModuleIRC
+linael :log do
 
-    Name="log"	
+  help [
+    "Module: Log",
+    " ",
+    "Log every recognized message in the console"
+  ]
 
-    Help=["Module: Log"," ","Log every recognized message in the console"]
-
-    def log(msg)
+  [:msg,:kick,:nick,:part,:join,:mode].each do |type|
+    on type,type do |msg|
       p msg
     end
-
-    def startMod()
-      add_module({msg:  [:log],
-                  cmd:  [:log],
-                  kick: [:log],
-                  nick: [:log],
-                  part: [:log],
-                  join: [:log],
-                  mode: [:log]})
-    end
-
   end
+
 end
