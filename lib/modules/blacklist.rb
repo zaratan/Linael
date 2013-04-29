@@ -101,7 +101,7 @@ module Linael
     # Check if an instance is authorized in a chan
     def act_authorized?(instance,msg)
       return true unless msg.kind_of? PrivMessage
-      moduleAdmin = @runner.modules.detect {|mod| mod.class == Modules::Module}
+      moduleAdmin = @runner.master
       mod = moduleAdmin.modules[instance.class::Name]
       result = true
       result &= !mod.in_blacklist?(msg.place) 

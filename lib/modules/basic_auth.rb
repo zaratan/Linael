@@ -13,7 +13,7 @@ linael :basic_auth,:auth => true do
 
   on_init do
     @user = Hash.new
-    ask_user "zaratan"
+    ask_user Linael::Master
   end
 
   #ask for a user status to nickserv
@@ -22,11 +22,10 @@ linael :basic_auth,:auth => true do
   end
   
   on :auth, :basic_auth, /./ do |msg,options|
-      ask_user "zaratan"
+      ask_user Linael::Master
       sleep(0.3)
-      msg.who == "Zaratan" and 
-        (msg.identification.match '^~Zaratan@zaratan.fr') and 
-        (@user["zaratan"] == "3")
+      msg.who.downcase == Linael::Master.downcase and 
+        (@user[Linael::Master] == "3")
   end
 
 end

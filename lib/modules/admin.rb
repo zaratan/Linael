@@ -54,7 +54,9 @@ linael :admin, require_auth: true do
   on :cmdAuth, :kick, /^!admin_kick\s|^!kick\s|^!k\s/ do |msg,options|
     answer(msg,"Oki doki! I'll kick #{options.who} on #{options.chan}")	
     talk(options.chan,"bye #{options.who}!")
-    kick_channel({dest: options.chan,who: options.who, msg: options.reason})
+    kick_channel :dest => options.chan,
+                 :who  => options.who, 
+                 :msg  => options.reason
   end
 
   #(re)load a file
@@ -65,7 +67,7 @@ linael :admin, require_auth: true do
   #change mode on a chan
   on :cmdAuth, :mode, /^!admin_mode\s|^!mode\s/ do |msg,options|
     mode_channel  :dest => options.chan,
-                  :who  => options.what,
+                  :what => options.what,
                   :args => options.reason
     answer(msg,"Oki doki! I'll change mode #{options.what} #{options.reason+" " unless options.reason.empty?}on #{options.chan}")
   end

@@ -33,6 +33,6 @@ linael :caesar, constructor:"Aranelle" do
     :target => {regexp: /\s-t([a-z])\s/,default: "b"}
 
   define_method "all" do |options|
-    options.all.gsub(/^!caesar\s+(-s[a-z]\s+)?(-t[a-z]\s+)?/,"").gsub("\r","")
+    options.all.gsub(/(-s[a-z]\s+)?(-t[a-z]\s+)?/,"").gsub("\r","")
   end
 end

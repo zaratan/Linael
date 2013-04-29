@@ -38,7 +38,7 @@ module Linael
       :cmdAct,
       :authAct,
       :cmdAuthAct,
-      :modules
+      :master
 
     # To get ToDo list
     def self.toDo
@@ -67,23 +67,22 @@ module Linael
     end
 
     # Initialize
-    def initialize(modules)
+    def initialize(master_module,modules)
       Handler.toDo << :handleKeepAlive << :handlePrivMsg
       Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
       @msgAct=Hash.new
       @cmdAct=Hash.new
       @authAct=Hash.new
       @cmdAuthAct=Hash.new
-      @modules=[]
-      modules.each {|klass| @modules << klass.new(self)}
-      @modules.each {|mod| mod.startMod}
+      @master = master_module.new(self)
+      @master.startMod
+      modules.each {|modName| @master.modules.add(modName)}
     end
 
     # Main method where we dispatch message over the != modules
     def handle_msg(msg)
       begin
-        Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, 
-                                                                        :undef => :replace, :replace => ''))}
+        Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => ''))}
       rescue Exception
         puts $!	
       end

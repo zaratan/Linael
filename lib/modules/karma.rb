@@ -36,7 +36,7 @@ linael :karma do
   end
 
   on :cmd, :karma, /^!karma\s/ do |msg,options|
-    answer(privMsg,"Karma for #{options.who} is : #{@karma[options.who.downcase]}!")
+    answer(msg,"Karma for #{options.who} is : #{@karma[options.who.downcase]}!")
   end
 
   on :cmd, :karma_list, /^!karma_list\s/ do |msg,options|

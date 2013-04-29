@@ -27,7 +27,7 @@ module Linael
     #   mod("admin") #=> return admin module
     #   mod("dfgh")  #=> nil
     def mod(name)
-      @runner.modules.detect {|mod| mod.class == Modules::Module}.modules[name]
+      @runner.master.modules[name]
     end
 
     # Name of the module. Must be equal to class name downcase

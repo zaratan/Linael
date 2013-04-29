@@ -57,7 +57,7 @@ linael :save, require_auth: true, required_mod: ["module","blacklist"] do
     end
   end
 
-  on :cmd_auth, :load_save, /^!load(\s|\n|\r)/ do |msg,options|
+  on :cmdAuth, :load_save, /^!load(\s|\r|\n)/ do |msg,options|
     if Dir.exist? 'save'
       #construct list to load
       list_to_load = []

@@ -51,7 +51,7 @@ def self.linael(name,config_hash = Hash.new,&block)
       generate_reason
       #Define method .type which return the first word begining with -
       generate_type
-      #return EVERYTHING
+      #return EVERYTHING but the first word
       generate_all
     end)
 
@@ -93,7 +93,7 @@ module Linael
     # +regex+:: the regex that the method should match
     # +config_hash+:: an optional configuration hash (for now, there is no configuration option)
     # +block+:: where we describe what the method should do
-    def self.on(type, name,regex=/./,config_hash = Hash.new,&block)
+    def self.on(type, name,regex=//,config_hash = Hash.new,&block)
     
       # Generate the catch of regex in Options class
       self::Options.class_eval do

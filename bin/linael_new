@@ -14,18 +14,21 @@ module Linael
 
   include IRC
 
-  #The server to join
-  Server = "irc.rizon.net"
+  #THIS IS A DEFAULT CONFIGURATION PLEASE DO NOT EDIT DIRECTLY OR YOUR COMMIT WILL BE REFUSED
+
+  #The server adress to join
+  Server = ""
   #The connection port
   Port = 6667
   #Nick of the bot
   Nick = "Linael"
   #Name of master user
-  Master = "zaratan"
+  Master = "Skizzk"
 
-  #Module which 
+  #Module in charge of loading others
   MasterModule = Modules::Module
-  ModulesToLoad = []
+  #The names of differents modules you want to autoload
+  ModulesToLoad = ["basic_auth","admin","identify"]
 
   IRC::linael_start
 

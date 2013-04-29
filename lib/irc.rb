@@ -5,6 +5,12 @@ module Linael
   # mains methods of IRC
   module IRC
 
+    def self.linael_start
+      self.connect(Linael::Server,Linael::Port,Linael::Nick)
+      action = Handler.new(Linael::MasterModule,Linael::ModulesToLoad)
+      self.main_loop(action)
+    end
+
     # Send a message in the socket
     def self.send_msg(msg)
       $linael_irc_socket.puts "#{msg}\n"
@@ -46,6 +52,7 @@ module Linael
           msg = "#{$1.upcase} "
           msg += "#{arg[:dest]} " unless arg[:dest].nil?
           msg += "#{arg[:who]} " unless arg[:who].nil?
+          msg += "#{arg[:what]} " unless arg[:what].nil?
           msg += "#{arg[:args]} " unless arg[:args].nil?
           msg += ":#{arg[:msg]} " unless arg[:msg].nil?
           IRC::send_msg msg
@@ -62,6 +69,9 @@ module Linael
 
     #proxy for talk (proxyception) for readability
     def answer(privMsg,ans)
+      if !privMsg 
+        return
+      end
       if(privMsg.private_message?)
         talk(privMsg.who,ans)
       else

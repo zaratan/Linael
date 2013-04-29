@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 #A module to say if a triangle is right angled
-linael :triangle,constructor : "Aranelle" do
+linael :triangle, constructor: "Aranelle" do
 
     on :cmd, :triangle, /^!triangle\s/ do |msg,options|
         measures = options.all.gsub(/\s+/," ").split(" ")

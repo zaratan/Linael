@@ -15,12 +15,12 @@ linael :help do
       load "./lib/modules/#{modName}.rb"
       klass = "linael/modules/#{modName}".camelize.constantize
       unless !defined?(klass::Help) or klass::Help.empty?
-        klass::Help.each {|helpSent| answer(privMsg,helpSent)}
+        klass::Help.each {|helpSent| answer(msg,helpSent)}
       else
-        answer(privMsg,"No help for the module #{modName}. Ask #{klass::Constructor} for this :)")
+        answer(msg,"No help for the module #{modName}. Ask #{klass::Constructor} for this :)")
       end
     else
-      answer(privMsg,"There is no module named #{modName}")
+      answer(msg,"There is no module named #{modName}")
     end
   end
 

@@ -57,8 +57,8 @@ linael :module,require_auth: true do
       return
     end
 
-    @modules.remove modName,privMsg
-    @modules.add modName,privMsg
+    @modules.remove modName,msg
+    @modules.add modName,msg
   end
 
 end
@@ -96,7 +96,8 @@ module Linael
         @instance = instKlass
         rescue Exception
           answer(params[:privMsg],"Problem when loading the module")
-          talk(params[:privMsg].who,$!)
+          talk(params[:privMsg].who,$!) 
+          p $!
           raise $!
         end
       else
@@ -170,16 +171,17 @@ module Linael
     end
 
     # Ask for adding a module
-    def add(modName,privMsg)
+    # TODO add a nil privateMessage to handle adding from self
+    def add(modName,privMsg=false)
       begin
       if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
         load "./lib/modules/#{modName}.rb"
         klass = "linael/modules/#{modName}".camelize.constantize
         if (has_key?(klass::Name))
-          answer(privMsg,"Module already loaded, please unload first")	
+          answer(privMsg,"Module already loaded, please unload first")
         else
           if (klass.require_auth && @authModule.empty?)
-            answer(privMsg,"You need at least one authMethod to load this module")
+            answer(privMsg,"You need at least one authMethod to load this module") 
           else
             if matchRequirement?(klass.required_mod)
               mod = Modules::ModuleType.new(@runner,klass: klass,privMsg: privMsg)
@@ -187,16 +189,16 @@ module Linael
               @authModule << klass::Name if klass::auth?
               answer(privMsg,"Module #{modName} loaded!")
             else
-              answer(privMsg,"You do not have loaded all the modules required for this module.")
-              answer(privMsg,"Here is the list of requirement: #{klass.required_mod.join(" - ")}.")
+              answer(privMsg,"You do not have loaded all the modules required for this module.") 
+              answer(privMsg,"Here is the list of requirement: #{klass.required_mod.join(" - ")}.") 
             end
           end
         end
       end
       rescue Exception
         puts $!
-        answer(privMsg,"Problem when loading the module")
-        talk(privMsg.who,$!)
+        answer(privMsg,"Problem when loading the module") 
+        talk(privMsg.who,$!) 
       end
     end
 

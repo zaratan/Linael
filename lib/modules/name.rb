@@ -46,18 +46,18 @@ linael :name do
         url+="&usage_#{type}=1"
       end
       page = Hpricot(open(url))
-      name = (page/"div.body span.heavymedium a").inject("") {|str, nam| str += " #{coder.decode(nam.inner_html)}"}
+      name = (page/"div.body span.heavybig a").inject("") {|str, nam| str += " #{coder.decode(nam.inner_html)}"}
       name = (page/"div.body span").inject("") {|str, nam| str += " #{coder.decode(nam.inner_html.gsub(/\s/,""))}"} if name.empty?
-      answer(privMsg,"#{i+1} - #{name}")
+      answer(msg,"#{i+1} - #{name}")
 
     end
   end
 
   #show the differents types of names
-  on :cmd, :what_types, /^!name\s.*\s-types\s/ do |msg,options|
+  on :cmd, :what_types, /^!name\s.*\s*-types\s/ do |msg,options|
     coder = HTMLEntities.new
 
-    if (privMsg.message =~ /^!name\s.*\s-types\s+([A-z\*]*)/)
+    if (msg.message =~ /^!name\s.*\s*-types\s+([A-z\*]*)/)
       search=$1
       search.gsub!("*",".*")
     end
@@ -76,20 +76,20 @@ linael :name do
     end
     typesToParse.compact!
     typesToParse.cycle do |type|
-      talk(privMsg.who,typesToParse.shift(5).join("   "))
+      talk(msg.who,typesToParse.shift(5).join("   "))
     end
   end
 
 
-  generate_value_with_default :time_string => {regexp: /\s-([0-1]?[0-9])\s/, default: "1"},
-    :size => {regexp: /\s-s([1-4])\s/, default: "1"}
+  value_with_default :time_string => {regexp: /\s-([0-1]?[0-9])\s/, default: "1"},
+                     :size => {regexp: /\s-s([1-4])\s/, default: "1"}
 
-  generate_value :gender        => /\s-g([mfa])\s/,
-    :types_string  => /\s-t([A-z0-9]*)\s/
+  value :gender        => /\s-g([mfa])\s/,
+        :types_string  => /\s-t([A-z0-9]*)\s/
 
-  generate_match :all   => /\s-a\s/,
-  :types => /\s-types\s/,
-  :info  => /\s-info\s/
+  match :all   => /\s-a\s/,
+        :types => /\s-types\s/,
+        :info  => /\s-info\s/
 
   define_method "types" do |options|
     options.types_string.split(',')
