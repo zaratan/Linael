@@ -21,9 +21,9 @@ Modular collaborative IRC Bot in Ruby.
 
 
 
-##What is not Linael (and not Cinch)
+##What is not Linael (and why not Cinch)
 
-It's not a gem. You can't add it to an other program this easyly. And it is a bit heavier to clone the whole directory.
+It's not a gem. You can't add it to an other program this easily. And it is a bit heavier to clone the whole directory.
 
 It's not only a framework to build features. 
 It's a whole bot with embeded features.
@@ -31,16 +31,16 @@ I really like to have a whole DSL instead of some helper methods.
 
 #How to launch it?
 
-* Have ruby 1.9
+  * Have ruby 1.9
 * Create your own file in bin (see [How to make launch config](wiki/How-to-make-launch-config))
-* Install dependencies
-```shell
-bundle install
-```
-* Launch it! 
-```shell
-ruby bin/your_own_linael
-```
+  * Install dependencies
+  ```shell
+  bundle install
+  ```
+  * Launch it! 
+  ```shell
+  ruby bin/your_own_linael
+  ```
 
 #How to add my own features?
 
@@ -48,13 +48,13 @@ Read [How to make a new Module](wiki/How-to-make-a-new-Module)
 
 #How contribute?
 
-Fork it! Do it! Push it!
+  Fork it! Do it! Push it!
 
 #To do
-- [X] How to make a new module
-- [ ] What module should I use and why?
-- [X] Add a way to launch mods by default
-- [X] Config file
-- [ ] Module for wrapping File reading
-- [ ] Thread it!
-- [ ] Ping timer
+  - [X] How to make a new module
+  - [ ] What module should I use and why?
+  - [X] Add a way to launch mods by default
+  - [X] Config file
+  - [ ] Module for wrapping File reading
+  - [ ] Thread it!
+  - [ ] Ping timer
