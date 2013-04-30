@@ -3,13 +3,31 @@ Linael
 
 Modular collaborative IRC Bot in Ruby.
 
-#What is Linael
+#What is Linael and why Linael?
 
-Linael is a modular collaborative IRC bot written in ruby.
+* Linael is a modular collaborative IRC bot written in ruby.
+> **Modular** because the core functionnality is the module plugger (which is himself a module).
+> **Collaborative** because i'll happyly integrate any module you will submit :)
 
-She is designed to hot load/reload modules so you don't have to stop her... EVER.
+* She is designed to hot load/reload modules so you don't have to stop her... EVER.
+> Seriously, you **don't** really want your bot to quit for adding/correcting a functionnality.
 
-It's shipped with a DSL to make module writting easy
+* It's shipped with a DSL to make module writting easy.
+> Just tell your bot what you want to do. Do not ask yourself how to.
+
+* It come with an ever-growing library of modules.
+> You want to create, not to rewrite the same old administration module, don't you?
+
+
+
+
+##What is not Linael (and not Cinch)
+
+It's not a gem. You can't add it to an other program this easyly. And it is a bit heavier to clone the whole directory.
+
+It's not only a framework to build features. 
+It's a whole bot with embeded features.
+I really like to have a whole DSL instead of some helper methods.
 
 #How to launch it?
 
