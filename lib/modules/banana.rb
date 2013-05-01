@@ -1,72 +1,61 @@
 # -*- encoding : utf-8 -*-
-module Linael
-  class Modules::Banana < ModuleIRC
 
-    Name="banana"
+# Sing the banana song :)
+linael :banana,require_auth: true do 
 
-    Lyrics=[
-      "http://www.youtube.com/watch?v=vNie6hVM8ZI",
-      " ",
-      "ba-ba-ba-ba-ba-nana (2x)",
-      " ",
-      "banana-ah-ah (ba-ba-ba-ba-ba-nana)",
-      "potato-na-ah-ah (ba-ba-ba-ba-ba-nana)",
-      "banana-ah-ah (ba-ba-ba-ba-ba-nana)",
-      "togari noh pocato-li kani malo mani kano",
-      "chi ka-baba, ba-ba-nana",
-      " ",
-      "yoh plano boo la planonoh too",
-      "ma bana-na la-ka moobi talamoo",
-      "ba-na-na",
-      " ",
-      "ba-ba (ba-ba-ba-ba-banana)",
-      "PO-TAE-TOH-OH-OH (ba-ba-ba-ba-banana)",
-      "togari noh pocato li kani malo mani kano",
-      "chi ka-ba-ba, ba-ba-naNAAAHHHH!!!!"
-    ]
+  #Lyrics of the banana song
+  Lyrics=[
+    "http://www.youtube.com/watch?v=vNie6hVM8ZI",
+    " ",
+    "ba-ba-ba-ba-ba-nana (2x)",
+    " ",
+    "banana-ah-ah (ba-ba-ba-ba-ba-nana)",
+    "potato-na-ah-ah (ba-ba-ba-ba-ba-nana)",
+    "banana-ah-ah (ba-ba-ba-ba-ba-nana)",
+    "togari noh pocato-li kani malo mani kano",
+    "chi ka-baba, ba-ba-nana",
+    " ",
+    "yoh plano boo la planonoh too",
+    "ma bana-na la-ka moobi talamoo",
+    "ba-na-na",
+    " ",
+    "ba-ba (ba-ba-ba-ba-banana)",
+    "PO-TAE-TOH-OH-OH (ba-ba-ba-ba-banana)",
+    "togari noh pocato li kani malo mani kano",
+    "chi ka-ba-ba, ba-ba-naNAAAHHHH!!!!"
+  ]
 
-    Help=[
-      "Module: Banana",
-      " ",
-      "=====Fonctions=====",
-      "!banana                       => sing the banana song",
-      "!banana -[add|del] username   => add/del a user for this module"
-    ]
+  help [
+    "Sing the banana song",
+    " ",
+    "=====Fonctions=====",
+    "!banana                       => sing the banana song",
+    "!banana -[add|del] username   => add/del a user for this module"
+  ]
 
-    def startMod
-      add_module({cmd: [:song],
-                  cmdAuth: [:addUser,
-                            :delUser]})
+  on_init do
+    @user=["zaratan"]
+  end
+
+  #sing
+  on :cmd, :song, /^!banana[^A-z]*$/ do |msg,options|
+    before(msg) do |msg|
+      ((@user.detect {|user| msg.who.downcase.match(user)}) || (msg.private_message?))
     end
+    Lyrics.each{|line| answer(msg,line);sleep(0.5)}
+  end
 
-    def song privMsg
-      if (module? privMsg)
-        Lyrics.each{|line| answer(privMsg,line);sleep(0.5)}
-      end
-    end
-
-    def addUser privMsg
-      if (privMsg.message =~ /!banana.*-add\s*(\S*)/)
-        answer(privMsg,"Oki doki! #{$~[1]} can now banana :)")
-        @user << $~[1].downcase
-      end
-    end
-
-    def delUser privMsg
-      if (privMsg.message =~ /!banana\s*-del\s*(\S*)/)
-        answer(privMsg,"Oki doki! #{$~[1]} won't banana anymore :(")
-        @user.delete $~[1].downcase
-      end
-    end
-
-    def module? privMsg
-      (privMsg.message.encode.downcase =~ /^!banana[^A-z]*$/) && ((@user.detect {|user| privMsg.who.downcase.match(user)}) || (privMsg.private_message?))
-    end
-
-    def initialize(runner)
-      @user=["zaratan"]
-      super runner
-    end
+  #add a user
+  on :cmdAuth, :add_user, /!banana\s-add\s/ do |msg,options|
+    answer(msg,"Oki doki! #{options.who} can now banana :)")
+    @user << options.who.downcase
 
   end
+
+  #del a user
+  on :cmdAuth, :del_user, /!banana\s-del\s/ do |msg,options|
+    answer(msg,"Oki doki! #{options.who} won't banana anymore :(")
+    @user.delete options.who.downcase
+  end
+
 end

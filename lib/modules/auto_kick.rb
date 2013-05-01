@@ -1,11 +1,10 @@
 # -*- encoding : utf-8 -*-
-module Linael
-  class Modules::AutoKick < ModuleIRC
 
-    Name="auto_kick"
+#A module for managing auto kick
+linael :auto_kick,require_auth: true do
 
-    Help=[
-      "Module: Auto_Kick",
+    help [
+      "Module for manage Auto_Kick",
       " ",
       "=====Functions=====",
       "!akick -[add|del|show] where <options>",
@@ -16,55 +15,45 @@ module Linael
       "-show  : print the rule for the chan"
     ]
 
-    def self.require_auth
-      true
-    end
-
-    def initialize runner
+    
+    on_init do
       @akick = Hash.new
-      super(runner)
     end
 
-    def startMod
-      add_module({cmdAuth: [:addAkick,
-                            :delAkick,
-                            :printAkick],
-                  join:[:autokick]})
-    end
+    #autokick on join
+    on :join, :autokick, /./ do
 
-    def autokick joinMsg
-      if !@akick[joinMsg.where.downcase].nil?
-        if @akick[joinMsg.where.downcase].detect {|regexp| ((joinMsg.who.downcase.match regexp) || (joinMsg.identification.downcase.match regexp))}
-          talk(joinMsg.where,"sorry #{joinMsg.who} you are akick from #{joinMsg.where}.")
-          kick_channel({dest:joinMsg.where,who:joinMsg.who,msg:"sorry ♥"})
-        end
+      before(join) do |join|
+        !@akick[join.where.downcase].nil? and 
+          @akick[joinMsg.where.downcase].detect do |regexp| 
+          (joinMsg.who.downcase.match regexp) or 
+            (joinMsg.identification.downcase.match regexp)
+          end
       end
+
+      talk(join.where,"sorry #{join.who} you are akick from #{join.where}.")
+      kick_channel({dest:join.where,who:join.who,msg:"sorry ♥"})
+
     end
 
-    def addAkick privMsg
-      if Options.akick_add? privMsg.message
-        options = Options.new privMsg
-        answer(privMsg,"Oki doki! #{options.who} will be auto kick on #{options.chan}.")
-        addAkickRule options.chan.downcase,options.who.downcase
-      end
+    #add rule
+    on :cmdAuth, :add_akick, /^!akick\s-add\s/ do |msg,options|
+      answer(msg,"Oki doki! #{options.who} will be auto kick on #{options.chan}.")
+      add_akick_rule options.chan.downcase,options.who.downcase
     end
 
-    def delAkick privMsg
-      if Options.akick_del? privMsg.message
-        options = Options.new privMsg
-        answer(privMsg,"Oki doki! I'll no longuer match rule #{options.who} on #{options.chan}.")
-        delAkickRule options.chan.downcase,(options.who.to_i)
-      end
+    #del rule
+    on :cmdAuth, :del_akick, /^!akick\s-del\s/ do |msg,options|
+      answer(msg,"Oki doki! I'll no longuer match rule #{options.who} on #{options.chan}.")
+      del_akick_rule options.chan.downcase,(options.who.to_i)
     end
 
-    def printAkick privMsg
-      if Options.akick_show? privMsg.message
-        options = Options.new privMsg
-        printRules options.chan.downcase,privMsg.who
-      end
+    #show rules for a chan
+    on :cmdAuth, :show_akick, /!akick\s-show\s/ do |msg,options|
+      print_rules options.chan.downcase,msg.who
     end
 
-    def addAkickRule where,rule
+    define_method "add_akick_rule" do |where,rule|
       rule.gsub!("*",".*")
       if @akick[where].nil?
         @akick[where] = [rule]
@@ -73,26 +62,16 @@ module Linael
       end
     end
 
-    def delAkickRule where,ruleNum
+    define_method "del_akick_rule" do |where,ruleNum|
       if !@akick[where].nil?
         @akick[where].delete_at (ruleNum - 1)
       end
     end
 
-    def printRules where,who
+    define_method "print_rules" do |where,who|
       if !@akick[where].nil?
         @akick[where].each_with_index {|rule,index| talk(who,"#{(index + 1)} - #{rule}")}
       end
     end
 
-  
-    class Options < ModulesOptions
-      generate_to_catch :akick_add  => /^!akick\s-add/,
-                        :akick_del  => /^!akick\s-del/,
-                        :akick_show => /^!akick\s-show/
-      generate_chan
-      generate_who
-    end
-
-  end
 end

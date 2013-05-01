@@ -6,16 +6,27 @@ require 'socket'
 require_relative '../lib/irc.rb'
 require_relative '../lib/mess.rb'
 require_relative "../lib/modules.rb"
+require_relative '../lib/DSL.rb'
 require_relative '../lib/modules/module.rb'
 require_relative '../lib/message.rb'
-
-$SAFE = 0
 
 module Linael
 
   include IRC
+  
+  #The server to join
+  Server = "irc.rizon.net"
+  #The connection port
+  Port = 6667
+  #Nick of the bot
+  Nick = "LinaelTest"
+  #Name of master user
+  Master = "zaratan"
 
-  IRC::connect("irc.rizon.net",6667,"LinaelTest")
-  action=Handler.new([Modules::Module])	
-  IRC::main_loop(action)
+  #Module which 
+  MasterModule = Modules::Module
+  ModulesToLoad = ["basic_auth","admin"]
+
+  IRC::linael_start
+
 end

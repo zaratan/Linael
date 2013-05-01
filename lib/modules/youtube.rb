@@ -3,29 +3,21 @@
 require('open-uri')
 require('htmlentities')
 
-module Linael
-  class Modules::Youtube < ModuleIRC
+# Fetches a YouTube title and says it
+linael :youtube, :constructor => "Vinz_" do
 
-    Name="youtube"
-    Constructor="Vinz_"
+    value :id => /http[s]?:\/\/(?:www\.)?youtu.*v=([^&\s]*)/
 
-    def startMod
-      add_module :msg => [:youtube]
+    on_init do
+        @users = ["internets"]
     end
 
-    def youtube privMsg
-      if (Options.link? privMsg.message and privMsg.who !="Internets")
-        options = Options.new privMsg
+    on :msg, :youtube, /http[s]?:\/\/(?:www\.)?youtu.*\?/ do |msg,options|
+        before(msg) do |msg|
+            not (@users.detect {|user| msg.who.downcase.match(user)})
+        end
+
         open("http://www.youtube.com/watch?v=#{options.id}").read =~ /<title>(.*?)<\/title>/
-        answer(privMsg,HTMLEntities.new.decode("#{privMsg.who}: #{$1}"))
-      end
+        answer(msg, HTMLEntities.new.decode("#{msg.who}: #{$1}"))
     end
-
-    class Options < ModulesOptions
-      generate_to_catch :link => /http[s]?:\/\/(?:www\.)?youtu.*\?/
-      generate_value :id => /http[s]?:\/\/(?:www\.)?youtu.*v=([^&\s]*)/
-
-    end
-
-  end
 end
