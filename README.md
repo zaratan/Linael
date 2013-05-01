@@ -31,20 +31,20 @@ I really like to have a whole DSL instead of some helper methods.
 
 #How to launch it?
 
-  * Have ruby 1.9
-* Create your own file in bin (see [How to make launch config](wiki/How-to-make-launch-config))
-  * Install dependencies
-  ```shell
-  bundle install
-  ```
-  * Launch it! 
-  ```shell
-  ruby bin/your_own_linael
-  ```
+* Have ruby 1.9
+* Create your own file in bin (see [How to make launch config](https://github.com/Skizzk/Linael/wiki/How-to-make-launch-config))
+* Install dependencies
+```shell
+bundle install
+```
+* Launch it! 
+```shell
+ruby bin/your_own_linael
+```
 
 #How to add my own features?
 
-Read [How to make a new Module](wiki/How-to-make-a-new-Module)
+Read [How to make a new Module](https://github.com/Skizzk/Linael/wiki/How-to-make-a-new-Module)
 
 #How contribute?
 
