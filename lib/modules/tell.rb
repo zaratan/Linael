@@ -17,9 +17,11 @@ linael :tell do
   #add a tell
   on :cmd, :tell_add, /^!tell/ do |msg,options|
 
-    @tell_list[options.who.gsub(":","")] ||= []
-    @tell_list[options.who.gsub(":","")] = @tell_list[options.who.gsub(":","")] << [options.from_who,options.all.gsub(/^.*:/,"")]
-    answer(msg,"Oki doki! I'll tell this to #{options.who.gsub(":","")} :)")
+    who_tell = options.who.gsub(":","")
+
+    @tell_list[who_tell] ||= []
+    @tell_list[who_tell] = @tell_list[who_tell] << [options.from_who,options.all.gsub(/^.*:/,"")]
+    answer(msg,"Oki doki! I'll tell this to #{who_tell} :)")
 
   end
 
