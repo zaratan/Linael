@@ -36,7 +36,7 @@ linael :link, require_auth: true do
   end
 
   on :cmd, :link, /^!link\s+[^-\s]\S*\s/ do |priv_msg,options|
-    links = @links[options.link] || []
+    links = @links[options.link.downcase] || []
     if links.empty? 
       answer(priv_msg,"#{priv_msg.who}: I'm sorry, I really don't know :(")
     else
@@ -45,7 +45,7 @@ linael :link, require_auth: true do
   end
 
   on :cmd, :links, /^!links\s+\S+/ do |priv_msg,options|
-    links = @links[options.link] || []
+    links = @links[options.link.downcase] || []
     if links.empty?
       answer(priv_msg,"#{priv_msg.who}: I'm sorry, I really don't know :(")
     else
