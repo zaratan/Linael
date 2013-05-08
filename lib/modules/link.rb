@@ -2,6 +2,8 @@
 
 linael :link, require_auth: true do
 
+  # TODO
+  # Un petit %Q ici ;)
   help [
     "Module : Link",
     " ",
@@ -15,7 +17,7 @@ linael :link, require_auth: true do
   ]
 
   on_init do 
-    @links = Hash.new
+    @links = {}
     @users = []
   end
 
