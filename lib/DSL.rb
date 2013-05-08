@@ -16,31 +16,29 @@
 #   linael :test, constructor: "Skizzk", require_auth: true, required_mod: ["admin"] do 
 #   end 
 #   #=> produce a module named Test with Skizzk for constructor, which require at least an auth method and the module admin.
-def self.linael(name,config_hash = Hash.new,&block)
+def self.linael(name, config_hash ={}, &block)
 
   # Create the class
   new_class = Class.new(Linael::ModuleIRC) do
 
     # Add config in it
-    self.const_set("Constructor",config_hash[:constructor]) if config_hash.has_key?(:constructor)
+    self.const_set("Constructor",config_hash[:constructor]) if config_hash[:constructor]
     self.const_set("Name",name.to_s)
 
     define_singleton_method "require_auth" do
-      return false unless config_hash.has_key?(:require_auth)
       config_hash[:require_auth]
     end
 
     define_singleton_method "required_mod" do
-      return config_hash[:required_mod] if config_hash.has_key?(:required_mod)
+      config_hash[:required_mod]
     end
 
     define_singleton_method "auth?" do
-      return false unless config_hash.has_key?(:auth)
       config_hash[:auth]
     end
 
     # Define Options class (with some magic methods)
-    self.const_set("Options",Class.new(Linael::ModulesOptions) do 
+    options_class = Class.new(Linael::ModulesOptions) do 
       #Define method .chan which return the first word beging with a # . if none, return current chan
       generate_chan
       #Define method .who which retrun the first word with no # nor ! nor - . If none return current user
@@ -53,10 +51,11 @@ def self.linael(name,config_hash = Hash.new,&block)
       generate_type
       #return EVERYTHING but the first word
       generate_all
-    end)
+    end
 
+    self.const_set("Options",options_class)
 
-  end
+  end # Class.new(Linael::ModuleIRC)
 
   # Link the module to the right part of linael
   Linael::Modules.const_set(name.to_s.camelize,new_class)
@@ -93,11 +92,11 @@ module Linael
     # +regex+:: the regex that the method should match
     # +config_hash+:: an optional configuration hash (for now, there is no configuration option)
     # +block+:: where we describe what the method should do
-    def self.on(type, name,regex=//,config_hash = Hash.new,&block)
+    def self.on(type, name, regex=//, config_hash = {}, &block)
     
-      # Generate the catch of regex in Options class
+      # Generate regex catching in Options class
       self::Options.class_eval do
-        generate_to_catch name => regex
+        generate_to_catch(name => regex)
       end
 
       # Define the method which will be really called
@@ -120,7 +119,8 @@ module Linael
         end
       end
       # Add the feature to module start
-      self.const_set("ToStart",Hash.new) unless defined?(self::ToStart)
+      # TODO add doc here (why unless)
+      self.const_set("ToStart",{}) unless defined?(self::ToStart)
       self::ToStart[type] ||= []
       self::ToStart[type] = self::ToStart[type] << name
     end
@@ -187,12 +187,11 @@ module Linael
       @runner = runner
       self.instance_eval(&self.class::At_launch) if defined?(self.class::At_launch)
       @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
-      
     end
 
     # A method used to describe preliminary tests in a method
     def before(msg,&block)
-      raise InterruptLinael, "not matching" unless block.call(msg)
+      raise(InterruptLinael, "not matching") unless block.call(msg)
     end
 
     # Execute something later
@@ -201,7 +200,7 @@ module Linael
     # +hash+:: Params sended to the block
     def at(time,hash,&block)
       Thread.new do
-        sleep(1) until time < Time.now
+        sleep(time - Time.now)
         self.instance_exec(hash,&block)
       end
     end
