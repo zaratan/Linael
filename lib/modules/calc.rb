@@ -11,8 +11,10 @@ linael :calc do
     "!calc string to calc"
   ]
 
+  value to_calc: /\s([0-9A-z\/\*-\+\(\)\s\.<>!=&|]*)/
+
   on :cmd, :calc, /^!calc\s/ do |msg,options|
-    result = `echo "#{options.all.gsub("\r","")}" | bc -l`
+    result = `echo "#{options.to_calc.gsub("\r","")}" | bc -l`
     answer(msg,result)
   end
 end

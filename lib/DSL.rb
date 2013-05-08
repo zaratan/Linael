@@ -108,7 +108,7 @@ module Linael
           options = self.class::Options.new msg if msg.kind_of? PrivMessage
           begin
             #execute block
-            self.instance_exec(msg,options,&block)
+            Thread.new {self.instance_exec(msg,options,&block)}
           #for catching before methods
           rescue InterruptLinael
           end
