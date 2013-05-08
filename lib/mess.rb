@@ -5,18 +5,17 @@ class Message
 
   # Abstract type
   Type="MESSAGE"
-  # Astarct motif
+  # Abstract motif
   Motif=/\A.*\z/
 
   # sender@identification :message
   attr_reader :sender, :identification, :message
 
   # Initialize
-  def initialize(sender,identification,message)
+  def initialize(sender, identification, message)
     @sender=sender
     @identification=identification
     @message=message
-
   end
 
   # Is matching Motif?
@@ -26,7 +25,7 @@ class Message
 
   # Default to_s
   def to_s
-    "<#{@sender}(#{@identification})> #{@message}"
+    "<#{sender}(#{identification})> #{message}"
   end
 
 end
@@ -191,14 +190,10 @@ class Part < AbstractAct
   end
 
   # Who part
-  def who
-    @sender
-  end
+  alias :who :sender
 
   # From where did he part
-  def from
-    @message
-  end
+  alias :from :message
 
   # Overide of to_s
   def to_s
