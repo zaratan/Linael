@@ -6,12 +6,13 @@ module Linael
 
     # *Intern method, don't use it*::
     # It's a methode made for generate the add_type_behaviour
+    # TODO add protected (convention for *internal*)
     def add_module_irc_behavior type
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
         procToAdd = Proc.new {|msg| instance.send(nom,msg) if (instance.methods.grep /act_authorized\?/).empty? or act_authorized?(instance,msg)}
         (@runner.send "#{type}Act")[(instance.class::Name+ident).to_sym]= procToAdd
-        @behavior = Hash.new if !@behavior
-        @behavior[type] = [] if !@behavior[type]
+        @behavior ||= {}
+        @behavior[type] ||= []
         @behavior[type] << ident
       end
       self.class.send("define_method",("del_#{type}_behavior")) do |instance,ident|
@@ -30,10 +31,11 @@ module Linael
       @runner.master.modules[name]
     end
 
+    # TODO FIXME break backward module compatibility, it is crap
     # Name of the module. Must be equal to class name downcase
     Name=""
 
-    # *OLD DSL method*:: Must be overided to True if you need authentification
+    # *OLD DSL method*:: Must be overided to True if you need authentication
     def self.require_auth 
       false
     end

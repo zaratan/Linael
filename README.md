@@ -1,7 +1,9 @@
 Linael
 ======
+[![Code Climate](https://codeclimate.com/github/Skizzk/Linael.png)](https://codeclimate.com/github/Skizzk/Linael)
+[![Dependency Status](https://gemnasium.com/Skizzk/Linael.png)](https://gemnasium.com/Skizzk/Linael)
 
-Modular collaborative IRC Bot in Ruby.
+Modular collaborative IRC Bot in Ruby. 
 
 #What is Linael and why Linael?
 
@@ -57,4 +59,4 @@ Read [How to make a new Module](https://github.com/Skizzk/Linael/wiki/How-to-mak
   - [X] Config file
   - [ ] Module for wrapping File reading
   - [X] Thread it!
-  - [ ] Ping timer
+  - [X] Timer
