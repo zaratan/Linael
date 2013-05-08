@@ -9,8 +9,9 @@ module Linael
     # A method to handle Ping message
     def handleKeepAlive(msg)
       if Ping.match(msg) then
-        msgPing = Ping.new msg
-        pong_channel({dest: msgPing.sender})
+        ping_msg = Ping.new msg
+        pong_channel({dest: ping_msg.sender})
+        @pingAct.values.all?{|act| act.call ping_msg} 
         return true
       end
       return false
@@ -73,6 +74,7 @@ module Linael
       @msgAct=Hash.new
       @cmdAct=Hash.new
       @authAct=Hash.new
+      @pingAct=Hash.new
       @cmdAuthAct=Hash.new
       @master = master_module.new(self)
       @master.startMod

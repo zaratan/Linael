@@ -189,6 +189,17 @@ module Linael
     def before(msg,&block)
       raise InterruptLinael, "not matching" unless block.call(msg)
     end
+
+    # Execute something later
+    # Params:
+    # +time+:: The time of the execution
+    # +hash+:: Params sended to the block
+    def at(time,hash,&block)
+      Thread.new do
+        sleep(1) until time < Time.now
+        self.instance_exec(hash,&block)
+      end
+    end
   end
 
 end
