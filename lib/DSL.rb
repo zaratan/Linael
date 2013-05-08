@@ -107,8 +107,13 @@ module Linael
           # if it's a message: generate options
           options = self.class::Options.new msg if msg.kind_of? PrivMessage
           begin
-            #execute block
-            Thread.new {self.instance_exec(msg,options,&block)}
+            #DON'T THREAD AUTH METHOD NOOB
+            if type == :auth
+              self.instance_exec(msg,options,&block)
+            else
+              #execute block
+              Thread.new {self.instance_exec(msg,options,&block)}
+            end
           #for catching before methods
           rescue InterruptLinael
           end
