@@ -108,7 +108,7 @@ module Linael
           options = self.class::Options.new msg if msg.kind_of? PrivMessage
           begin
             #execute block
-            self.instance_exec(msg,options,&block)
+            Thread.new {self.instance_exec(msg,options,&block)}
           #for catching before methods
           rescue InterruptLinael
           end
@@ -188,6 +188,17 @@ module Linael
     # A method used to describe preliminary tests in a method
     def before(msg,&block)
       raise InterruptLinael, "not matching" unless block.call(msg)
+    end
+
+    # Execute something later
+    # Params:
+    # +time+:: The time of the execution
+    # +hash+:: Params sended to the block
+    def at(time,hash,&block)
+      Thread.new do
+        sleep(1) until time < Time.now
+        self.instance_exec(hash,&block)
+      end
     end
   end
 

@@ -56,5 +56,5 @@ Read [How to make a new Module](https://github.com/Skizzk/Linael/wiki/How-to-mak
   - [X] Add a way to launch mods by default
   - [X] Config file
   - [ ] Module for wrapping File reading
-  - [ ] Thread it!
+  - [X] Thread it!
   - [ ] Ping timer
