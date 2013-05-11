@@ -33,10 +33,12 @@ linael :tell do
       who = msg.who.downcase if type == :msg
 
       if @tell_list.has_key?(who)
-        @tell_list[who].each do |message|
-          talk(who,"Hey! #{message[0]} told me this: #{message[1]}")
-        end
+        to_tell = @tell_list[who]
         @tell_list.delete(who)
+        to_tell.each do |message|
+          talk(who,"Hey! #{message[0]} told me this: #{message[1]}")
+          sleep(1)
+        end
       end
 
     end

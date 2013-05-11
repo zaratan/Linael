@@ -43,6 +43,8 @@ module Linael
 
     include IRC
 
+    attr_accessor :timer
+
     # Cover most of  IRC send. 
     # Catch methods ending with _channel
     #   kick_channel #=> a kick
@@ -64,6 +66,9 @@ module Linael
 
     #proxy for sendind a private_message to socket. Just for code readability
     def talk(dest,msg)
+      $timer ||= 0
+      sleep(0.2) until Time.now > $timer
+      $timer = Time.now + 0.5
       privmsg_channel({dest: dest, msg: msg})
     end
 
