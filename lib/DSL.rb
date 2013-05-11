@@ -198,7 +198,7 @@ module Linael
     # Params:
     # +time+:: The time of the execution
     # +hash+:: Params sended to the block
-    def at(time,hash,&block)
+    def at(time,hash=nil,&block)
       Thread.new do
         sleep(time - Time.now)
         self.instance_exec(hash,&block)
