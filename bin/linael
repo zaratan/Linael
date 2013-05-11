@@ -26,7 +26,7 @@ module Linael
 
   #Module which 
   MasterModule = Modules::Module
-  ModulesToLoad = []
+  ModulesToLoad = ["basic_auth","admin","help","blacklist","save","identify","talk","tell","link","karma","remind","youtube"]
 
   IRC::linael_start
 

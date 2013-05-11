@@ -35,6 +35,12 @@ linael :test,:constructor => "Skizzk",:require_auth => true,:required_mod => ["a
     end
 
   end
+  
+  on :cmd, :test3, /^!test3\s/ do |msg,options|
+    150.times do
+      talk(options.from_who,"TESTTESTESTETETETETETETETTETETETETETTETETETETTETETETETETETETETTETETETESTESTETSTETS")
+    end
+  end
 
 
 end

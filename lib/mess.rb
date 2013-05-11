@@ -9,7 +9,7 @@ class Message
   Motif=/\A.*\z/
 
   # sender@identification :message
-  attr_reader :sender, :identification, :message
+  attr_accessor :sender, :identification, :message
 
   # Initialize
   def initialize(sender, identification, message)

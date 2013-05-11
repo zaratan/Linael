@@ -3,13 +3,15 @@
 require 'open-uri'
 require 'hpricot'
 require 'htmlentities'
+require 'net/http'
 
 #A module to generate names
 linael :name do
 
   help [
     "Module: Name",
-    "A module to generate names",
+    "A module to generate names.", 
+    "Thx to http://www.behindthename.com",
     " ",
     "=====Fonctions=====",
     "!name       => display a random name from a database",
@@ -50,6 +52,34 @@ linael :name do
       name = (page/"div.body span").inject("") {|str, nam| str += " #{coder.decode(nam.inner_html.gsub(/\s/,""))}"} if name.empty?
       answer(msg,"#{i+1} - #{name}")
 
+    end
+  end
+
+  #info on a name... this fonction is SO UGLY
+  on :cmd, :info_name, /!name\s.*\s*-info\s/ do |msg,options|
+    coder = HTMLEntities.new
+
+    uri = URI('http://www.behindthename.com/names/search.php')
+    redirect = Net::HTTP.post_form(uri, 'terms' => options.who)
+    redirect.each_header {|h,v| p h; p v}
+    url = "http://www.behindthename.com"+redirect.get_fields('location')[0]
+    page = Hpricot(open(url))
+    page = coder.decode(page)
+    page =~ /GENDER[^>]*>[^>]*info[^>]*><[^<]*>([A-z]*)<[^<]*<\/span/m
+    gender = $1
+    answer(msg,"Gender: #{gender}")
+    usages = page.scan /<a[^>]*usg[^>]*>([A-z\s]*)</
+    answer(msg,"Usages: #{usages.join(", ")}")
+    page =~ /padding:3px;padding-left:10px;[^>]*>.(.*)<.div.*nameheading.*triangle.gif[^>]*>[^>]*related/m
+    description = $1
+    description.gsub!(/<[^>]*>/,"")
+    answer(msg,"Description:")
+    description.split("\n").each do |to_print|
+      to_print.gsub!("\r","")
+      to_print += " "
+      to_print.scan(/.{0,400}\s/).each do |line|
+        answer(msg,line)
+      end
     end
   end
 

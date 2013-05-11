@@ -6,6 +6,15 @@ require 'ya2yaml'
 #A module to save variables in others modules
 linael :save, require_auth: true, required_mod: ["module","blacklist"] do
 
+  on :cmdAuth, :auto_save, /^!auto_save\s/ do |msg,options|
+      msg.message = "!save\s"
+      save(msg)
+    at 1.hour.from_now do
+      msg.message = "!auto_save\s"
+      auto_save(msg)
+    end
+  end
+
   on :cmdAuth, :save, /^!save(\s|\r|\n)/ do |msg,options|
     #list of module to save
     list_to_save=[]
