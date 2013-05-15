@@ -39,9 +39,9 @@ linael :karma do
     answer(msg,"Karma for #{options.who} is : #{@karma[options.who.downcase]}!")
   end
 
-  on :cmd, :karma_list, /^!karma_list\s/ do |msg,options|
+  on :cmd, :karma_list, /^!karma_list\s+\S/ do |msg,options|
     @karma.each do |key,value|
-      talk(msg.who, "Karma for #{key}: #{value}") if  options.regex == "" || key.match("^#{options.regex.downcase.gsub("*",".*")}$")
+      talk(msg.who, "Karma for #{key}: #{value}") if key.match("^#{options.regex.downcase.gsub("*",".*")}$")
     end
   end
 
