@@ -4,7 +4,7 @@
 linael :banana,require_auth: true do 
 
   #Lyrics of the banana song
-  Lyrics=[
+  Linael::Lyrics=[
     "http://www.youtube.com/watch?v=vNie6hVM8ZI",
     " ",
     "ba-ba-ba-ba-ba-nana (2x)",
@@ -42,7 +42,7 @@ linael :banana,require_auth: true do
     before(msg) do |msg|
       ((@user.detect {|user| msg.who.downcase.match(user)}) || (msg.private_message?))
     end
-    Lyrics.each{|line| answer(msg,line);sleep(0.5)}
+    Linael::Lyrics.each{|line| answer(msg,line);sleep(0.5)}
   end
 
   #add a user
