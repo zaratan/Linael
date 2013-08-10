@@ -11,8 +11,10 @@ linael :tell do
   ]
 
   on_init do
-    @tell_list = Hash.new()
+    @tell_list = {}
   end
+
+  attr_accessor :tell_list
 
   #add a tell
   on :cmd, :tell_add, /^!tell/ do |msg,options|
@@ -20,7 +22,7 @@ linael :tell do
     who_tell = options.who.downcase.gsub(":","")
 
     @tell_list[who_tell] ||= []
-    @tell_list[who_tell] = @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,"")]
+    @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,"")]
     answer(msg,"Oki doki! I'll tell this to #{who_tell} :)")
 
   end
