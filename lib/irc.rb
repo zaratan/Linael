@@ -26,7 +26,6 @@ module Linael
     # Main loop of the irc to keep the prog reading inside the socket
     def self.main_loop(msg_handler)
       while line = get_msg
-        p line
         msg_handler.handle_msg(line)
       end
     end
