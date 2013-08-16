@@ -31,13 +31,10 @@ class Message
   def initialize(msg)
     date = Time.now
     msg =~ self::Motif
-    sender = $1
-    identification = $2 if $2
-    content = $3 if $3
   end
 
-  UserRegex=/:([^!]*)!(\S*)/
-  ContentRegex=/:([^\r\n]*)/
+  UserRegex=/:(?<sender>[^!]*)!(?<identification>\S*)/
+  ContentRegex=/:(?<content>[^\r\n]*)/
   
   def self.default_regex(type)
     /\A#{UserRegex}\s#{type}\s#{ContentRegex}/
@@ -74,14 +71,7 @@ class LocatedMessage < Message
     location =~ /^#/
   end
 
-  def initialize(msg)
-    super(msg)
-    content = nil
-    location = $3 if $3
-    content = $4 if $4
-  end
-
-  LocationRegex=/\S*/
+  LocationRegex=/(?<location>\S*)/
 
   def self.default_regex(type)
     /\A#{UserRegex}\s#{type}\s#{LocationRegex}\s#{ContentRegex}/
@@ -89,12 +79,63 @@ class LocatedMessage < Message
 
 end
 
+join_regex = /#{LocatedMessage::UserRegex}\sJOIN\s:#{LocatedMessage::LocationRegex}/
+
+generate_message_class :join, LocatedMessage, join_regex do
+  def to_s
+    "#{sender}(#{identification}) has joined #{location}"
+  end
+end
+
+generate_message_class :part, LocatedMessage, LocatedMessage.default_regex("PART") do
+  def to_s
+    "#{sender}(#{identification}) has leaved #{location} saying: #{content}"
+  end
+end
+
+generate_message_class :notice, LocatedMessage, LocatedMessage.default_regex("NOTICE") do
+  def to_s
+    "#{sender}(#{identification}) has noticed #{location} saying: #{content}"
+  end
+end
+
+generate_message_class :priv_message, LocatedMessage, LocatedMessage.default_regex("PRIVMSG"), "PRIVMSG" do
+  def to_s
+    "#{sender}(#{identification}) said to #{location}: #{content}"
+  end
+end
+
 #Kick, Mode
 class UserLocatedMessage < LocatedMessage
 
   attr_accessor :target
 
+  def initialize(msg)
+    super(msg)
+    content = nil
+    target
+  end
+
+  TargetRegex=/(?<target>\S*)/
+
 end
+
+mode_regex=/\A#{UserLocatedMessage::UserRegex}\sMODE\s#{UserLocatedMessage::LocationRegex}\s(?<content>\S*)\s#{UserLocatedMessage::TargetRegex}/
+
+generate_message_class :mode UserLocatedMessage, mode_regex do
+  def to_s
+    "#{sender}(#{identification}) changed mode on #{location}: #{content} #{target} "
+  end
+end
+
+kick_regex=/\A#{UserLocatedMessage::UserRegex}\sKICK\s#{UserLocatedMessage::LocationRegex}\s#{UserLocatedMessage::TargetRegex}\s#{UserLocatedMessage::ContentRegex}/
+
+generate_message_class :kick UserLocatedMessage, kick_regex do
+  def to_s
+    "#{sender}(#(identification}) kicked #{target} from #{location} for reason: #{content}"
+  end
+end
+
 
 #Numbered messages
 class ServerMessage < Message
