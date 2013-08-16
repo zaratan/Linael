@@ -132,7 +132,6 @@ module Linael
     # +:default+:: default value
     def self.generate_meth args
       define_method args[:name] do
-        p message, args[:regexp], message =~ args[:regexp]
         return $1 if message =~ args[:regexp]
         return self.send args[:default_meth] if args[:default_meth]
         return args[:default] unless args[:default].nil?
