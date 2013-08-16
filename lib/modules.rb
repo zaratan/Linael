@@ -107,9 +107,9 @@ module Linael
 
     # Initialize
     def initialize privMsg
-      @message = privMsg.message
-      @where = privMsg.place
-      @from_who = privMsg.who
+      @message = privMsg.message || ""
+      @where = privMsg.place || ""
+      @from_who = privMsg.who || ""
     end
 
     # Magic method to generate class methods for matching regex
@@ -132,6 +132,7 @@ module Linael
     # +:default+:: default value
     def self.generate_meth args
       define_method args[:name] do
+        p message, args[:regexp], message =~ args[:regexp]
         return $1 if message =~ args[:regexp]
         return self.send args[:default_meth] if args[:default_meth]
         return args[:default] unless args[:default].nil?

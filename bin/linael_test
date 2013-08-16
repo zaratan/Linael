@@ -5,7 +5,7 @@ require 'active_support/inflector'
 require 'active_support/core_ext/numeric/time'
 require 'socket'
 require_relative '../lib/irc.rb'
-require_relative '../lib/mess.rb'
+require_relative '../lib/better_mess.rb'
 require_relative "../lib/modules.rb"
 require_relative '../lib/DSL.rb'
 require_relative '../lib/modules/module.rb'

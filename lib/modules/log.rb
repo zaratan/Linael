@@ -7,7 +7,7 @@ linael :log do
     "Log every recognized message in the console"
   ]
 
-  [:msg,:kick,:nick,:part,:join,:mode].each do |type|
+  [:msg,:kick,:nick,:part,:join,:mode,:quit,:notice,:invite].each do |type|
     on type,type do |msg|
       p msg
     end

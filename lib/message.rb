@@ -8,7 +8,7 @@ module Linael
 
     # A method to handle Ping message
     def handleKeepAlive(msg)
-      if Ping.match(msg) then
+      if Ping.match?(msg) then
         ping_msg = Ping.new msg
         pong_channel({dest: ping_msg.sender})
         @pingAct.values.all?{|act| act.call ping_msg} 
@@ -19,7 +19,7 @@ module Linael
 
     # A method to handle private messages
     def handlePrivMsg(msg)
-      if PrivMessage.match(msg) then
+      if PrivMessage.match?(msg) then
         privmsg = PrivMessage.new msg
         if (privmsg.command?) then
           @cmdAct.values.each {|act| act.call privmsg}
@@ -51,26 +51,27 @@ module Linael
       @to_handle
     end
 
-    @to_handle=[Mode,Nick,Join,Notice,Part,Kick]
+    @to_handle=[Mode,Nick,Join,Notice,Part,Kick,Invite,Quit]
     
     @to_handle.each do |klass|
-      attr_accessor "#{klass.name.downcase}Act".to_sym
-      define_method "handle_#{klass.name.downcase}" do |msg|
-        if klass.match(msg) then
+      klass_name = klass.name.gsub(/.*:/,"").downcase
+      attr_accessor "#{klass_name}Act".to_sym
+      define_method "handle_#{klass_name}" do |msg|
+        if klass.match?(msg) then
           part = klass.new msg
-          instance_variable_get("@#{klass.name.downcase}Act").values.each {|act| act.call part}
+          instance_variable_get("@#{klass_name}Act").values.each {|act| act.call part}
           return true
         end
         return false
       end
       @toDo = [] if @toDo.nil?
-      @toDo << "handle_#{klass.name.downcase}".to_sym
+      @toDo << "handle_#{klass_name}".to_sym
     end
 
     # Initialize
     def initialize(master_module,modules)
       Handler.toDo << :handleKeepAlive << :handlePrivMsg
-      Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
+      Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.gsub(/.*:/,"").downcase}Act",Hash.new}
       @msgAct=Hash.new
       @cmdAct=Hash.new
       @authAct=Hash.new
