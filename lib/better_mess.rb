@@ -40,7 +40,7 @@ class Message
   ContentRegex=/:([^\r\n]*)/
   
   def self.default_regex(type)
-    /\A#{Message::UserRegex}\s#{type}\s#{Message::ContentRegex}/
+    /\A#{UserRegex}\s#{type}\s#{ContentRegex}/
   end
 
 end
@@ -72,6 +72,19 @@ class LocatedMessage < Message
 
   def on_chan?
     location =~ /^#/
+  end
+
+  def initialize(msg)
+    super(msg)
+    content = nil
+    location = $3 if $3
+    content = $4 if $4
+  end
+
+  LocationRegex=/\S*/
+
+  def self.default_regex(type)
+    /\A#{UserRegex}\s#{type}\s#{LocationRegex}\s#{ContentRegex}/
   end
 
 end
