@@ -2,15 +2,17 @@
 
 module Linael
 
-  # General class for messages
-  # Quit, Ping, Nick
+  # General class for messages 
+  # It covers Quit, Ping and Nick messages
   class Message
 
+    # date of message, sender of message, ident of sender, content of message
     attr_accessor :date, :sender, :identification, :content
 
     alias_method :who, :sender
     alias_method :message, :content
 
+    # DSL method to generate final classes of messages
     def self.generate_message_class (name,super_class,motif,type=nil,&block)
       new_message_class = Class.new(super_class) do
         self.const_set('Motif', motif)
@@ -29,10 +31,12 @@ module Linael
       end
     end
 
+    # Is matching motif?
     def self.match? msg
       msg =~ self::Motif
     end
 
+    # Initialize the message
     def initialize(msg,parse=nil)
       @date = Time.now
       unless parse
@@ -44,57 +48,48 @@ module Linael
       @content= (parse[:content_r] if parse.names.include? 'content_r') || ""
     end
 
+    # Pretty print the user
     def print_user
       "#{sender}(#{identification})"
     end
 
+    # Regex for matching user
     UserRegex=/:(?<sender_r>[^!]*)!(?<identification_r>\S*)/
+
+    # Regex for matching content
     ContentRegex=/:?(?<content_r>[^\n]*)/
 
+    # Default regex for Messages
     def self.default_regex(type)
       /\A#{UserRegex}\s#{type}\s#{ContentRegex}/
     end
 
   end
 
-  Message.generate_message_class :quit, Linael::Message, Message.default_regex("QUIT") do
-    def to_s
-      "#{print_user} has quit: #{message}"
-    end
-  end
-
-  Message.generate_message_class :ping, Message,/\APING :(?<sender_r>[^\n]*)\z/ do
-    def to_s
-      "Ping from #{sender}"
-    end
-  end
-
-  Message.generate_message_class :nick, Message, Message.default_regex("NICK") do
-    def to_s
-      "#{print_user} changed his nick to #{content}"
-    end
-
-    alias_method :new_nick, :content
-  end
-
-  #Join, Part, Notice, PrivateMessage
+  # General class for located messages
+  # It cover Join, Part, Notice and PrivateMessage messages
   class LocatedMessage < Message
 
+    # Location of the message
     attr_accessor :location
 
     alias_method :where, :location
     alias_method :place, :location
 
+    # Is it on a chan?
     def on_chan?
       location =~ /^#/
     end
 
+    # Is it a private message?
     def private_message?
       location !~ /^#/
     end
 
+    # Regex for matching location
     LocationRegex=/(?<location_r>\S*)/
 
+    # initialize
     def initialize(msg,parse=nil)
       unless parse
         self.class::Motif =~ msg
@@ -104,13 +99,41 @@ module Linael
       @location= (parse[:location_r] if parse.names.include? 'location_r') || ""
     end
 
+    # Default regex for LocatedMessage
     def self.default_regex(type)
       /\A#{UserRegex}\s#{type}\s#{LocationRegex}\s#{ContentRegex}/
     end
 
   end
 
+  # General class for messgaes with user and location
+  # It covers Kick, Mode and Invite messages
+  class UserLocatedMessage < LocatedMessage
+
+    # Target of the message
+    attr_accessor :target
+
+    # Initialize
+    def initialize msg
+      self.class::Motif =~ msg
+      super(msg,$~)
+      @target= ($~[:target_r] if $~.names.include? 'target_r') || ""
+    end
+
+    # Regex for matching target
+    TargetRegex=/(?<target_r>\S*)/
+
+  end
+  
+  #Unregular Regex for join 
   join_regex = /#{LocatedMessage::UserRegex}\sJOIN\s:#{LocatedMessage::LocationRegex}/
+  #Unregular Regex for mode 
+  mode_regex=/\A#{UserLocatedMessage::UserRegex}\sMODE\s#{UserLocatedMessage::LocationRegex}\s(?<content_r>\S*)\s#{UserLocatedMessage::TargetRegex}/
+  #Unregular Regex for kick 
+  kick_regex=/\A#{UserLocatedMessage::UserRegex}\sKICK\s#{UserLocatedMessage::LocationRegex}\s#{UserLocatedMessage::TargetRegex}\s#{UserLocatedMessage::ContentRegex}/
+  #Unregular Regex for invite 
+  invite_regex=/\A#{UserLocatedMessage::UserRegex}\sINVITE\s#{UserLocatedMessage::TargetRegex}\s:#{UserLocatedMessage::LocationRegex}/
+
 
   Message.generate_message_class :join, LocatedMessage, join_regex do
     def to_s
@@ -139,24 +162,26 @@ module Linael
       content =~ /^!/
     end
   end
-
-
-  #Kick, Mode, Invite
-  class UserLocatedMessage < LocatedMessage
-
-    attr_accessor :target
-
-    def initialize msg
-      self.class::Motif =~ msg
-      super(msg,$~)
-      @target= ($~[:target_r] if $~.names.include? 'target_r') || ""
+  
+  Message.generate_message_class :quit, Linael::Message, Message.default_regex("QUIT") do
+    def to_s
+      "#{print_user} has quit: #{message}"
     end
-
-    TargetRegex=/(?<target_r>\S*)/
-
   end
 
-  mode_regex=/\A#{UserLocatedMessage::UserRegex}\sMODE\s#{UserLocatedMessage::LocationRegex}\s(?<content_r>\S*)\s#{UserLocatedMessage::TargetRegex}/
+  Message.generate_message_class :ping, Message,/\APING :(?<sender_r>[^\n]*)\z/ do
+    def to_s
+      "Ping from #{sender}"
+    end
+  end
+
+  Message.generate_message_class :nick, Message, Message.default_regex("NICK") do
+    def to_s
+      "#{print_user} changed his nick to #{content}"
+    end
+
+    alias_method :new_nick, :content
+  end
 
   Message.generate_message_class :mode, UserLocatedMessage, mode_regex do
     def to_s
@@ -164,15 +189,11 @@ module Linael
     end
   end
 
-  kick_regex=/\A#{UserLocatedMessage::UserRegex}\sKICK\s#{UserLocatedMessage::LocationRegex}\s#{UserLocatedMessage::TargetRegex}\s#{UserLocatedMessage::ContentRegex}/
-
   Message.generate_message_class :kick, UserLocatedMessage, kick_regex do
     def to_s
       "#{print_user} kicked #{target} from #{location} for reason: #{content}"
     end
   end
-
-  invite_regex=/\A#{UserLocatedMessage::UserRegex}\sINVITE\s#{UserLocatedMessage::TargetRegex}\s:#{UserLocatedMessage::LocationRegex}/
 
   Message.generate_message_class :invite, UserLocatedMessage, invite_regex do
     def to_s
