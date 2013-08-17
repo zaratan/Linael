@@ -4,23 +4,30 @@
 #A module for rejoin
 linael :rejoin, require_auth: true do
 
-  help []
+  help=[
+    "Auto-rejoin module",
+    "!start to start it"
+    ]
 
   on_init do
+    @started=false
     @chan_to_rejoin=[]
   end
+
 
   define_method "rejoin_all" do 
     @chan_to_rejoin.each do |chan|
       join_channel :dest => chan
     end
+    at 1.minute.from_now do
+      rejoin_all
+    end
   end
 
-  on :cmdAuth, :launch, /^!auto_rejoin/ do |msg,options|
+  on :cmdAuth, :launch, /^!start/ do |msg,options|
+    before(@started) {|start| !start}
+    @started = true
     rejoin_all
-    at 1.minutes.from_now do
-      launch(msg)
-    end
   end
 
   on :kick, :do_they_kick_me? do |msg|

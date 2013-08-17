@@ -169,7 +169,7 @@ module Linael
     end
   end
 
-  Message.generate_message_class :ping, Message,/\APING :(?<sender_r>[^\n]*)\z/ do
+  Message.generate_message_class :ping, Message,/\APING :(?<sender_r>[^\n]*)/ do
     def to_s
       "Ping from #{sender}"
     end
@@ -203,10 +203,27 @@ module Linael
 
 
   #Numbered messages
-  class ServerMessage < Message
+  class NumberedMessage < LocatedMessage
 
     attr_accessor :code
 
+    def initialize msg
+      self.class::Motif =~ msg
+      super(msg,$~)
+      @code= ($~[:code_r] if $~.names.include? 'code_r') || ""
+
+    end
+
+    def self.regex 
+      /:(?<sender_r>\S*)\s(?<code_r>\d*)\s(?<location_r>[^:]*):(?<content_r>[^\n]*)/
+    end
+
+  end
+
+  Message.generate_message_class :server, NumberedMessage, NumberedMessage.regex do
+    def to_s
+      "#{sender} #{code} #{location}: #{content}"
+    end
   end
 
 end

@@ -37,6 +37,7 @@ module Linael
     #the differents type of actings
     attr_accessor :msgAct,
       :cmdAct,
+      :pingAct,
       :authAct,
       :cmdAuthAct,
       :master
@@ -51,7 +52,7 @@ module Linael
       @to_handle
     end
 
-    @to_handle=[Mode,Nick,Join,Notice,Part,Kick,Invite,Quit]
+    @to_handle=[Mode,Nick,Join,Notice,Part,Kick,Invite,Quit,Server]
     
     @to_handle.each do |klass|
       klass_name = klass.name.gsub(/.*:/,"").downcase

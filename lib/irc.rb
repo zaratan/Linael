@@ -6,7 +6,7 @@ module Linael
   module IRC
 
     def self.linael_start
-      self.connect(Linael::Server,Linael::Port,Linael::Nick)
+      self.connect(Linael::ServerAddress,Linael::Port,Linael::BotNick)
       action = Handler.new(Linael::MasterModule,Linael::ModulesToLoad)
       self.main_loop(action)
     end

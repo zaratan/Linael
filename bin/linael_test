@@ -16,17 +16,17 @@ module Linael
   include IRC
   
   #The server to join
-  Server = "irc.rizon.net"
+  ServerAddress = "irc.rizon.net"
   #The connection port
   Port = 6667
   #Nick of the bot
-  Nick = "LinaelTest"
+  BotNick = "LinaelTest"
   #Name of master user
   Master = "zaratan"
 
   #Module which 
   MasterModule = Modules::Module
-  ModulesToLoad = ["basic_auth","admin"]
+  ModulesToLoad = ["basic_auth","admin","log"]
 
   IRC::linael_start
 
