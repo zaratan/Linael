@@ -19,6 +19,7 @@ GEM
     arel (4.0.0)
     atomic (1.1.13)
     builder (3.1.4)
+    colorize (0.5.8)
     google-search (1.0.3)
       json
     happymapper (0.4.0)
@@ -51,6 +52,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  colorize
   google-search
   hpricot
   htmlentities

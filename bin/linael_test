@@ -4,6 +4,7 @@
 require 'active_support/inflector'
 require 'active_support/core_ext/numeric/time'
 require 'socket'
+require 'colorize'
 require_relative '../lib/irc.rb'
 require_relative '../lib/mess.rb'
 require_relative "../lib/modules.rb"
@@ -26,7 +27,7 @@ module Linael
 
   #Module which 
   MasterModule = Modules::Module
-  ModulesToLoad = ["basic_auth","admin","log"]
+  ModulesToLoad = ["basic_auth","admin"]
 
   IRC::linael_start
 

@@ -32,14 +32,14 @@ linael :rejoin, require_auth: true do
 
   on :kick, :do_they_kick_me? do |msg|
     before(msg) do |msg| 
-      msg.who.downcase == Linael::Nick.downcase 
+      msg.who.downcase == Linael::BotNick.downcase 
     end
     @chan_to_rejoin << msg.place
   end
 
   on :join, :do_i_join? do |msg|
     before(msg) do |msg|
-      msg.who.downcase == Linael::Nick.downcase
+      msg.who.downcase == Linael::BotNick.downcase
     end
     @chan_to_rejoin.delete(msg.where)
   end

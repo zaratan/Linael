@@ -56,6 +56,7 @@ module Linael
           msg += "#{arg[:what]} " unless arg[:what].nil?
           msg += "#{arg[:args]} " unless arg[:args].nil?
           msg += ":#{arg[:msg]} " unless arg[:msg].nil?
+          puts ">>> #{msg}".blue
           IRC::send_msg msg
         end      
         return self.send name,args[0]
