@@ -4,6 +4,7 @@
 require 'active_support/inflector'
 require 'active_support/core_ext/numeric/time'
 require 'socket'
+require 'colorize'
 require_relative '../lib/irc.rb'
 require_relative '../lib/mess.rb'
 require_relative "../lib/modules.rb"
@@ -16,11 +17,11 @@ module Linael
   include IRC
   
   #The server to join
-  Server = "irc.rizon.net"
+  ServerAddress = "irc.rizon.net"
   #The connection port
   Port = 6667
   #Nick of the bot
-  Nick = "LinaelTest"
+  BotNick = "LinaelTest"
   #Name of master user
   Master = "zaratan"
 

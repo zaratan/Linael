@@ -8,8 +8,9 @@ module Linael
 
     # A method to handle Ping message
     def handleKeepAlive(msg)
-      if Ping.match(msg) then
+      if Ping.match?(msg) then
         ping_msg = Ping.new msg
+        pretty_print_message ping_msg
         pong_channel({dest: ping_msg.sender})
         @pingAct.values.all?{|act| act.call ping_msg} 
         return true
@@ -19,8 +20,9 @@ module Linael
 
     # A method to handle private messages
     def handlePrivMsg(msg)
-      if PrivMessage.match(msg) then
+      if PrivMessage.match?(msg) then
         privmsg = PrivMessage.new msg
+        pretty_print_message privmsg
         if (privmsg.command?) then
           @cmdAct.values.each {|act| act.call privmsg}
           if (@authAct.values.all? {|auth| auth.call privmsg})
@@ -37,6 +39,7 @@ module Linael
     #the differents type of actings
     attr_accessor :msgAct,
       :cmdAct,
+      :pingAct,
       :authAct,
       :cmdAuthAct,
       :master
@@ -51,26 +54,39 @@ module Linael
       @to_handle
     end
 
-    @to_handle=[Mode,Nick,Join,Notice,Part,Kick]
+    @to_handle=[Mode,Nick,Join,Notice,Part,Kick,Invite,Quit,Server]
     
     @to_handle.each do |klass|
-      attr_accessor "#{klass.name.downcase}Act".to_sym
-      define_method "handle_#{klass.name.downcase}" do |msg|
-        if klass.match(msg) then
+      klass_name = klass.name.gsub(/.*:/,"").downcase
+      attr_accessor "#{klass_name}Act".to_sym
+      define_method "handle_#{klass_name}" do |msg|
+        if klass.match?(msg) then
           part = klass.new msg
-          instance_variable_get("@#{klass.name.downcase}Act").values.each {|act| act.call part}
+          pretty_print_message part
+          instance_variable_get("@#{klass_name}Act").values.each {|act| act.call part}
           return true
         end
         return false
       end
       @toDo = [] if @toDo.nil?
-      @toDo << "handle_#{klass.name.downcase}".to_sym
+      @toDo << "handle_#{klass_name}".to_sym
+    end
+
+    # Pretty print messages
+    def pretty_print_message msg
+      puts "<<< #{msg}".colorize( 
+        if msg.kind_of? Linael::Server
+          :yellow
+        else
+          :green
+        end
+      )
     end
 
     # Initialize
     def initialize(master_module,modules)
       Handler.toDo << :handleKeepAlive << :handlePrivMsg
-      Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.downcase}Act",Hash.new}
+      Handler.to_handle.each {|klass| instance_variable_set "@#{klass.name.gsub(/.*:/,"").downcase}Act",Hash.new}
       @msgAct=Hash.new
       @cmdAct=Hash.new
       @authAct=Hash.new
@@ -86,7 +102,7 @@ module Linael
       begin
         Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => ''))}
       rescue Exception
-        puts $!	
+        puts $!.to_s.red	
       end
     end
 

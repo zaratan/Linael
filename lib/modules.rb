@@ -107,9 +107,9 @@ module Linael
 
     # Initialize
     def initialize privMsg
-      @message = privMsg.message
-      @where = privMsg.place
-      @from_who = privMsg.who
+      @message = privMsg.message || ""
+      @where = privMsg.place || ""
+      @from_who = privMsg.who || ""
     end
 
     # Magic method to generate class methods for matching regex

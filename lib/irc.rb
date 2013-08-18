@@ -6,7 +6,7 @@ module Linael
   module IRC
 
     def self.linael_start
-      self.connect(Linael::Server,Linael::Port,Linael::Nick)
+      self.connect(Linael::ServerAddress,Linael::Port,Linael::BotNick)
       action = Handler.new(Linael::MasterModule,Linael::ModulesToLoad)
       self.main_loop(action)
     end
@@ -26,7 +26,6 @@ module Linael
     # Main loop of the irc to keep the prog reading inside the socket
     def self.main_loop(msg_handler)
       while line = get_msg
-        p line
         msg_handler.handle_msg(line)
       end
     end
@@ -57,6 +56,7 @@ module Linael
           msg += "#{arg[:what]} " unless arg[:what].nil?
           msg += "#{arg[:args]} " unless arg[:args].nil?
           msg += ":#{arg[:msg]} " unless arg[:msg].nil?
+          puts ">>> #{msg}".blue
           IRC::send_msg msg
         end      
         return self.send name,args[0]
