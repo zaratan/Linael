@@ -21,46 +21,34 @@ define_method "ago" do |time|
 
   result = ""
   if dd != 0
-    result += "#{dd} day(s) "
+    result += "#{dd} day#{"s" if dd > 1} "
   end
   if result != "" and ss == 0 and hh != 0 and mm == 0
     result += "and "
   end
   if hh != 0
-    result += "#{hh} hour(s) "
+    result += "#{hh} hour#{"s" if hh >1} "
   end
   if result != "" and ss == 0 and mm != 0
     result += "and "
   end
   if mm != 0
-    result += "#{mm} minute(s) "
+    result += "#{mm} minute#{"s" if mm >1} "
   end
   if result != "" and ss != 0
     result += "and "
   end
   if ss != 0
-    result += "#{ss} second(s) "
+    result += "#{ss} second#{"s" if ss >1} "
   end
   result += "ago"
 
 end
 
-on :msg, :seen_msg do |msg|
-  @users[msg.sender.downcase] = Linael::User.new(msg)
-end
-
-on :nick, :seen_nick do |msg|
-  @users[msg.sender.downcase] = Linael::User.new(msg)
-end
-
-on :join, :seen_join do |msg|
-
-  @users[msg.sender.downcase] = Linael::User.new(msg)
-end
-
-on :part, :seen_part do |msg|
-
-  @users[msg.sender.downcase] = Linael::User.new(msg)
+[:quit,:msg,:nick,:join,:part].each do |type|
+  on type, :seen_part do |msg|
+    @users[msg.sender.downcase] = Linael::User.new(msg)
+  end
 end
 
 
@@ -69,16 +57,20 @@ on_init do
 end
 
 end
+
+#represent a User for Seen module
 class Linael::User
 
-attr_accessor :nick,:host,:last_seen,:last_act
-
-def initialize(msg)
-  @nick = msg.sender.downcase
-  @host = msg.identification.downcase
-  @last_seen = Time.now
-  @last_act = msg
-end
+  #should be obvious
+  attr_accessor :nick,:host,:last_seen,:last_act
+  
+  #init
+  def initialize(msg)
+    @nick = msg.sender.downcase
+    @host = msg.identification.downcase
+    @last_seen = Time.now
+    @last_act = msg
+  end
 
 
 end

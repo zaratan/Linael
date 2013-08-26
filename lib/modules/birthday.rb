@@ -75,12 +75,18 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
     "!birthday -del XXX            => del a birthday for someone (Admin)",
     "!birthday XXX                 => show XXX birthday",
     "!birthday -remind XXX         => remind you of XXX birthday",
-    "!birthday -unremind XXX       => un-remind you of XXX birthday"
+    "!birthday -unremind XXX       => un-remind you of XXX birthday",
+    "!start                        => start remind (Admin)"
   ]
 
   on_init do
-    @birthday={}
+    @birthday = {}
+    @started = false
     start_remind
+  end
+
+  on_load do
+    @started = false
   end
 
   on :cmd,:birthday_add,/^!birthday\s+-add\s/ do |msg,options|
@@ -119,6 +125,12 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
     Time.now.to_date.next_day.to_time
   end
 
+  on :cmdAuth, :start, /^!start/ do
+    before(@started) {|start| !start}
+    @started = true
+    start_remind
+  end
+
   define_method :start_remind do
     remind
     at(tommorow_midnight) do
@@ -131,7 +143,7 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
       if (Time.now.day == v.day.to_i and Time.now.month == v.month.to_i)
         v.remind.each do |who|
           mod("tell").instance.tell_list[who] ||= []
-          mod("tell").instance.tell_list[who] << [Linael::Nick,v.print_birthday]
+          mod("tell").instance.tell_list[who] << [Linael::BotNick,v.print_birthday]
         end
       end
     end
