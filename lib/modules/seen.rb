@@ -45,7 +45,7 @@ define_method "ago" do |time|
 
 end
 
-[:msg,:nick,:join,:part].each do |type|
+[:quit,:msg,:nick,:join,:part].each do |type|
   on type, :seen_part do |msg|
     @users[msg.sender.downcase] = Linael::User.new(msg)
   end
