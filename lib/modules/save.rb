@@ -7,10 +7,10 @@ require 'ya2yaml'
 linael :save, require_auth: true, required_mod: ["module","blacklist"] do
 
   on :cmdAuth, :auto_save, /^!auto_save\s/ do |msg,options|
-      msg.message = "!save\s"
+      msg.content = "!save\s"
       save(msg)
     at 1.hour.from_now do
-      msg.message = "!auto_save\s"
+      msg.content = "!auto_save\s"
       auto_save(msg)
     end
   end
