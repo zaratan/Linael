@@ -36,11 +36,11 @@ I really like to have a whole DSL instead of some helper methods.
 * Have ruby 1.9
 * Create your own file in bin (see [How to make launch config](https://github.com/Skizzk/Linael/wiki/How-to-make-launch-config))
 * Install dependencies
-```shell
+```
 bundle install
 ```
 * Launch it! 
-```shell
+```
 ruby bin/your_own_linael
 ```
 
