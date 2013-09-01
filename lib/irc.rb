@@ -87,6 +87,17 @@ module Linael
         talk(privMsg.place,ans)
       end
     end
+    
+    # Pretty print messages
+    def self.pretty_print_message msg
+      puts "<<< #{msg}".colorize( 
+        if msg.kind_of? Linael::Server
+          :yellow
+        else
+          :green
+        end
+      )
+    end
 
   end
 end
@@ -96,4 +107,4 @@ require_relative '../lib/mess.rb'
 require_relative "../lib/modules.rb"
 require_relative '../lib/DSL.rb'
 require_relative '../lib/modules/module.rb'
-require_relative '../lib/message.rb'
+require_relative '../lib/handler.rb'
