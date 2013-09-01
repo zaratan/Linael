@@ -31,7 +31,7 @@ module Linael
       @runner.master.modules[name]
     end
 
-    # TODO FIXME break backward module compatibility, it is crap
+    # TODO FIXME X break backward module compatibility, it is crap
     # Name of the module. Must be equal to class name downcase
     Name=""
 

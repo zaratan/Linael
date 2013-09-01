@@ -104,7 +104,7 @@ module Linael
         # Is it matching the regex?
         if self.class::Options.send("#{name}?",msg.message)
           # if it's a message: generate options
-          options = self.class::Options.new msg if msg.kind_of? PrivMessage
+          options = self.class::Options.new msg if msg.kind_of? Privmsg
           begin
             #DON'T THREAD AUTH METHOD NOOB
             if type == :auth

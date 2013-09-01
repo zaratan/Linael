@@ -20,8 +20,8 @@ module Linael
 
     # A method to handle private messages
     def handlePrivMsg(msg)
-      if PrivMessage.match?(msg) then
-        privmsg = PrivMessage.new msg
+      if Privmsg.match?(msg) then
+        privmsg = Privmsg.new msg
         pretty_print_message privmsg
         if (privmsg.command?) then
           @cmdAct.values.each {|act| act.call privmsg}

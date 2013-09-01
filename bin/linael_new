@@ -1,33 +1,26 @@
 #!/usr/bin/ruby
 # -*- encoding : utf-8 -*-
 
-require 'active_support/inflector'
-require 'active_support/core_ext/numeric/time'
-require 'socket'
-require 'colorize'
-require_relative '../lib/irc.rb'
-require_relative '../lib/mess.rb'
-require_relative "../lib/modules.rb"
-require_relative '../lib/DSL.rb'
-require_relative '../lib/modules/module.rb'
-require_relative '../lib/message.rb'
+require_relative 'default_linael'
 
 module Linael
 
-  include IRC
-
-  #THIS IS A DEFAULT CONFIGURATION PLEASE DO NOT EDIT DIRECTLY OR YOUR COMMIT WILL BE REFUSED
+  #THIS IS A DEFAULT CONFIGURATION PLEASE DO NOT EDIT DIRECTLY FOR YOUR BOT OR YOUR COMMIT WILL BE REFUSED
+  #You are not obliged to use every options this is the default configuration
 
   #The server adress to join
-  ServerAddress = ""
+  ServerAddress = ''
   #The connection port
   Port = 6667
   #Nick of the bot
-  BotNick = "Linael"
-  #Name of master user
-  Master = "Skizzk"
+  BotNick = 'Linael'
+  #Name of master user (downcase)
+  Master = 'zaratan'
+  
+  # Char that will be used for commands
+  CmdChar = '!'
 
-  #Module in charge of loading others
+  #Module in charge of loading others (most of the time you don't want this option)
   MasterModule = Modules::Module
   #The names of differents modules you want to autoload
   ModulesToLoad = ["basic_auth","admin","identify"]

@@ -1,5 +1,10 @@
 # -*- encoding : utf-8 -*-
 
+require 'active_support/inflector'
+require 'active_support/core_ext/numeric/time'
+require 'socket'
+require 'colorize'
+
 module Linael
 
   # mains methods of IRC
@@ -40,25 +45,26 @@ module Linael
   #different possible action from IRC
   module Action
 
-    include IRC
-
     attr_accessor :timer
+
+    # Define a irc sending method
+    def define_send(name,short)
+        self.class.send("define_method",name) do |arg|
+          msg = "#{short.upcase} "
+          [:dest,:who,:what,:args,:msg].each do |key|
+            msg += "#{":" if key==:msg}#{arg[key]} " unless arg[key].nil?            
+          end
+          puts ">>> #{msg}".blue
+          IRC::send_msg msg
+        end      
+    end
 
     # Cover most of  IRC send. 
     # Catch methods ending with _channel
     #   kick_channel #=> a kick
     def method_missing(name, *args, &block)
       if name =~ /(.*)_channel/
-        self.class.send("define_method",name) do |arg|
-          msg = "#{$1.upcase} "
-          msg += "#{arg[:dest]} " unless arg[:dest].nil?
-          msg += "#{arg[:who]} " unless arg[:who].nil?
-          msg += "#{arg[:what]} " unless arg[:what].nil?
-          msg += "#{arg[:args]} " unless arg[:args].nil?
-          msg += ":#{arg[:msg]} " unless arg[:msg].nil?
-          puts ">>> #{msg}".blue
-          IRC::send_msg msg
-        end      
+        define_send(name,$1)
         return self.send name,args[0]
       end
       super
@@ -74,9 +80,7 @@ module Linael
 
     #proxy for talk (proxyception) for readability
     def answer(privMsg,ans)
-      if !privMsg 
-        return
-      end
+      return unless privMsg
       if(privMsg.private_message?)
         talk(privMsg.who,ans)
       else
@@ -86,3 +90,10 @@ module Linael
 
   end
 end
+
+#It's ugly but you really need to load Action first
+require_relative '../lib/mess.rb'
+require_relative "../lib/modules.rb"
+require_relative '../lib/DSL.rb'
+require_relative '../lib/modules/module.rb'
+require_relative '../lib/message.rb'

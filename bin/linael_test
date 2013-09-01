@@ -1,33 +1,14 @@
 #!/usr/bin/ruby
 # -*- encoding : utf-8 -*-
 
-require 'active_support/inflector'
-require 'active_support/core_ext/numeric/time'
-require 'socket'
-require 'colorize'
-require_relative '../lib/irc.rb'
-require_relative '../lib/mess.rb'
-require_relative "../lib/modules.rb"
-require_relative '../lib/DSL.rb'
-require_relative '../lib/modules/module.rb'
-require_relative '../lib/message.rb'
+require_relative 'default_linael'
 
 module Linael
 
-  include IRC
-  
   #The server to join
-  ServerAddress = "irc.rizon.net"
-  #The connection port
-  Port = 6667
+  ServerAddress = 'irc.rizon.net'
   #Nick of the bot
-  BotNick = "LinaelTest"
-  #Name of master user
-  Master = "zaratan"
-
-  #Module which 
-  MasterModule = Modules::Module
-  ModulesToLoad = ["basic_auth","admin"]
+  BotNick = 'LinaelTest'
 
   IRC::linael_start
 
