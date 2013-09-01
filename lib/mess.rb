@@ -25,21 +25,21 @@ module Linael
       msg =~ self::Motif
     end
 
-    def parse_msg(msg,parse=nil)
-      unless parse
+    def parse_msg(msg)
         self.class::Motif =~ msg
-        parse = $~
-      end
-      parse      
+        $~
+    end
+
+    def parse_item(item,parse)
+      tag = (item.to_s.gsub(/^@/,"") + "_r").to_sym
+      instance_variable_set(item, (parse[tag] if parse.names.include? tag.to_s) || "")
     end
 
     # Initialize the message
-    def initialize(msg,parse=nil)
+    def initialize(msg,var=[])
       @date = Time.now
-      parse= parse_msg(msg,parse)
-      @sender= (parse[:sender_r] if parse.names.include? 'sender_r') || ""
-      @identification= (parse[:identification_r] if parse.names.include? 'identification_r') || ""
-      @content= (parse[:content_r] if parse.names.include? 'content_r') || ""
+      parse= parse_msg(msg)
+      ([:@sender,:@identification,:@content] + var).each {|var| parse_item(var,parse)}
     end
 
     # Pretty print the user
@@ -84,10 +84,8 @@ module Linael
     LocationRegex=/(?<location_r>\S*)/
 
     # initialize
-    def initialize(msg,parse=nil)
-      parse= parse_msg(msg,parse)
-      super(msg,parse)
-      @location= (parse[:location_r] if parse.names.include? 'location_r') || ""
+    def initialize(msg,parse = nil,var = [])
+      super(msg,[:@location] + var)
     end
 
     # Default regex for LocatedMessage
@@ -106,9 +104,7 @@ module Linael
 
     # Initialize
     def initialize msg
-      parse= parse_msg(msg)
-      super(msg,parse)
-      @target= (parse[:target_r] if parse.names.include? 'target_r') || ""
+      super(msg,[:@taget])
     end
 
     # Regex for matching target
@@ -123,9 +119,7 @@ module Linael
     attr_accessor :code
 
     def initialize msg
-      parse= parse_msg(msg)
-      super(msg,parse)
-      @code= (parse[:code_r] if parse.names.include? 'code_r') || ""
+      super(msg,[:@code])
     end
 
     def self.regex 
