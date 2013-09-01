@@ -4,7 +4,7 @@
 linael :module,require_auth: true do
 
   #Hack 'cause this module is quite special
-  define_method "initialize" do |runner|
+  def initialize runner
     @dir = Dir.new("./lib/modules")
     @modules=Linael::Modules::ModuleList.new(runner)
     @modules.addMod(Linael::Modules::ModuleType.new(runner,instance: self,name: self.class::Name))

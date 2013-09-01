@@ -88,22 +88,11 @@ module Linael
       end
     end
     
-    # Pretty print messages
-    def self.pretty_print_message msg
-      puts "<<< #{msg}".colorize( 
-        if msg.kind_of? Linael::Server
-          :yellow
-        else
-          :green
-        end
-      )
-    end
-
   end
 end
 
 #It's ugly but you really need to load Action first
-require_relative '../lib/mess.rb'
+require_relative '../lib/messages.rb'
 require_relative "../lib/modules.rb"
 require_relative '../lib/DSL.rb'
 require_relative '../lib/modules/module.rb'

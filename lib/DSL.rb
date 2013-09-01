@@ -21,53 +21,22 @@ def self.linael(name, config_hash ={}, &block)
   # Create the class
   new_class = Class.new(Linael::ModuleIRC) do
 
-    # Add config in it
-    self.const_set("Constructor",config_hash[:constructor]) if config_hash[:constructor]
-    self.const_set("Name",name.to_s)
-
-    define_singleton_method "require_auth" do
-      config_hash[:require_auth]
-    end
-
-    define_singleton_method "required_mod" do
-      config_hash[:required_mod]
-    end
-
-    define_singleton_method "auth?" do
-      config_hash[:auth]
-    end
-
-    # Define Options class (with some magic methods)
-    options_class = Class.new(Linael::ModulesOptions) do 
-      #Define method .chan which return the first word beging with a # . if none, return current chan
-      generate_chan
-      #Define method .who which retrun the first word with no # nor ! nor - . If none return current user
-      generate_who
-      #Define method .what which return first word with no # nor !
-      generate_what
-      #Define method .reason which return everything after :
-      generate_reason
-      #Define method .type which return the first word begining with -
-      generate_type
-      #return EVERYTHING but the first word
-      generate_all
-    end
-
-    self.const_set("Options",options_class)
+    generate_all_config(name, config_hash)
+    self.const_set("Options",generate_all_options)
 
   end # Class.new(Linael::ModuleIRC)
 
   # Link the module to the right part of linael
   Linael::Modules.const_set(name.to_s.camelize,new_class)
-  
+
   # Execute the block
-  new_class.instance_eval(&block)
+  "Linael::Modules::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
 
 end
 
 #Everything goes there
 module Linael
-  
+
   # Fake interruption for before check
   class InterruptLinael < Interrupt
   end
@@ -93,36 +62,50 @@ module Linael
     # +config_hash+:: an optional configuration hash (for now, there is no configuration option)
     # +block+:: where we describe what the method should do
     def self.on(type, name, regex=//, config_hash = {}, &block)
-    
+
       # Generate regex catching in Options class
       self::Options.class_eval do
         generate_to_catch(name => regex)
       end
 
+      generate_define_method_on(type,name,regex,&block) if block_given?
+
       # Define the method which will be really called
-      self.send("define_method",name) do |msg|
-        # Is it matching the regex?
-        if self.class::Options.send("#{name}?",msg.message)
-          # if it's a message: generate options
-          options = self.class::Options.new msg if msg.kind_of? Privmsg
-          begin
-            #DON'T THREAD AUTH METHOD NOOB
-            if type == :auth
-              self.instance_exec(msg,options,&block)
-            else
-              #execute block
-              Thread.new {self.instance_exec(msg,options,&block)}
-            end
-          #for catching before methods
-          rescue InterruptLinael
-          end
-        end
-      end
       # Add the feature to module start
       # TODO add doc here (why unless)
       self.const_set("ToStart",{}) unless defined?(self::ToStart)
       self::ToStart[type] ||= []
       self::ToStart[type] = self::ToStart[type] << name
+    end
+
+    def execute_method(type, msg, options, &block)
+      if type == :auth
+        instance_exec(msg,options,&block)
+      else
+        #execute block
+        Thread.new do
+          begin
+            instance_exec(msg,options,&block)
+          rescue InterruptLinael
+          rescue Exception
+            p "#{$!.red}"
+          end
+        end
+      end
+
+    end
+
+
+    # TODO add it to protected
+    def self.generate_define_method_on(type,name,regex,&block)
+      self.send("define_method",name) do |msg|
+        # Is it matching the regex?
+        if self.class::Options.send("#{name}?",msg.message)
+          # if it's a message: generate options
+          options = self.class::Options.new msg if msg.kind_of? Privmsg
+          execute_method(type,msg,options,&block)
+        end
+      end
     end
 
     # Wrapper to add values regex
@@ -161,7 +144,7 @@ module Linael
     def self.on_init(&block)
       self.const_set("At_launch",block)
     end
-    
+
     # Instructions used at load (from save module) 
     def self.on_load(&block)
       self.const_set("At_load",block)
@@ -204,6 +187,9 @@ module Linael
         self.instance_exec(hash,&block)
       end
     end
+
+
+    protected
   end
 
 end
