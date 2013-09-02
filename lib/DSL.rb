@@ -6,16 +6,16 @@
 # Params:
 # +name+::         a symbol to name the module
 # +config_hash+:: optional hash for configuration. the differents options available are:
-# * +:constructor+:: A string for the name of the module maker. "Zaratan" by default
+# * +:author+:: A string for the name of the module maker. "Zaratan" by default
 # * +:require_auth+:: A boolean for saying if an auth method is required or not
 # * +:required_mod+:: A list of module names required for this module
 # * +:auth+:: A boolean telling if it's an auth module or not
 #
 # +block+:: definition of the module. Everything here will be executed in the scope of the module.
 #   
-#   linael :test, constructor: "Skizzk", require_auth: true, required_mod: ["admin"] do 
+#   linael :test, author: "Skizzk", require_auth: true, required_mod: ["admin"] do 
 #   end 
-#   #=> produce a module named Test with Skizzk for constructor, which require at least an auth method and the module admin.
+#   #=> produce a module named Test with Skizzk for author, which require at least an auth method and the module admin.
 def self.linael(name, config_hash ={}, &block)
 
   # Create the class
