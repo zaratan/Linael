@@ -55,7 +55,7 @@ module Linael
     # Add config in it
     def self.generate_all_config(name, config_hash)
 
-      self.const_set("Constructor",config_hash[:constructor]) if config_hash[:constructor]
+      self.const_set("Constructor",config_hash[:author]) if config_hash[:author]
       self.const_set("Name",name.to_s)
 
       define_singleton_method "require_auth" do
