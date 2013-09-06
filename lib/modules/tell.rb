@@ -22,7 +22,7 @@ linael :tell do
     who_tell = options.who.downcase.gsub(":","")
 
     @tell_list[who_tell] ||= []
-    @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,""), Time::now.sfrtime("%d/%m/%Y at %H:%M") ]
+    @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,""), Time::now.strftime("%d/%m/%Y at %H:%M") ]
     answer(msg,"Oki doki! I'll tell this to #{who_tell} :)")
 
   end
