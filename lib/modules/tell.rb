@@ -22,7 +22,7 @@ linael :tell do
     who_tell = options.who.downcase.gsub(":","")
 
     @tell_list[who_tell] ||= []
-    @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,"")]
+    @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,""), Time::now.sfrtime("%d/%m/%Y at %H:%M") ]
     answer(msg,"Oki doki! I'll tell this to #{who_tell} :)")
 
   end
@@ -38,7 +38,7 @@ linael :tell do
         to_tell = @tell_list[who]
         @tell_list.delete(who)
         to_tell.each do |message|
-          talk(who,"Hey! #{message[0]} told me this: #{message[1]}")
+          talk(who,"Hey! #{message[0]} told me this: #{message[1]} at #{message[2]}")
           sleep(1)
         end
       end
