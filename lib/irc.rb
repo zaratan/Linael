@@ -95,5 +95,5 @@ end
 require_relative '../lib/messages.rb'
 require_relative "../lib/modules.rb"
 require_relative '../lib/DSL.rb'
-require_relative '../lib/modules/module.rb'
+require_relative '../lib/modules/master.rb'
 require_relative '../lib/handler.rb'

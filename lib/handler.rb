@@ -54,13 +54,25 @@ module Linael
     end
 
     @to_handle.each {|handle| add_act(handle)}
-    
+   
+    def act_types
+      instance_variables.grep(/@(.*)Act/) {$1.to_sym}
+    end
+
+    def add_act(type,proc_name,prok)
+      send("#{type}Act")[proc_name.to_sym]= prok
+    end
+
+    def del_act(type,proc_name)
+      send("#{type}Act").delete(proc_name.to_sym)
+    end
 
     def handle_msg(msg)
       begin
         Handler.toDo.detect{|m| self.send(m,msg.force_encoding('utf-8').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => ''))}
-      rescue Exception
-        puts $!.to_s.red	
+      rescue Exception => e
+        puts e.to_s.red	
+        puts e.backtrace.join("\n").red
       end
     end
     
@@ -73,8 +85,8 @@ module Linael
       @authAct=Hash.new
       @cmdAuthAct=Hash.new
       @master = master_module.new(self)
-      @master.startMod
-      modules.each {|modName| @master.modules.add(modName)}
+      @master.start!
+      modules.each {|modName| @master.add_action(modName)}
     end
     
     private

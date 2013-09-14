@@ -17,7 +17,7 @@ module Linael
   CmdChar = '!'
 
   # Module which 
-  MasterModule = Modules::Module
+  MasterModule = Modules::Master
   ModulesToLoad = ['basic_auth','admin']
 
 end

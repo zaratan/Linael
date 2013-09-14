@@ -87,8 +87,9 @@ module Linael
           begin
             instance_exec(msg,options,&block)
           rescue InterruptLinael
-          rescue Exception
-            p "#{$!.red}"
+          rescue Exception => e
+            p e.to_s.red
+            p e.backtrace.join("\n").red
           end
         end
       end
@@ -161,15 +162,15 @@ module Linael
     end
 
     # Overide of normal method
-    def startMod
+    def start!
       add_module(self.class::ToStart)
     end
 
     # Overide of normal method
-    def initialize(runner)
-      @runner = runner
+    def initialize(master)
+      @master = master
       self.instance_eval(&self.class::At_launch) if defined?(self.class::At_launch)
-      @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
+      @master.act_types.each {|t| add_module_irc_behavior t}
     end
 
     # A method used to describe preliminary tests in a method

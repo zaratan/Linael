@@ -11,7 +11,7 @@ module Linael
     #   mod("admin") #=> return admin module
     #   mod("dfgh")  #=> nil
     def mod(name)
-      @runner.master.modules[name]
+      master.module_instance name
     end
 
     # Name of module constructor.
@@ -20,16 +20,9 @@ module Linael
     # In new DSL should be setted in linael command.
     Constructor="Zaratan"
 
-    # *Don't really instanciate this class*::
-    def initialize(runner)
-      @runner=runner
-      @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
-    end
-
-
     # +behavior+:: actions
     # +runner+::   container
-    attr_accessor :behavior,:runner
+    attr_accessor :behavior,:master
 
     protected
 
@@ -37,18 +30,19 @@ module Linael
     # Define Options class (with some magic methods)
     def self.generate_all_options
       Class.new(Linael::ModulesOptions) do 
+        ['chan','who','what','reason','type','all'].each {|t| send("generate_#{t}")}
         #Define method .chan which return the first word beging with a # . if none, return current chan
-        generate_chan
+        #generate_chan
         #Define method .who which retrun the first word with no # nor ! nor - . If none return current user
-        generate_who
+        #generate_who
         #Define method .what which return first word with no # nor !
-        generate_what
+        #generate_what
         #Define method .reason which return everything after :
-        generate_reason
+        #generate_reason
         #Define method .type which return the first word begining with -
-        generate_type
+        #generate_type
         #return EVERYTHING but the first word
-        generate_all
+        #generate_all
       end
     end
 
@@ -88,7 +82,7 @@ module Linael
     end
 
     # *Internal method, don't use it*
-    def stopMod()
+    def stop!
       self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
     end
 
@@ -100,10 +94,14 @@ module Linael
       end
     end
 
+    def instance_ident instance,ident
+      "#{instance.class::Name}_#{ident}"
+    end
+
     def define_add_behaviour(type)
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
         procToAdd = generate_proc nom,instance
-        (@runner.send "#{type}Act")[(instance.class::Name+ident).to_sym]= procToAdd
+        master.add_act type, instance_ident(instance,ident), procToAdd
         @behavior ||= {}
         @behavior[type] ||= []
         @behavior[type] << ident
@@ -112,7 +110,7 @@ module Linael
 
     def define_del_behaviour(type)
       self.class.send("define_method",("del_#{type}_behavior")) do |instance,ident|
-        (@runner.send "#{type}Act").delete((instance.class::Name+ident).to_sym)
+        master.del_act type,instance_ident(instance,ident)
         @behavior.delete_if {|k,v| v == ident} 
       end
     end
@@ -248,6 +246,9 @@ module Linael
         :regexp => /\s(.*)/
     end
 
+  end
+
+  class MessagingException < StandardError
   end
 
 end
