@@ -5,27 +5,22 @@ linael :help do
 
   help [
     "Module Help:",
-    "!help modName => display the help for the module modName"
+    "!help module_name => display the help for the module modName"
   ]
+
+  def help_act msg,name
+    klass = master.module_class_from_name(name)
+    p !defined?(klass::Help)
+    raise MessagingException, "No help for the module #{name}. Ask #{klass::Constructor} for this :)" if !defined?(klass::Help) || klass::Help.empty?
+    klass::Help.each {|helpSent| answer(msg,helpSent)}
+  end
 
   #react to !help which open class for reading Help constant
   on :cmd, :help, /^!help\s/ do |msg,options|
-    modName=options.what
-    if @dir.find{|file| file.sub!(/\.rb$/,""); file ==  modName} 	
-      load "./lib/modules/#{modName}.rb"
-      klass = "linael/modules/#{modName}".camelize.constantize
-      unless !defined?(klass::Help) or klass::Help.empty?
-        klass::Help.each {|helpSent| answer(msg,helpSent)}
-      else
-        answer(msg,"No help for the module #{modName}. Ask #{klass::Constructor} for this :)")
-      end
-    else
-      answer(msg,"There is no module named #{modName}")
+    message_handler msg do
+      help_act(msg,options.what)
     end
   end
 
-  on_init do
-    @dir = Dir.new("./lib/modules")
-  end
 
 end

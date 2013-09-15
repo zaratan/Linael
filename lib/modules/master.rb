@@ -1,4 +1,14 @@
 linael :master, require_auth: true do
+  help [
+    "Module for loading modules",
+    " ",
+    "#####Functions#####",
+    "!module -add name     => Load name module",
+    "!module -del name     => Unload name module",
+    "!module -reload name  => Reload name module",
+    "!module -show [regex] => Show a list of modules. A * mean that the module is loaded",
+  ]
+
 
   attr_reader :modules
 
@@ -30,20 +40,6 @@ linael :master, require_auth: true do
     super self
   end
 
-  def message_handler msg,result_message
-    begin
-      yield
-    rescue MessagingException => error_message
-      answer(msg,error_message)
-      return
-    rescue Exception => error
-      talk(msg.who,error.to_s)
-      p error.backtrace.join("\n").red
-      return
-    end
-    answer(msg,result_message)
-  end
-
   def add_action name
     modules.add_module(name)
   end
@@ -60,11 +56,13 @@ linael :master, require_auth: true do
     modules.add_module name
   end
 
-  def show_action msg,regex
-    result = modules.keys.select {|k| k.match regex}
+  def show_action msg,regex=""
+    regex.gsub!(/\*/,'[^\\/]*')
+    regex = Regexp.new("#{regex}[^\\/]*\.rb")
+    result = modules.find_all_modules(regex).map {|path| path.gsub(/.*\//,'').gsub(/\.rb/,'') }
     result_loaded = result.select {|k| module_instance(k)}
-    answer(msg,"List of #{BotNick} modules: [#{result.join(' ,')}]")
-    answer(msg,"List of loaded modules: [#{result_loaded.join(' ,')}]")
+    answer(msg,"List of #{Linael::BotNick} modules: [#{result.join(', ')}]")
+    answer(msg,"List of loaded modules: [#{result_loaded.join(', ')}]")
   end
 
   on :cmdAuth, :add, /^!module\s-add\s/ do |msg,options|
@@ -79,14 +77,15 @@ linael :master, require_auth: true do
     end
   end
 
-  on :cmdAuth, :reload, /^!module\s-del\s/ do |msg,options|
+  on :cmdAuth, :reload, /^!module\s-reload\s/ do |msg,options|
     message_handler msg,"Module #{options.who} reloaded \o/" do
       reload_action options.who
     end
   end
 
   on :cmd, :show, /^!module\s-show\s/ do |msg,options|
-    show_action msg,options.who
+    regex = (options.who unless options.who == options.from_who ) || ""
+    show_action msg,regex
   end
 
 end  
@@ -117,7 +116,7 @@ module Linael
     def match_requirement?(required_modules)
       !required_modules || required_modules.all? {|mod| has_key? mod}
     end
-    
+
     def has_key?(key)
       any? {|mod| mod.name == key}
     end
@@ -144,13 +143,19 @@ module Linael
 
     alias_method :push, :<<
     alias_method :add_module, :<<
-    
+
     def delete_module_by_name(module_name)
       raise MessagingException, "Module #{module_name} not loaded." unless has_key?(module_name)
-      modules = modules.delete_if do |mod| 
+      modules.delete_if do |mod| 
         mod.stop! if mod.name == module_name
       end
-      auth_modules.delete module_name
+      auth_modules.delete_if do |mod|
+        mod.name = module_name
+      end
+    end
+
+    def find_all_modules(regex=/\.rb/)
+      recursive_search dir,regex
     end
 
     def find_file_module_by_name(module_name)
@@ -160,7 +165,7 @@ module Linael
         return module_name
       else
         #The name do not contain a / so we look EVERYWHERE and ask if many
-        mod_place = recursive_search dir,module_name
+        mod_place = recursive_search dir,/#{module_name}\.rb/
         raise MessagingException,"This module doesn't exist." if mod_place.empty?
         raise MessagingException,"There is multiple module with this name. Do you mean #{format_multiples_names(mod_place)}?" if mod_place.size > 1
         module_name= mod_place.first
@@ -171,14 +176,14 @@ module Linael
       multiples_names.map{|name| name.gsub(dir,"")}.join(" or ")
     end
 
-    def recursive_search(current_dir,module_name)
+    def recursive_search(current_dir,regex_name)
       result = []
       if File.directory?(current_dir)
         Dir.foreach(current_dir) do |file|
-          result += recursive_search("#{current_dir}/#{file}",module_name) unless file[0] == "."
+          result += recursive_search("#{current_dir}/#{file}",regex_name) unless file[0] == "."
         end
       else
-        result << current_dir if current_dir.include? "#{module_name}.rb"
+        result << current_dir if current_dir.match regex_name
       end
       return result
     end
@@ -212,27 +217,27 @@ module Linael
     attr_accessor :name,:instance
 
     def initialize master,params
-      @name = params[:klass]::name
+      @name = params[:klass]::Name
       @instance = (if params[:klass]
-                    params[:klass].new(master)
-                  else
-                    params[:instance]
-                  end)
-    end
-
-    def ==(mod)
-      name == mod.name
-    end
-
-    def stop!
-      @instance.stop!
-      true
-    end
-
-    def start!
-      @instance.start!
-    end
-    
+                   params[:klass].new(master)
+    else
+      params[:instance]
+    end)
   end
+
+  def ==(mod)
+    name == mod.name
+  end
+
+  def stop!
+    @instance.stop!
+    true
+  end
+
+  def start!
+    @instance.start!
+  end
+
+end
 
 end

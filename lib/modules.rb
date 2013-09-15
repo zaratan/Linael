@@ -23,8 +23,26 @@ module Linael
     # +behavior+:: actions
     # +runner+::   container
     attr_accessor :behavior,:master
+    
+    def stop!
+      self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
+    end
 
     protected
+
+    def message_handler msg,result_message=nil
+      begin
+        yield
+      rescue MessagingException => error_message
+        answer(msg,error_message)
+        return
+      rescue Exception => error
+        talk(msg.who,error.to_s)
+        puts error.backtrace.join("\n").red
+        return
+      end
+      answer(msg,result_message) if result_message
+    end
 
 
     # Define Options class (with some magic methods)
@@ -82,9 +100,6 @@ module Linael
     end
 
     # *Internal method, don't use it*
-    def stop!
-      self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
-    end
 
     def generate_proc nom,instance
       Proc.new do |msg| 
@@ -121,6 +136,7 @@ module Linael
       define_add_behaviour type
       define_del_behaviour type
     end
+    
 
 
   end
@@ -245,10 +261,11 @@ module Linael
       generate_meth :name   => "all",
         :regexp => /\s(.*)/
     end
+  
 
   end
 
-  class MessagingException < StandardError
-  end
 
 end
+    class MessagingException < StandardError
+    end
