@@ -18,7 +18,7 @@ module Linael
 
   # Module which 
   MasterModule = Modules::Master
-  ModulesToLoad = ['basic_auth','admin']
+  ModulesToLoad = ['basic_auth','admin','ping']
 
 end
 
