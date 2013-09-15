@@ -13,22 +13,11 @@ module Linael
     alias_method :message, :content
 
     # DSL method to generate final classes of messages
-    def self.generate_message_class (name,super_class,motif,type=nil,&block)
-      new_message_class = Class.new(super_class) do
-        self.const_set('Motif', motif)
-        self.const_set('Type', 
-          if type
-            type
-          else
-            name.to_s
-          end
-        )
-
-      end
+    def self.generate_message_class (name,super_class,motif=nil,&block)
+      motif ||= super_class.default_regex(name.to_s.upcase)
+      new_message_class = Class.new(super_class) {self.const_set('Motif', motif)}
       Linael.const_set(name.to_s.camelize,new_message_class)
-      if block_given?
-        "Linael::#{name.to_s.camelize}".constantize.class_eval &block
-      end
+      "Linael::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
     end
 
     # Is matching motif?
@@ -36,16 +25,21 @@ module Linael
       msg =~ self::Motif
     end
 
-    # Initialize the message
-    def initialize(msg,parse=nil)
-      @date = Time.now
-      unless parse
+    def parse_msg(msg)
         self.class::Motif =~ msg
-        parse = $~
-      end
-      @sender= (parse[:sender_r] if parse.names.include? 'sender_r') || ""
-      @identification= (parse[:identification_r] if parse.names.include? 'identification_r') || ""
-      @content= (parse[:content_r] if parse.names.include? 'content_r') || ""
+        $~
+    end
+
+    def parse_item(item,parse)
+      tag = (item.to_s.gsub(/^@/,"") + "_r").to_sym
+      instance_variable_set(item, (parse[tag] if parse.names.include? tag.to_s) || "")
+    end
+
+    # Initialize the message
+    def initialize(msg,var=[])
+      @date = Time.now
+      parse= parse_msg(msg)
+      ([:@sender,:@identification,:@content] + var).each {|var| parse_item(var,parse)}
     end
 
     # Pretty print the user
@@ -83,20 +77,15 @@ module Linael
 
     # Is it a private message?
     def private_message?
-      location !~ /^#/
+      !on_chan?
     end
 
     # Regex for matching location
     LocationRegex=/(?<location_r>\S*)/
 
     # initialize
-    def initialize(msg,parse=nil)
-      unless parse
-        self.class::Motif =~ msg
-        parse = $~
-      end
-      super(msg,parse)
-      @location= (parse[:location_r] if parse.names.include? 'location_r') || ""
+    def initialize(msg,parse = nil,var = [])
+      super(msg,[:@location] + var)
     end
 
     # Default regex for LocatedMessage
@@ -115,15 +104,30 @@ module Linael
 
     # Initialize
     def initialize msg
-      self.class::Motif =~ msg
-      super(msg,$~)
-      @target= ($~[:target_r] if $~.names.include? 'target_r') || ""
+      super(msg,[:@taget])
     end
 
     # Regex for matching target
     TargetRegex=/(?<target_r>\S*)/
 
   end
+  
+  
+  #Numbered messages
+  class NumberedMessage < LocatedMessage
+
+    attr_accessor :code
+
+    def initialize msg
+      super(msg,[:@code])
+    end
+
+    def self.regex 
+      /:(?<sender_r>\S*)\s(?<code_r>\d*)\s(?<location_r>[^:]*):(?<content_r>[^\n]*)/
+    end
+
+  end
+
   
   #Unregular Regex for join 
   join_regex = /#{LocatedMessage::UserRegex}\sJOIN\s:#{LocatedMessage::LocationRegex}/
@@ -140,30 +144,26 @@ module Linael
       "#{print_user} has joined #{location}"
     end
   end
-
-  Message.generate_message_class :part, LocatedMessage, LocatedMessage.default_regex("PART") do
-    def to_s
-      "#{print_user} has leaved #{location} saying: #{content}"
+  
+  [[:part,'leaved'],[:notice,'noticed']].each do |args|
+    Message.generate_message_class args.first, LocatedMessage do
+      define_method "to_s" do
+        "#{print_user} has #{args.last} #{location} saying: #{content}"
+      end
     end
   end
 
-  Message.generate_message_class :notice, LocatedMessage, LocatedMessage.default_regex("NOTICE") do
-    def to_s
-      "#{print_user} has noticed #{location} saying: #{content}"
-    end
-  end
-
-  Message.generate_message_class :priv_message, LocatedMessage, LocatedMessage.default_regex("PRIVMSG"), "PRIVMSG" do
+  Message.generate_message_class :privmsg, LocatedMessage do
     def to_s
       "#{print_user} said to #{location}: #{content}"
     end
 
     def command?
-      content =~ /^!/
+      content =~ /^#{Linael::CmdChar}/
     end
   end
   
-  Message.generate_message_class :quit, Linael::Message, Message.default_regex("QUIT") do
+  Message.generate_message_class :quit, Linael::Message do
     def to_s
       "#{print_user} has quit: #{message}"
     end
@@ -175,7 +175,7 @@ module Linael
     end
   end
 
-  Message.generate_message_class :nick, Message, Message.default_regex("NICK") do
+  Message.generate_message_class :nick, Message do
     def to_s
       "#{print_user} changed his nick to #{content}"
     end
@@ -199,25 +199,6 @@ module Linael
     def to_s
       "#{print_user} invited #{target} on #{location}"
     end
-  end
-
-
-  #Numbered messages
-  class NumberedMessage < LocatedMessage
-
-    attr_accessor :code
-
-    def initialize msg
-      self.class::Motif =~ msg
-      super(msg,$~)
-      @code= ($~[:code_r] if $~.names.include? 'code_r') || ""
-
-    end
-
-    def self.regex 
-      /:(?<sender_r>\S*)\s(?<code_r>\d*)\s(?<location_r>[^:]*):(?<content_r>[^\n]*)/
-    end
-
   end
 
   Message.generate_message_class :server, NumberedMessage, NumberedMessage.regex do

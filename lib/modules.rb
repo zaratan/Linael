@@ -4,23 +4,6 @@ module Linael
 
     include Action
 
-    # *Intern method, don't use it*::
-    # It's a methode made for generate the add_type_behaviour
-    # TODO add protected (convention for *internal*)
-    def add_module_irc_behavior type
-      self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
-        procToAdd = Proc.new {|msg| instance.send(nom,msg) if (instance.methods.grep /act_authorized\?/).empty? or act_authorized?(instance,msg)}
-        (@runner.send "#{type}Act")[(instance.class::Name+ident).to_sym]= procToAdd
-        @behavior ||= {}
-        @behavior[type] ||= []
-        @behavior[type] << ident
-      end
-      self.class.send("define_method",("del_#{type}_behavior")) do |instance,ident|
-        (@runner.send "#{type}Act").delete((instance.class::Name+ident).to_sym)
-        @behavior.delete_if {|k,v| v == ident} 
-      end
-    end
-
     # Return the current instance of a module return nil if no mod
     # Params:
     # +name+:: name of the module
@@ -28,31 +11,7 @@ module Linael
     #   mod("admin") #=> return admin module
     #   mod("dfgh")  #=> nil
     def mod(name)
-      @runner.master.modules[name]
-    end
-
-    # TODO FIXME break backward module compatibility, it is crap
-    # Name of the module. Must be equal to class name downcase
-    Name=""
-
-    # *OLD DSL method*:: Must be overided to True if you need authentication
-    def self.require_auth 
-      false
-    end
-
-    # *OLD DSL method*:: Must be overided if you need other modules
-    def self.required_mod
-      nil
-    end
-
-    # *OLD DSL method*:: Must be overided if you want to do something @load
-    def load_mod
-
-    end
-
-    # *OLD DSL method*:: Must be overired to True if it's an authentification module
-    def self.auth?
-      false
+      master.module_instance name
     end
 
     # Name of module constructor.
@@ -61,14 +20,72 @@ module Linael
     # In new DSL should be setted in linael command.
     Constructor="Zaratan"
 
-    # *Don't really instanciate this class*::
-    def initialize(runner)
-      @runner=runner
-      @runner.instance_variables.grep(/@(.*)Act/) {add_module_irc_behavior $1}
+    # +behavior+:: actions
+    # +runner+::   container
+    attr_accessor :behavior,:master
+    
+    def stop!
+      self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
+    end
+
+    protected
+
+    def message_handler msg,result_message=nil
+      begin
+        yield
+      rescue MessagingException => error_message
+        answer(msg,error_message)
+        return
+      rescue Exception => error
+        talk(msg.who,error.to_s)
+        puts error.backtrace.join("\n").red
+        return
+      end
+      answer(msg,result_message) if result_message
     end
 
 
-    # *OLD DSL method*:: use it to declare which method tu use
+    # Define Options class (with some magic methods)
+    def self.generate_all_options
+      Class.new(Linael::ModulesOptions) do 
+        ['chan','who','what','reason','type','all'].each {|t| send("generate_#{t}")}
+        #Define method .chan which return the first word beging with a # . if none, return current chan
+        #generate_chan
+        #Define method .who which retrun the first word with no # nor ! nor - . If none return current user
+        #generate_who
+        #Define method .what which return first word with no # nor !
+        #generate_what
+        #Define method .reason which return everything after :
+        #generate_reason
+        #Define method .type which return the first word begining with -
+        #generate_type
+        #return EVERYTHING but the first word
+        #generate_all
+      end
+    end
+
+    # Add config in it
+    def self.generate_all_config(name, config_hash)
+
+      self.const_set("Constructor",config_hash[:author]) if config_hash[:author]
+      self.const_set("Name",name.to_s)
+
+      define_singleton_method "require_auth" do
+        config_hash[:require_auth]
+      end
+
+      define_singleton_method "required_mod" do
+        config_hash[:required_mod]
+      end
+
+      define_singleton_method "auth?" do
+        config_hash[:auth]
+      end
+
+    end
+
+    # *Internal method, don't use it*
+    # use it to declare which method tu use
     # +method_hash+:: 
     # * +key+:: place to load (:cmd,:join,...)
     # * +value+:: name of the method
@@ -83,13 +100,44 @@ module Linael
     end
 
     # *Internal method, don't use it*
-    def stopMod()
-      self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
+
+    def generate_proc nom,instance
+      Proc.new do |msg| 
+        if (instance.methods.grep /act_authorized\?/).empty? || act_authorized?(instance,msg)
+          instance.send(nom,msg) 
+        end
+      end
     end
 
-    # +behavior+:: actions
-    # +runner+::   container
-    attr_accessor :behavior,:runner
+    def instance_ident instance,ident
+      "#{instance.class::Name}_#{ident}"
+    end
+
+    def define_add_behaviour(type)
+      self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
+        procToAdd = generate_proc nom,instance
+        master.add_act type, instance_ident(instance,ident), procToAdd
+        @behavior ||= {}
+        @behavior[type] ||= []
+        @behavior[type] << ident
+      end
+    end
+
+    def define_del_behaviour(type)
+      self.class.send("define_method",("del_#{type}_behavior")) do |instance,ident|
+        master.del_act type,instance_ident(instance,ident)
+        @behavior.delete_if {|k,v| v == ident} 
+      end
+    end
+
+    # *Intern method, don't use it*::
+    # It's a methode made for generate the add_type_behaviour
+    def add_module_irc_behavior type
+      define_add_behaviour type
+      define_del_behaviour type
+    end
+    
+
 
   end
 
@@ -213,7 +261,11 @@ module Linael
       generate_meth :name   => "all",
         :regexp => /\s(.*)/
     end
+  
 
   end
 
+
 end
+    class MessagingException < StandardError
+    end

@@ -17,15 +17,15 @@ linael :basic_auth,:auth => true do
   end
 
   #ask for a user status to nickserv
-  define_method "ask_user" do |user|
+  def ask_user user
     talk("nickserv","status #{user}")
   end
-  
-  on :auth, :basic_auth, /./ do |msg,options|
-      ask_user Linael::Master
-      sleep(0.3)
-      msg.who.downcase == Linael::Master.downcase and 
-        (@user[Linael::Master] == "3")
+
+  on :auth, :basic_auth do |msg,options|
+    ask_user Linael::Master
+    sleep(0.3)
+    msg.who.downcase == Linael::Master.downcase && 
+      (@user[Linael::Master] == "3")
   end
 
 end
