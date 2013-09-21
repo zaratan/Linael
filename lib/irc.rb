@@ -4,6 +4,8 @@ require 'active_support/inflector'
 require 'active_support/core_ext/numeric/time'
 require 'socket'
 require 'colorize'
+require 'r18n-desktop'
+      
 
 module Linael
 

@@ -4,7 +4,11 @@ require('open-uri')
 require('htmlentities')
 
 # Fetches a YouTube title and says it
-linael :youtube, :constructor => "Vinz_" do
+linael :youtube, :author => "Vinz_" do
+
+  help [
+    t.youtube.help.description
+  ]
 
   value :id => /http[s]?:\/\/(?:www\.)?youtu.*v=([^&\s]*)/
 

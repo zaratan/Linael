@@ -7,10 +7,11 @@ require('htmlentities')
 linael :excuse_fr do
 
   help [
-    "Module for dev excuse (french)",
-    " ",
-    "#####Function#####",
-    "!excuse => Give an excuse"
+    t.excuse.help.description,
+    t.excuse.help.source,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.excuse.help.function.excuse
   ]
 
   on :cmd, :excuse, /^!excuse/ do |msg,options|

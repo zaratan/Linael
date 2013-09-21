@@ -4,10 +4,10 @@
 linael :tell do
 
   help [
-    "A module to tell something to somebody next time the bot see her",
-    " ",
-    "#####Function#####",
-    "!tell somebody : something => tell something to somebody"
+    t.tell.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.tell.help.function.tell
   ]
 
   on_init do
@@ -16,14 +16,17 @@ linael :tell do
 
   attr_accessor :tell_list
 
+  def add_tell who_tell,from,message
+    @tell_list[who_tell] ||= []
+    @tell_list[who_tell] << [from,message, Time::now.strftime(t.tell.time) ]
+  end
+
   #add a tell
   on :cmd, :tell_add, /^!tell/ do |msg,options|
 
-    who_tell = options.who.downcase.gsub(":","")
-
-    @tell_list[who_tell] ||= []
-    @tell_list[who_tell] << [options.from_who,options.all.gsub(/^[^:]*:/,""), Time::now.strftime("%d/%m/%Y at %H:%M") ]
-    answer(msg,"Oki doki! I'll tell this to #{who_tell} :)")
+    who_tell = options.who.downcase
+    add_tell who_tell, options.from_who, options.reason
+    answer(msg,t.tell.act.tell(who_tell))
 
   end
 
@@ -38,7 +41,7 @@ linael :tell do
         to_tell = @tell_list[who]
         @tell_list.delete(who)
         to_tell.each do |message|
-          talk(who,"Hey! #{message[0]} told me this: #{message[1]} at #{message[2]}")
+          talk(who,t.tell.act.do(message[0], message[1], message[2]))
           sleep(1)
         end
       end

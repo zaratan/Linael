@@ -1,8 +1,15 @@
 # -*- encoding : utf-8 -*-
 module Linael
+
   class ModuleIRC
 
     include Action
+
+    R18n.default_places = './translation/'
+
+    #use en by default
+
+    include R18n::Helpers
 
     # Return the current instance of a module return nil if no mod
     # Params:

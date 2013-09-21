@@ -26,15 +26,17 @@ linael :banana,require_auth: true do
   ]
 
   help [
-    "Sing the banana song",
-    " ",
-    "=====Fonctions=====",
-    "!banana                       => sing the banana song",
-    "!banana -[add|del] username   => add/del a user for this module"
+    t.banana.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.banana.function.banana,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.banana.function.user
   ]
 
   on_init do
-    @user=["zaratan"]
+    @user=[Linael::Master]
   end
 
   #sing
@@ -47,14 +49,14 @@ linael :banana,require_auth: true do
 
   #add a user
   on :cmdAuth, :add_user, /!banana\s-add\s/ do |msg,options|
-    answer(msg,"Oki doki! #{options.who} can now banana :)")
+    answer(msg, t.banana.user.add(options.who))
     @user << options.who.downcase
 
   end
 
   #del a user
   on :cmdAuth, :del_user, /!banana\s-del\s/ do |msg,options|
-    answer(msg,"Oki doki! #{options.who} won't banana anymore :(")
+    answer(msg, t.banana.user.del(options.who))
     @user.delete options.who.downcase
   end
 

@@ -5,8 +5,10 @@
 linael :rejoin, require_auth: true do
 
   help=[
-    "Auto-rejoin module",
-    "!start to start it"
+    t.rejoin.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.rejoin.help.function.start
     ]
 
   on_init do

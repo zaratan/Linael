@@ -19,7 +19,6 @@ module Linael
       if whenz =~ /([0-9]+)\/[0-9]+\/?[0-9]*/
         return $1
       else
-        p "ERROR in when: #{whenz}"
         return 0
       end
     end
@@ -29,7 +28,6 @@ module Linael
       if whenz =~ /[0-9]+\/([0-9]+)\/?[0-9]*/
         return $1
       else
-        p "ERROR in when: #{whenz}"
         return 0
       end
     end
@@ -45,7 +43,11 @@ module Linael
 
 
     def print_birthday
-      "Hey! It's #{nick} birthday today (#{Time.now.strftime("%d/%m/%Y") })!#{"(S)He is #{Time.now.year - year.to_i} years old!" if year.to_i != 0}"
+      t.birthday.print(nick, Time.now.strftime("%d/%m/%Y")) +  if year.to_i != 0
+              t.birtday.age(Time.now.year - year.to_i)
+            else
+              ""
+            end
     end
 
     def add_remind nick
@@ -68,21 +70,22 @@ end
 linael :birthday,require_auth: true,required_mod: ["tell"] do
 
   help [
-    "Module to remind of birthday",
-    " ",
-    "######Functions######",
-    "!birthday -add XXX DD/MM/YYYY => add a birthday for someone",
-    "!birthday -del XXX            => del a birthday for someone (Admin)",
-    "!birthday XXX                 => show XXX birthday",
-    "!birthday -remind XXX         => remind you of XXX birthday",
-    "!birthday -unremind XXX       => un-remind you of XXX birthday",
-    "!start                        => start remind (Admin)"
+    t.birthday.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.birthday.function.add,
+    t.birthday.function.tell,
+    t.birthday.function.remind,
+    t.birthday.function.unremind,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.birthday.function.del,
+    t.birthday.function.start
   ]
 
   on_init do
     @birthday = {}
     @started = false
-    start_remind
   end
 
   on_load do
@@ -95,33 +98,33 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
     else
       @birthday[options.who] = Linael::Birthday.new(options.who,options.date)
     end
-    answer(msg,"Oki doki! #{options.who} birthday is now #{options.date}.")
+    answer(msg,t.birthday.act.add(options.who, options.date))
   end
 
   on :cmd_auth,:birthday_del,/^!birthday\s+-del\s/ do |msg,options|
     @birthday[options.who] = nil
-    answer(msg,"Oki... I won't remind #{options.who} birthday anymore.")
+    answer(msg, t.birthday.act.del(options.who))
   end
 
   on :cmd,:birthday_remind,/^!birthday\s+-remind\s/ do |msg,options|
     @birthday[options.who].add_remind(options.from_who)
-    answer(msg,"I'll remind you of #{options.who} birthday.")
+    answer(msg, t.birthday.act.remind(options.who))
   end
 
   on :cmd,:birthday_unremind,/^!birthday\s+-unremind\s/ do |msg,options|
     @birthday[options.who].del_remind(options.from_who)
-    answer(msg,"I won't remind you anymore of #{options.who} birthday :(")
+    answer(msg,t.birthday.act.unremind(options.who))
   end
 
   on :cmd,:birthday_tell,/^!birthday\s+[A-Za-z]/ do |msg,options|
-    answer(msg,"(S)he was born on #{@birthday[options.who].day}/#{@birthday[options.who].month}#{"/#{@birthday[options.who].year}" if @birthday[options.who].year != 0}!")
+    answer(msg,t.birthday.act.tell(@birthday[options.who].day,@birthday[options.who].month},@birthday[options.who].year))
   end
 
   on :cmd,:birthday_test,/^!test_birthday/ do |msg,options|
     remind
   end
 
-  define_method :tommorow_midnight do
+  def tommorow_midnight 
     Time.now.to_date.next_day.to_time
   end
 
@@ -131,19 +134,18 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
     start_remind
   end
 
-  define_method :start_remind do
+  def start_remind
     remind
     at(tommorow_midnight) do
       start_remind
     end
   end
 
-  define_method :remind do
+  def remind 
     @birthday.each do |k,v|
       if (Time.now.day == v.day.to_i and Time.now.month == v.month.to_i)
         v.remind.each do |who|
-          mod("tell").instance.tell_list[who] ||= []
-          mod("tell").instance.tell_list[who] << [Linael::BotNick,v.print_birthday]
+          mod("tell").add_tell(who,Linael::BotNick,v.print_birthday)
         end
       end
     end

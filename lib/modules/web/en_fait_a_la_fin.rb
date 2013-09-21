@@ -7,10 +7,15 @@ require('htmlentities')
 linael :en_fait_a_la_fin do
 
   help [
-    "Module to spoil movies (french)",
-    " ",
-    "#####Function#####",
-    "!spoil [-t] => Spoil a film. If -t, it will give the title"
+    t.enfaitalafin.help.description,
+    t.enfaitalafin.help.source,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.enfaitalafin.help.function.spoil,
+    t.help.helper.line.white,
+    t.help.helper.line.options,
+    t.enfaitalafin.help.option.title,
+    t.enfaitalafin.help.option.id
   ]
 
   on :cmd, :spoil, /^!spoil/ do |msg,options|

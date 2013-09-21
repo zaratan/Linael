@@ -4,17 +4,13 @@
 linael :karma do
 
   help [
-    "A module to count ++ on people",
-    " ",
-    "=====Functions=====",
-    "!karma              => show your karma",
-    "!karma XXX          => show the karma of XXX",
-    "!karma_list [regex] => private answer for karma matching regex",
-    "XXX +1 or XXX ++    => add 1 to XXX karma",
-    "XXX -1 or XXX --    => del 1 to XXX karma",
-    " ",
-    "=====Options=====",
-    "!karma_list regex   => an irc regex * for a wildcard"
+    t.karma.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.karma.help.function.self,
+    t.karma.help.function.karma,
+    t.karma.help.function.plus_one,
+    t.karma.help.function.minus_one
   ]
 
   on_init do
@@ -36,16 +32,9 @@ linael :karma do
   end
 
   on :cmd, :karma, /^!karma\s/ do |msg,options|
-    answer(msg,"Karma for #{options.who} is : #{@karma[options.who.downcase]}!")
+    answer(msg, t.karma.karma(options.who,@karma[options.who.downcase]))
   end
 
-  on :cmd, :karma_list, /^!karma_list\s+\S/ do |msg,options|
-    @karma.each do |key,value|
-      talk(msg.who, "Karma for #{key}: #{value}") if key.match("^#{options.regex.downcase.gsub("*",".*")}$")
-    end
-  end
-
-  value :karma      => /(\S*)\s*(\+|-)/,
-        :regex      => /^!karma_list\s([A-z\*]*)/
+  value :karma => /(\S*)\s*(\+|-)/
 
 end

@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 # -*- encoding : utf-8 -*-
 
+LinaelLanguages = 'fr'
 require_relative 'default_linael'
 
 module Linael
@@ -9,7 +10,9 @@ module Linael
   ServerAddress = 'irc.rizon.net'
   #Nick of the bot
   BotNick = 'LinaelTest'
+  
 
   IRC::linael_start
+
 
 end

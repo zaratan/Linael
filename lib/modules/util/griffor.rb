@@ -1,12 +1,14 @@
 linael :griffor do
 
   help [
-    "A module to track griffor test scores",
-    " ",
-    "#####Functions#####",
-    "!griffor name => score of name",
-    "!griffor -add score => update your score"
+    t.griffor.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.griffor.function.show,
+    t.griffor.function.add
   ]
+
+  attr_accessor :scores
 
   on_init do
     @scores = {}
@@ -18,9 +20,9 @@ linael :griffor do
     end
 
     if @scores.has_key? options.who
-      answer(msg,"#{options.who}: #{@scores[options.who]}")
+      answer(msg,t.griffor.act.show(options.who, scores[options.who]))
     else
-      answer(msg,"No score for #{options.who}. Do the test on http://test.griffor.com")
+      answer(msg, t.griffor.no.score(options.who))
     end
   end
 
@@ -30,7 +32,7 @@ linael :griffor do
     end
 
     @scores[options.from_who] = options.who
-    answer(msg,"#{options.from_who}: Your score is now: #{options.who}")
+    answer(msg, t.griffor.act.add(options.from_who,options.who))
   end
 end
            

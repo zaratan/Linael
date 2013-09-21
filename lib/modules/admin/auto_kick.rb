@@ -4,15 +4,12 @@
 linael :auto_kick,require_auth: true do
 
     help [
-      "Module for manage Auto_Kick",
-      " ",
-      "=====Functions=====",
-      "!akick -[add|del|show] where <options>",
-      " ",
-      "=====Options=====",
-      "-add   : add a rule of auto kick. can match nick or vhost. Can match regexp with *",
-      "-del   : delete the rule by its number",
-      "-show  : print the rule for the chan"
+      t.autokick.help.description,
+      t.help.helper.line.white,
+      t.help.helper.line.admin,
+      t.autokick.function.add,
+      t.autokick.function.del,
+      t.autokick.function.show
     ]
 
     
@@ -31,14 +28,14 @@ linael :auto_kick,require_auth: true do
           end
       end
 
-      talk(join.where,"sorry #{join.who} you are akick from #{join.where}.")
-      kick_channel({dest:join.where,who:join.who,msg:"sorry ♥"})
+      talk(join.where,t.autokick.act.akick.answer(join.who))
+      kick_channel dest: join.where, who: join.who, msg: t.autokick.act.akick.kick
 
     end
 
     #add rule
     on :cmdAuth, :add_akick, /^!akick\s-add\s/ do |msg,options|
-      answer(msg,"Oki doki! #{options.who} will be auto kick on #{options.chan}.")
+      answer(msg, t.autokick.act.add(options.who, options.chan))
       add_akick_rule options.chan.downcase,options.who.downcase
     end
 
@@ -53,7 +50,7 @@ linael :auto_kick,require_auth: true do
       print_rules options.chan.downcase,msg.who
     end
 
-    define_method "add_akick_rule" do |where,rule|
+    def add_akick_rule(where,rule)
       rule.gsub!("*",".*")
       if @akick[where].nil?
         @akick[where] = [rule]
@@ -62,13 +59,13 @@ linael :auto_kick,require_auth: true do
       end
     end
 
-    define_method "del_akick_rule" do |where,ruleNum|
+    def del_akick_rule(where,ruleNum)
       if !@akick[where].nil?
         @akick[where].delete_at (ruleNum - 1)
       end
     end
 
-    define_method "print_rules" do |where,who|
+    def print_rules(where,who)
       if !@akick[where].nil?
         @akick[where].each_with_index {|rule,index| talk(who,"#{(index + 1)} - #{rule}")}
       end

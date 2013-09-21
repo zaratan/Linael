@@ -1,0 +1,422 @@
+or: or
+
+and: and
+
+ago: ago
+
+version: "Linael Version 3.0 running on Ruby"
+
+day: !!pl
+  0: ""
+  1: "1 day"
+  n: "%1 days"
+
+hour: !!pl
+  0: ""
+  1: "1 hour"
+  n: "%1 hours"
+
+minute: !!pl
+  0: "" 
+  1: "1 minute"
+  n: "%1 minutes"
+
+second: !!pl
+  0: ""
+  1: "1 second"
+  n: "%1 seconds"
+
+
+
+help:
+  helper:
+    line:
+      functions: ______Functions______
+      admin:     ______Admin_Functions______
+      options:   ______Options______
+      white:     ' '  
+  help:
+    description: A module for getting description of modules.
+    function:
+      help: '!help module_name => display the help for the module *module_name*'
+  default:
+    master: "Ask !help master for a list of modules"
+    help:   "Ask !help module_name for an help on a particular module"
+  none: No help for the module %1. Ask %2 for this.
+
+master:
+  help:
+    description: Master module for managing the other modules.
+    function:
+      add:    '!module -add name     => Load *name* module.'
+      del:    '!module -del name     => Unload *name* module.'
+      reload: '!module -reload name  => Reload *name* module.'
+      show:   '!module -show [regex] => Show the different modules. A regex can be provided (with * for anything).'
+
+  not:
+    loaded:    Module %1 not loaded.
+    exist:     This module doesn't exist.
+    unique:    There is multiple module with this name. Do you mean %1 ?
+    unloaded:  Module already loaded, please unload it first.
+    enough:
+      auth:    You need at least one authentication module to load this module.
+      require: You do not have loaded all the requirement for this module (%1).
+
+  show:
+    all:    'List of %1 modules: [%2].'
+    loaded: 'List of loaded modules: %1.'
+
+  act:
+    add:    Module %1 added.
+    del:    Module %1 removed.
+    reload: Module %1 reloaded.
+
+admin:
+  help:
+    description: Administration module.
+    function:
+      join:   "!admin_join|!join|!j chan              => Join *chan*."
+      part:   "!admin_part|!part    chan              => Part *chan*."
+      kick:   "!admin_kick|!kick|!k chan who :reason  => Kick *who* on *chan* for *reason*."
+      die:    "!admin_die                             => Quit."
+      mode:   "!admin_mode|!mode    chan what [:args] => Change *what* mode on *chan* with *args* options."
+      reload: "!admin_reload        file              => Reload a file."
+  act:
+    part: 
+      message: Bye.
+      answer:  Ok. I'll part from %1.
+    die:  
+      answer:  Bye.
+      message: Bye.
+    kick: 
+      message: Bye %1.
+      answer:  Ok. I'll kick %1 on %2.
+    join:
+      answer:  Ok. I'll join %1.
+    reload:
+      answer:  Ok. %1 file have been reloaded.
+    mode:
+      answer:  Ok. I'll change mode %1 on %2
+
+savem:
+  help:
+    description: Saving module to save other module's state in yaml files
+    function:
+      save:      "!save [module] => Save a *module*. If no module given, save all the loaded modules."
+      load:      "!load [module] => Load a *module*. If no module given, load all the saved modules."
+      autosave:  "!auto_save     => Auto save every modules every hours."
+  no:
+    module:    There is no module to save.
+    directory: No save directory.
+  error:
+    saving:    An error occured, module %1 is not saved.
+  act:
+    save:      Module %1 is saved.
+    load:      Module %1 loaded.
+
+blacklist:
+  help:
+    description: A module to whitelist/blacklist modules from a chan
+    function: 
+      blacklist: "!blacklist|!bl -(add|del) [-all] [chan] [module] => add or remove a*chan* from *module* blacklist. If no chan, it's the actual one."
+      whitelist: "!whitelist|!wl -(add|del) [-all] [chan] [module] => add or remove a*chan* from *module* whitelist. If no chan, it's the actual one."
+    option:
+      all: -all => do the job for every chan.
+  not:
+    loaded:
+  act: 
+    added: added in
+    deleted: deleted from
+    global: The chan %1 have been %2 the %3 of the module %4.
+
+autokick:
+  help:
+    description: Module to manage auto kicks
+    function:
+      add:  "!akick -add  chan regex => Add a akick rule on a *chan*. The *regex* is matched both on nick and vhost. It can match regex with *."
+      del:  "!akick -del  chan rule  => Remove a *rule* (based on it's number) on a *chan*."
+      show: "!akick -show chan       => Print the akick rules for a *chan*."
+  act:
+    akick:
+      answer: "%1, you're auto kick from this channel."
+      kick: NO.
+    add: "%1 added to auto kicks on %2."
+    del: Rule number %1 is removed from %2.
+
+system:
+  help:
+    description: A module to interact with the system.
+    function:
+      bash: "!bash cmd => execute the command *cmd* with bash."
+  act:
+    bash: "%1: Command executed."
+
+autorejoin:
+  help:
+    description: A module to make the bot auto rejoin after kicks.
+
+rejoin:
+  help:
+    description: A module to make the bot auto rejoin after bans.
+    function:
+      start: "!start => start the module."
+
+talk:
+  help:
+    description: A module to make the bot talk.
+    function:
+      talk: "!talk chan :message => make the bot say *message* on *chan*."
+
+banana:
+  help:
+    description: A module to sing the banana song.
+    function:
+      banana: "!banana                 => Sing the banana song."
+      user:   "!banana -(add|del) user => Add/remove a *user* on this module."
+  user:
+    add: "%1 can now !banana."
+    del: "%1 can't !banana anymore."
+
+caesar:
+  help:
+    description: A module to code a message using caesar cryptographic method.
+    function:
+      caesar: "!caesar [-s(letter)] [-t(letter)] string => Display your string, replacing each letter with the one following it in the alphabet."
+    option:
+      source: "-s[a-z] => Source letter(default: a)."
+      target: "-t[a-z] => Target letter(default: b)."
+
+dice:
+  help:
+    description: A module to launch dices.
+    function:
+      dice: XXXdYYY => launch XXX dice YYY (for exemple 3d6 launch 3 dices with 6 faces each)
+  act:
+    dice: "%1: Dices = [%2]"
+    sum: "%1: Sum = %2"
+
+lovely:
+  help:
+    description: A module to answer to love.
+  act:
+    love: I love you too %1.
+
+morse:
+  help:
+    description: A module to encode a message in morse.
+    function:
+      morse: "!morse message => Translate the *message* in morse."
+
+roulette:
+  help:
+    description:
+      a: "Auto kick people who lose on roulette."
+      b: "This module need marvin bot to work."
+  act:
+    kick: YOU LOSE!
+
+birthday:
+  help:
+    description: "Module to remind of birthday"
+    function:
+      add:      "!birthday -add user DD/MM/YYYY => Add a birthday for *user*."
+      del:      "!birthday -del user            => Del a birthday for *user*."
+      tell:     "!birthday user                 => Show *user* birthday."
+      remind:   "!birthday -remind user         => Remind you of *user* birthday."
+      unremind: "!birthday -unremind user       => Un-remind you of *user* birthday."
+      start:    "!start                         => Start remind."  
+  print: It's %1 birthday today (%2).
+  age: (S)He is %1 years old.
+  act:
+    add: "%1 birthday is now %2."
+    del: "%1 birthday removed."
+    tell: "(S)He was born on %1/%2/%3."
+    remind: "I'll remind you of %1 birthday."
+    unremind: "I won't remind you of %1 birthday."
+    start: "Remind started."
+    
+calc:
+  help:
+    description: Calculator
+    function: 
+      calc: "!calc string => calc with bc (http://unixhelp.ed.ac.uk/CGI/man-cgi?bc+1)"
+  result: "%1: %2"
+
+griffor:
+  help:
+    description: A module to track griffor test scores.
+    function: 
+      show: "!griffor name       => Score of *name*."
+      add:  "!griffor -add score => Update your *score*."
+  no:
+    score: No score for %1. Do the test on http://test.griffor.com .
+  act:
+    add:  "%1: Your score is now: %2."
+    show: "%1: %2."
+
+karma:
+  help:
+    description: A module to count +1 on people.
+    function:
+      self:      "!karma             => Show your karma."
+      karma:     "!karma user        => Show the karma of *user*."
+      plus_one:  "user +1 or user ++ => Add 1 to *user* karma."
+      minus_one: "user -1 or user -- => Del 1 to *user* karma."
+  karma: "Karma for %1 is: %2."
+      
+link:
+  help:
+    description: A module to associate things lire ruby => much better than perl
+    function:
+      link:  "!link word[?]               => Anwser one of the description associated with the *word*."
+      links: "!links word[?]              => Anwser all the descriptions of the *word* in query."
+      add:   "!link -add word description => Add a *description* to a *word*." 
+      del:   "!link -del word id          => Remove a description from a *word* using its *id*."
+      user:  "!link_user -(add|del) user  => Add/remove a *user* who can link."
+  act:
+    add: "%1 is now: %2."
+    del: Deleting entry number %1 of %2.
+    link:  "%1: %2."
+    links: "#%1: %2"
+    user:
+      add: "%1 can now link."
+      del: "%1 can't link anymore."
+  no:
+    link: "%1: I don't have this entry."
+
+remind:
+  help:
+    description: A module to remind things
+    function:
+      me:        "!remind me in time to something       => remind you in *time* to do *something*"
+      else:      "!remind somebody in time to something => remind *somebody* in *time* to do *something*"
+    time:
+      head:      ______Time______
+      line1:     It can take seconds, minutes, hours, days, weeks, months and years
+      line2:     "It add time with 'and'"
+      line3:     "Example: 1 day and 2 hours and 30 minutes"
+  remind: Remind to %1.
+  act:
+    me:   I'll remind you this in %1.
+    else: I'll remind this to %1 in %2.
+
+seen:
+  help:
+    description: A module to trac acting of users.
+    function:
+      seen:  "!seen user       => Tell the last time a *user* have been seen."
+      first: "!first_seen user => Tell the first time a *user* have been seen."
+  first: "Last seen %1 doing: %2."
+  seen: "First seen %1 doing: %2."
+
+message:
+  join:    "%1 has joined %2"
+  part:    "%1 has part %2 saying: %3"
+  notice:  "%1 has noticed %2 saying: %3"
+  privmsg: "%1 said to %2: %3"
+  quit:    "%1 has quit: %2"
+  ping:    "Ping from %1"
+  nick:    "%1 changed his nick to %2"
+  mode:    "%1 changed mode on %2: %3 %4"
+  kick:    "%1 kicked %2 from %3 for reason: %4"
+  invite:  "%1 invited %2 on %3"
+  server:  "%1 %2 %3: %4"
+
+tell:
+  help:
+    description: A module to tell something to somebody next time the bot see her.
+    function:
+      tell: "!tell somebody :something => tell *something* to *somebody*."
+  act:
+    tell: I'll tell this to %1.
+    do:   "%1 told me this: %2 (%3)"
+  time: "%d/%m/%Y at %H:%M"
+
+enfaitalafin:
+  help:
+    description: A module to spoil movies (french).
+    source: From enfaitalafin.fr
+    function:
+      spoil: "!spoil [-t] [id] => Spoil a film."
+    option:
+      title: "-t => Give the film title."
+      id:    "id => Spoil a film from its id."
+
+excuse:
+  help:
+    description: A module for dev excuses (french).
+    source: From www.excusesdedev.com
+    function: 
+      excuse: "!excuse => Give an excuse."
+
+google:
+  help:
+    description: A module to make search on google.
+    source: From www.google.com
+    function:
+      google:  "!g search   => make a google search on *search*"
+      youtube: "!yt search  => make a youtube search on *search*"
+      image:   "!img search => make a google-image search on *search*"
+
+name:
+  help:
+    description: "A module to generate names."
+    source: "From http://www.behindthename.com"
+    function:
+      name:  "!name                => display a random name from a database"
+      types: "!name -types [regex] => display the different types of names available. It eventualy take a regex."
+      info:  "!name -info *name*   => display information on *name*"
+    option:
+      name:
+        full:   "!name [-g(m|f)] [-s(1-4)] [-(0-9)] [-tType1,Type2,...]"
+        gender: "    -g    : Gender male or female"
+        size:   "    -s    : Size of the name"
+        number: "    -     : Number of result"
+        type:   "    -t    : Types of names"
+  info:
+    gender: "Gender: %1"
+    usages: "Usages: %1"
+    description: "Description:"
+
+reverso:
+  help:
+    description: A module to translate.
+    source: From reverso.net
+    function:
+      reverso: "!reverso [-f(from)] [-t(to)] message => Converte a *message* *from* a language *to* another."
+      lang:    "!reverso_lang                        => Answer the differents languages."
+  act:
+    reverso: "%1: %2"
+    lang: "[%1]"
+
+weather:
+  help:
+    description: A module for weather and forecast.
+    source: "From http://www.wunderground.com"
+    function:
+      weather:  "!weather or !w [location]  => Current weather for location."
+      forecast: "!forecast or !f [location] => 3 days forecast for location."
+      location: "!location location         => register a location for your user, so you don't have to type it."
+  no:
+    location: "No location for: %1"
+    register: "No location registered for %1. Use !location to register your location."
+  act:
+    weather: "Weather for %1: \u0002Condition\u000F: %2 %3°C (%4°F). \u0002Wind\u000F: From %5 at %6 (%7 mi/h). \u0002Pressure\u000F: %8 mb. \u0002Humidity\u000F: %9"
+    forecast:
+      main: "Forecast for %1: "
+      day: "\u0002%1\u000F: %2. "
+    location: Location is set for %1
+
+youtube:
+  help:
+    description: A module to spoil youtube links.
+
+linaeltranslation:
+  help:
+    description: A module to set the bot translation
+    function:
+      reload: "!translation -reload                      => reload the translations files"
+      set:    "!translation -set ([\"lang1\",\"lang2\"]) => change the bot languages to *lang1*, *lang2*"
+  act:
+    reload: Translations reloaded.
+    set:    "Translations are now: %1."

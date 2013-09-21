@@ -6,63 +6,49 @@ require 'ruby-units'
 linael :weather do
 
   help [
-    "A module for weather",
-    "thx to http://www.wunderground.com",
-    " ",
-    "######Functions######",
-    "!weather or !w [location]  => Current weather for location",
-    "!forecast or !f [location] => 3 days forecast for location",
-    "!location location         => register a location for your user, so you don't have to type it ;)"
+    t.weather.help.description,
+    t.weather.help.source,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.weather.help.function.weather,
+    t.weather.help.function.forecast,
+    t.weather.help.function.location
   ]
 
   on_init do
     @location={}
   end
 
-  define_method "weather_from" do |msg,location|
+  def weather_from location
     w = WeatherUnderground::Base.new.CurrentObservations(location)
-    if w.temp_c == ""
-      answer(msg,"Where the hell is #{location.gsub("\r","")} ?!?")
-      return nil
-    end
-    "Weather for #{w.display_location.first.full}: \u0002Condition\u000F: #{w.weather} #{w.temp_c}°C (#{w.temp_f}°F). \u0002Wind\u000F: From #{w.wind_dir} at #{Unit("#{w.wind_mph} mi/h").convert_to("km/h").round.to_s} (#{w.wind_mph} mi/h). \u0002Pressure\u000F: #{w.pressure_mb} mb. \u0002Humidity\u000F: #{w.relative_humidity}"
+    raise MessagingException, t.weather.no.location(location.gsub("\r","")) if w.temp_c == ""
+    t.weather.act.weather(w.display_location.first.full, w.weather, w.temp_c, w.temp_f, w.wind_dir, Unit("#{w.wind_mph} mi/h").convert_to("km/h").round.to_s, w.wind_mph, w.pressure_mb, w.relative_humidity)
   end
 
-  define_method "forecast_from" do |msg,location|
+  def forecast_from location
     w = WeatherUnderground::Base.new.CurrentObservations(location)
     f = WeatherUnderground::Base.new.TextForecast(location)
-    result = "Forecast for #{w.display_location.first.full}: "
-    if w.temp_c == ""
-      answer(msg,"Where the hell is #{location.gsub("\r","")} ?!?")
-      return nil
-    end
+    result = t.weather.act.forecast.main w.display_location.first.full
+    raise MessagingException, t.weather.no.location(location.gsub("\r","")) if w.temp_c == ""
     f.days.first(4).each do |d|
-      result += "\u0002#{d.title}\u000F: #{d.text.gsub("&deg;","°")}. "
+      result += t.weather.act.forecast.day d.title, d.text.gsub("&deg;","°")
     end
     result
   end
 
-  define_method "local" do |msg,user|
-    unless @location[user.downcase]
-      answer(msg,"No location registered for #{user}. Use !location to register your location")
-      return false
-    end
-    return true
+  def local user
+    raise MessagingException, t.weather.no.register(user) unless @location[user.downcase]
   end
-
-  on :cmd, :weather_search, /^!(weather|w)\s/ do |msg,options|
-    if options.all =~ /[A-Za-z]/
-      answer(msg,weather_from(msg,options.all))
-    else
-      answer(msg,weather_from(msg,@location[options.from_who.downcase])) if local(msg,options.from_who)
+  ["weather","forecast"].each do |method|
+    on :cmd, "#{method}_search".to_sym, /^!(#{method}|#{method[0]})\s/ do |msg,options|
+      message_handler msg do
+      if options.all =~ /[A-Za-z]/
+        answer(msg,send("#{method}_from",options.all))
+      else
+        local(options.from_who)
+        answer(msg,send("#{method}_from",@location[options.from_who.downcase]))
+      end
     end
-  end
-
-  on :cmd, :weather_forecast, /^!(forecast|f)\s/ do |msg,options|
-    if options.all =~ /[A-Za-z]/
-      answer(msg,forecast_from(msg,options.all))
-    else
-      answer(msg,forecast_from(msg,@location[options.from_who.downcase])) if local(msg,options.from_who)
     end
   end
 

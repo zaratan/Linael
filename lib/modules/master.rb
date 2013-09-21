@@ -1,12 +1,13 @@
 linael :master, require_auth: true do
   help [
-    "Module for loading modules",
-    " ",
-    "#####Functions#####",
-    "!module -add name     => Load name module",
-    "!module -del name     => Unload name module",
-    "!module -reload name  => Reload name module",
-    "!module -show [regex] => Show a list of modules. A * mean that the module is loaded",
+    t.master.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.master.help.function.show,
+    t.help.helper.line.admin,
+    t.master.help.function.add,
+    t.master.help.function.del,
+    t.master.help.function.reload
   ]
 
 
@@ -49,7 +50,7 @@ linael :master, require_auth: true do
   end
 
   def reload_action name
-    raise MessagingException, "Module not Loaded." unless modules.has_key?(name)
+    raise MessagingException, t.master.not.loaded(name) unless modules.has_key?(name)
     #raise an exception if the module do not exist :)
     modules.find_file_module_by_name(name)
     modules.remove name
@@ -61,24 +62,24 @@ linael :master, require_auth: true do
     regex = Regexp.new("#{regex}[^\\/]*\.rb")
     result = modules.find_all_modules(regex).map {|path| path.gsub(/.*\//,'').gsub(/\.rb/,'') }
     result_loaded = result.select {|k| module_instance(k)}
-    answer(msg,"List of #{Linael::BotNick} modules: [#{result.join(', ')}]")
-    answer(msg,"List of loaded modules: [#{result_loaded.join(', ')}]")
+    answer(msg, t.master.show.all(Linael::BotNick,result.join(', ')))
+    answer(msg, t.master.show.loaded(result_loaded.join(', ')))
   end
 
   on :cmdAuth, :add, /^!module\s-add\s/ do |msg,options|
-    message_handler msg,"Module #{options.who} added :)" do
+    message_handler msg, t.master.act.add(options.who) do
       add_action options.who
     end
   end
 
   on :cmdAuth, :del, /^!module\s-del\s/ do |msg,options|
-    message_handler msg,"Module #{options.who} removed :(" do
+    message_handler msg, t.master.act.del(options.who) do
       del_action options.who
     end
   end
 
   on :cmdAuth, :reload, /^!module\s-reload\s/ do |msg,options|
-    message_handler msg,"Module #{options.who} reloaded \o/" do
+    message_handler msg, t.master.act.reload(options.who) do
       reload_action options.who
     end
   end
@@ -95,8 +96,9 @@ module Linael
   class Modules::ModuleList
 
     include Enumerable
+    include R18n::Helpers
 
-    attr_reader :modules,:auth_modules,:dir,:master
+    attr_accessor :modules,:auth_modules,:dir,:master
 
     def initialize(master,dir)
       @master=master
@@ -145,12 +147,15 @@ module Linael
     alias_method :add_module, :<<
 
     def delete_module_by_name(module_name)
-      raise MessagingException, "Module #{module_name} not loaded." unless has_key?(module_name)
+      raise MessagingException, t.master.not.loaded(name) unless has_key?(module_name)
       modules.delete_if do |mod| 
-        mod.stop! if mod.name == module_name
+        if mod.name == module_name
+          mod.stop!
+          true
+        end
       end
       auth_modules.delete_if do |mod|
-        mod.name = module_name
+        mod.name == module_name
       end
     end
 
@@ -161,19 +166,19 @@ module Linael
     def find_file_module_by_name(module_name)
       #The name contain a / so we only look inside the right directory
       if module_name.include? "/"
-        raise MessagingException,"This module doesn't exist." unless File.exists(dir + module_name)    
+        raise MessagingException,T.master.not.exist unless File.exists(dir + module_name)    
         return module_name
       else
         #The name do not contain a / so we look EVERYWHERE and ask if many
         mod_place = recursive_search dir,/#{module_name}\.rb/
-        raise MessagingException,"This module doesn't exist." if mod_place.empty?
-        raise MessagingException,"There is multiple module with this name. Do you mean #{format_multiples_names(mod_place)}?" if mod_place.size > 1
+        raise MessagingException, t.master.not.exist if mod_place.empty?
+        raise MessagingException,t.master.not.unique(format_multiples_names(mod_place)) if mod_place.size > 1
         module_name= mod_place.first
       end
     end
 
     def format_multiples_names multiples_names
-      multiples_names.map{|name| name.gsub(dir,"")}.join(" or ")
+      multiples_names.map{|name| name.gsub(dir,"")}.join(" #{t.or} ")
     end
 
     def recursive_search(current_dir,regex_name)
@@ -198,15 +203,28 @@ module Linael
       "Linael::Modules::#{module_name.camelize}".constantize
     end
 
+    def good_to_add? module_name,klass
+      raise MessagingException, t.master.not.unloaded if has_key? module_name
+      raise MessagingException, t.master.not.enough.auth if klass.require_auth && auth_modules.empty?
+      raise MessagingException, t.master.not.enough.require(klass.required_mod.join(", ")) unless match_requirement? klass.required_mod
+    end
+
     def add_module_by_name(module_name)
       klass = load_module_class module_name
-      raise MessagingException, "Module already loaded, please unload first." if has_key? module_name
-      raise MessagingException, "You need at least one authentication module to load this module." if klass.require_auth && auth_modules.empty?
-      raise MessagingException, "You do not have loaded all the requirement for this module.(#{klass.required_mod.join(", ")})" unless match_requirement? klass.required_mod
+      good_to_add?(module_name,klass)
       mod = Modules::Module.new(master,klass: klass)
       add_module mod
       mod.start!
       auth_modules << mod if klass.auth?
+    end
+
+    def add_module_by_instance(instance)
+      instance.master = master
+      instance.launch
+      mod = Modules::Module.new(master,instance: instance)
+      add_module mod
+      mod.start!
+      auth_modules << mod if instance.class.auth?
     end
 
   end
@@ -217,7 +235,7 @@ module Linael
     attr_accessor :name,:instance
 
     def initialize master,params
-      @name = params[:klass]::Name
+      @name = (params[:klass] || params[:instance].class)::Name
       @instance = (if params[:klass]
                    params[:klass].new(master)
     else
@@ -231,7 +249,6 @@ module Linael
 
   def stop!
     @instance.stop!
-    true
   end
 
   def start!

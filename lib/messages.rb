@@ -6,6 +6,8 @@ module Linael
   # It covers Quit, Ping and Nick messages
   class Message
 
+    include R18n::Helpers
+
     # date of message, sender of message, ident of sender, content of message
     attr_accessor :date, :sender, :identification, :content
 
@@ -84,7 +86,7 @@ module Linael
     LocationRegex=/(?<location_r>\S*)/
 
     # initialize
-    def initialize(msg,parse = nil,var = [])
+    def initialize(msg, var = [])
       super(msg,[:@location] + var)
     end
 
@@ -104,7 +106,7 @@ module Linael
 
     # Initialize
     def initialize msg
-      super(msg,[:@taget])
+      super(msg,[:@target])
     end
 
     # Regex for matching target
@@ -123,7 +125,7 @@ module Linael
     end
 
     def self.regex 
-      /:(?<sender_r>\S*)\s(?<code_r>\d*)\s(?<location_r>[^:]*):(?<content_r>[^\n]*)/
+      /:(?<sender_r>\S*)\s+(?<code_r>\d*)\s+(?<location_r>[^:]*):(?<content_r>[^\n]*)/
     end
 
   end
@@ -141,21 +143,21 @@ module Linael
 
   Message.generate_message_class :join, LocatedMessage, join_regex do
     def to_s
-      "#{print_user} has joined #{location}"
+      t.message.join print_user, location
     end
   end
   
-  [[:part,'leaved'],[:notice,'noticed']].each do |args|
-    Message.generate_message_class args.first, LocatedMessage do
+  [:part,:notice].each do |args|
+    Message.generate_message_class args, LocatedMessage do
       define_method "to_s" do
-        "#{print_user} has #{args.last} #{location} saying: #{content}"
+        t.message.send args, print_user, location, content
       end
     end
   end
 
   Message.generate_message_class :privmsg, LocatedMessage do
     def to_s
-      "#{print_user} said to #{location}: #{content}"
+      t.message.privmsg(print_user,location,content)
     end
 
     def command?
@@ -165,19 +167,19 @@ module Linael
   
   Message.generate_message_class :quit, Linael::Message do
     def to_s
-      "#{print_user} has quit: #{message}"
+      t.message.quit print_user, message
     end
   end
 
   Message.generate_message_class :ping, Message,/\APING :(?<sender_r>[^\n]*)/ do
     def to_s
-      "Ping from #{sender}"
+      t.message.ping sender
     end
   end
 
   Message.generate_message_class :nick, Message do
     def to_s
-      "#{print_user} changed his nick to #{content}"
+      t.message.nick print_user, content
     end
 
     alias_method :new_nick, :content
@@ -185,25 +187,25 @@ module Linael
 
   Message.generate_message_class :mode, UserLocatedMessage, mode_regex do
     def to_s
-      "#{print_user} changed mode on #{location}: #{content} #{target} "
+      t.message.mode print_user, location, content, target
     end
   end
 
   Message.generate_message_class :kick, UserLocatedMessage, kick_regex do
     def to_s
-      "#{print_user} kicked #{target} from #{location} for reason: #{content}"
+      t.message.kick print_user, target, location, content
     end
   end
 
   Message.generate_message_class :invite, UserLocatedMessage, invite_regex do
     def to_s
-      "#{print_user} invited #{target} on #{location}"
+      t.message.invite print_user, target, location
     end
   end
 
   Message.generate_message_class :server, NumberedMessage, NumberedMessage.regex do
     def to_s
-      "#{sender} #{code} #{location}: #{content}"
+      t.message.server sender, code, location, content
     end
   end
 

@@ -6,13 +6,16 @@ require 'google-search'
 linael :google do
 
   help [
-    "A module to make google and youtube search",
-    " ",
-    "!g xxx  => make a google research",
-    "!yt xxx => make a youtube research"
-    ]
+    t.google.help.description,
+    t.google.help.source,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.google.help.function.google,
+    t.google.help.function.youtube,
+    t.google.help.function.image
+  ]
 
-  define_method "print_search" do |msg,options,clazz|
+  def print_search (msg,options,clazz)
     result = clazz.new(:query => options.all).first
     answer(msg,"#{options.from_who}: #{result.title.gsub(/<[^>]*>/,"").gsub(/\s\s+/," ")} ( #{result.uri} )")
     answer(msg, result.content.gsub(/<[^>]*>/,"").gsub(/\s\s+/," "))

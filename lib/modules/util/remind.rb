@@ -4,21 +4,22 @@
 linael :remind,require_auth: true do
 
   help [
-    "Module: Remind",
-    " ",
-    "A module to remind things",
-    "#####Functions#####",
-    "!remind me in [time] to something => remind you in [time] to do something",
-    "!remind somebody in [time] to something => remind somebody in [time] to do something (only bot op)",
-    " ",
-    "#####Time#####",
-    "It can take seconds,minutes,hours,days,weeks,months and years",
-    "It add time with 'and'",
-    "Example: 1 day and 2 hours and 30 minutes"
+    t.remind.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.remind.help.function.me,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.remind.help.function.else,
+    t.help.helper.line.white,
+    t.remind.help.time.head,
+    t.remind.help.time.line1,
+    t.remind.help.time.line2,
+    t.remind.help.time.line3
   ]
 
   #transform string to date
-  define_method "make_time" do |stime|
+  def make_time stime
 
     stime.gsub!(/\s+and\s+/,"+")
     stime.gsub!(/\s+/,".")
@@ -28,14 +29,14 @@ linael :remind,require_auth: true do
 
   end
 
-  define_method "remind_aux" do |options,time,who|
+  def remind_aux options, time, who
     who ||= options.from_who
     unless time
       time = make_time(options.time)
       @reminds << [options,time]
     end
     at(time,options) do |options|
-      talk(who,"Hey! Remind to #{options.action.gsub("\r","")}")
+      talk(who,t.remind.remind(options.action.gsub("\r","")))
       @reminds.delete_if {|rem| rem[1] < Time.now}
     end
   end
@@ -46,7 +47,6 @@ linael :remind,require_auth: true do
 
   on_load do
     @reminds.each do |rem|
-      p rem
       remind_aux(rem[0],rem[1],nil) if Time.now < rem[1]
     end
   end
@@ -59,7 +59,7 @@ linael :remind,require_auth: true do
   on :cmd, :remind, /^!remind\s+me\s/ do |msg,options|
 
     remind_aux(options,nil,nil)
-    answer(msg,"Oki doki! I'll remind you this in #{options.time}")
+    answer(msg,t.remind.act.me(options.time))
     
   end
   
@@ -70,7 +70,7 @@ linael :remind,require_auth: true do
     end
 
     remind_aux(options,nil,options.who)
-    answer(msg,"Oki doki! I'll remind this to #{options.who} in #{options.time}")
+    answer(msg,t.remind.act.else(options.who, options.time))
 
   end
 
