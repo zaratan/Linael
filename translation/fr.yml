@@ -4,15 +4,46 @@ and: et
 
 ago: auparavant
 
+day: !!pl
+  0: ""
+  1: "1 jour"
+  n: "%1 jours"
+
+hour: !!pl
+  0: ""
+  1: "1 heure"
+  n: "%1 heures"
+
+minute: !!pl
+  0: "" 
+  1: "1 minute"
+  n: "%1 minutes"
+
+second: !!pl
+  0: ""
+  1: "1 seconde"
+  n: "%1 secondes"
+
 help:
   helper:
     line:
       functions: ______Fonctions______
-      white: ' '  
-
+      admin:     ______Fonctions Admin______
+      options:   ______Options______
+      white:     ' '  
+  help:
+    description: Module qui décrit les autres modiles.
+    function:
+      help: "!help module_name => Affiche l'aide pour le module *module_name*"
+  default:
+    master: "Utilisez !help master pour obtenir la liste de modules"
+    help:   "Utilisez !help module_name pour obtenir l'aide d'un module spécifique"
+  none: "Aucune d'aide pour le module %1. Merci de vous adresser à %2."
+  
+  
 master:
   help:
-    description: Module maitre pour gerer les autres modules.
+    description: Module maître pour gérer les autres modules.
     function:
       add:    '!module -add nom      => Ajoute le module *nom*.'
       del:    '!module -del nom      => Supprime le module *nom*.'
@@ -22,11 +53,11 @@ master:
   not:
     loaded:    Le module %1 n'est pas chargé.
     exist:     Ce module n'existe pas.
-    unique:    Plusieurs modules possèdent le même nom. Lequel voulez-vous %1 ?
-    unloaded:  Ce module est déjà chargé, supprimer le d'abord.
+    unique:    "Plusieurs modules possèdent le même nom. Choisissez un module : %1"
+    unloaded:  Ce module est déjà chargé, commencez par le supprimer.
     enough:
-      auth:    Un module d'autentification est neccéssaire pour charger ce module.
-      require: Vous n'avez pas chargé tous les modules neccessaires au fonctionnnement de ce module (%1).
+      auth:    Un module d'autentification est nécessaire pour charger ce module.
+      require: Vous n'avez pas chargé tous les modules nécessaires au fonctionnement de ce module (%1).
   show:
     all:    'Liste des modules de %1: [%2].'
     loaded: 'Liste des modules chargés: [%1].'
@@ -34,3 +65,68 @@ master:
     add:    Module %1 chargé.
     del:    Module %1 supprimé.
     reload: Module %1 rechargé.
+    
+admin:
+  help:
+    description: Administration module.
+    function:
+      join:   "!admin_join|!join|!j chan              => Rejoindre *chan*."
+      part:   "!admin_part|!part    chan              => Quitter *chan*."
+      kick:   "!admin_kick|!kick|!k chan who :reason  => Kick *who* de *chan* pour *reason*."
+      die:    "!admin_die                             => Quit."
+      mode:   "!admin_mode|!mode    chan what [:args] => Changer *what* mode sur *chan* avec *args* options."
+      reload: "!admin_reload        file              => Recharger un ficher."
+  act:
+    part: 
+      message: Au-revoir.
+      answer:  Ok, je vais quitter %1.
+    die:  
+      answer:  Adieu.
+      message: Adieu.
+    kick: 
+      message: Au-revoir %1.
+      answer:  Ok, je vais virer %1 de %2.
+    join:
+      answer:  Ok, je vais rejoindre %1.
+    reload:
+      answer:  Ok, le fichier %1 a été rechargé.
+      mode:
+      answer:  Ok, je vais changer le mode %1 sur %2.
+
+savem:
+  help:
+    description: "Module de sauvegarde qui sauve l'état des autres modules dans un fichier yaml." 
+    function:
+      save:      "!save [module] => Sauvegarder un *module*. Si aucune module n'est précisé, tous les modules chargés seront sauvegardés."
+      load:      "!load [module] => Charger un *module*. Si aucune module n'est précisé, tous les modules sauvegardés seront chargés."
+      autosave:  "!auto_save     => Sauvegarde automatiquement tous les modules toutes les heures."
+  no:
+    module:    Il n'y a pas de module à sauvegarder.
+    directory: Pas de répertoire de sauvegarde.
+  error:
+    saving:    Une erreur est survenue, le module %1 n'a pas été sauvegardé.
+  act:
+    save:      Le module %1 aété sauvegardé.
+    load:      Le module %1 la été chargé.
+
+blacklist:
+  help:
+    description: Un module qu définit les modules autorisés sur un chan.
+    function: 
+      blacklist: "!blacklist|!bl -(add|del) [-all] [chan] [module] => Ajouter ou retirer un *chan* de la blacklist d'un *module*. Si aucun chan n'est précisé, cela s'appliquera au chan actif."
+      whitelist: "!whitelist|!wl -(add|del) [-all] [chan] [module] => Ajouter ou retirer un *chan* de la whitelist d'un *module*. Si aucun chan n'est précisé, cela s'appliquera au chan actif."
+    option:
+      all: "-all => Appliquer à tous les chans."
+  not:
+    loaded:
+  act: 
+    added: ajouté à
+    deleted: supprimé de
+    global: Le chan %1 a été %2 la %3 du module %4.
+
+autokick:
+  help:
+    description: Module qui gère les auto-kicks.
+    function:
+      add:  "!akick -add  chan regex => Ajouter une règle d'auto-kick sur un *chan*. La *regex* est vérifiée à la fois sur le nick et le vhost. On peut faire des regex avec *."
+     
