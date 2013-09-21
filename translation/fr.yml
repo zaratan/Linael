@@ -21,7 +21,7 @@ master:
     loaded:    Le module %1 n'est pas chargé.
     exist:     Ce module n'existe pas.
     unique:    Plusieurs modules possèdent le même nom. Lequel voulez-vous %1 ?
-    unloaded:  Ce module est déjà chargé, supprimer le d'abord.
+    unloaded:  Ce module est déjà chargé, supprimez le d'abord.
     enough:
       auth:    Un module d'autentification est neccéssaire pour charger ce module.
       require: Vous n'avez pas chargé tous les modules neccessaires au fonctionnnement de ce module (%1).

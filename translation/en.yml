@@ -4,6 +4,8 @@ and: and
 
 ago: ago
 
+version: "Linael Version 3.0 running on Ruby"
+
 day: !!pl
   0: ""
   1: "1 day"
@@ -361,9 +363,9 @@ name:
     description: "A module to generate names."
     source: "From http://www.behindthename.com"
     function:
-      name:  "!name                => display a random name from a database",
+      name:  "!name                => display a random name from a database"
       types: "!name -types [regex] => display the different types of names available. It eventualy take a regex."
-      info:  "!name -info *name*   => display information on *name*",
+      info:  "!name -info *name*   => display information on *name*"
     option:
       name:
         full:   "!name [-g(m|f)] [-s(1-4)] [-(0-9)] [-tType1,Type2,...]"
@@ -408,3 +410,13 @@ weather:
 youtube:
   help:
     description: A module to spoil youtube links.
+
+linaeltranslation:
+  help:
+    description: A module to set the bot translation
+    function:
+      reload: "!translation -reload                      => reload the translations files"
+      set:    "!translation -set ([\"lang1\",\"lang2\"]) => change the bot languages to *lang1*, *lang2*"
+  act:
+    reload: Translations reloaded.
+    set:    "Translations are now: %1."
