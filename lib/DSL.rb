@@ -16,23 +16,34 @@
 #   linael :test, author: "Skizzk", require_auth: true, required_mod: ["admin"] do 
 #   end 
 #   #=> produce a module named Test with Skizzk for author, which require at least an auth method and the module admin.
-def self.linael(name, config_hash ={}, &block)
+class Object
+  def linael(name, config_hash ={}, &block)
 
-  # Create the class
-  new_class = Class.new(Linael::ModuleIRC) do
+    # Create the class
+    new_class = Class.new(Linael::ModuleIRC) do
 
-    generate_all_config(name, config_hash)
-    self.const_set("Options",generate_all_options)
+      generate_all_config(name, config_hash)
+      self.const_set("Options",generate_all_options)
 
-  end # Class.new(Linael::ModuleIRC)
+    end # Class.new(Linael::ModuleIRC)
 
-  # Link the module to the right part of linael
-  Linael::Modules.const_set(name.to_s.camelize,new_class)
+    # Link the module to the right part of linael
+    Linael::Modules.const_set(name.to_s.camelize,new_class)
 
-  # Execute the block
-  "Linael::Modules::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
+    # Execute the block
+    "Linael::Modules::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
 
+  end
 end
+#This is a trick to use t inside help
+class Class
+  include R18n::Helpers
+end
+R18n.set (if LinaelLanguages.kind_of? Array
+          LinaelLanguages + ['en']
+            else
+              [LinaelLanguages, 'en']
+            end)
 
 #Everything goes there
 module Linael
@@ -88,8 +99,8 @@ module Linael
             instance_exec(msg,options,&block)
           rescue InterruptLinael
           rescue Exception => e
-            p e.to_s.red
-            p e.backtrace.join("\n").red
+            puts e.to_s.red
+            puts e.backtrace.join("\n").red
           end
         end
       end
@@ -166,11 +177,15 @@ module Linael
       add_module(self.class::ToStart)
     end
 
+    def launch
+      @master.act_types.each {|t| add_module_irc_behavior t}
+    end
+
     # Overide of normal method
     def initialize(master)
       @master = master
       self.instance_eval(&self.class::At_launch) if defined?(self.class::At_launch)
-      @master.act_types.each {|t| add_module_irc_behavior t}
+      launch
     end
 
     # A method used to describe preliminary tests in a method

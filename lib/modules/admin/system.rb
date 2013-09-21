@@ -3,17 +3,17 @@
 linael :system,require_auth: true do
 
   help [
-    "Module : System",
-    " ",
-    "=====Functions=====",
-    "!bash xxx => execute with bash the xxx command"
+    t.system.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.system.function.bash
   ]
 
-  on :cmdAuth, :bash, /^!bash\s+\S/ do |priv_msg,options|
-    result = `#{options.all}`
-    answer(priv_msg,"#{priv_msg.who}: Everything has gone as planned!")
+  on :cmdAuth, :bash, /^!bash\s+\S/ do |msg,options|
+    result = system(options.all)
+    answer(msg, t.system.act.bash(options.from_who))
     result.gsub("\r",'').split("\n").each do |line|
-      talk(priv_msg.who,line)
+      talk(options.from_who,line)
     end
   end
 

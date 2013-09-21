@@ -1,52 +1,47 @@
 # -*- encoding : utf-8 -*-
 
 # A module to manage black/white list
-linael :blacklist, require_auth: true,required_mod: ["module","admin"] do
+linael :blacklist, require_auth: true,required_mod: ["admin"] do
 
   match :all => /\s-all\s/
 
   help [
-    "A module to whitelist/blacklist modules from chan",
-    " ",
-    "#####Functions#####",
-    "!blacklist|!bl -[add|del] chan module => add or remove a chan from blacklist",
-    "!blacklist|!bl -[add|del] chan module => add or remove a chan from blacklist",
-    " ",
-    "#####Options#####",
-    "-all => do the job for all chans"
+    t.blacklist.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.blacklist.help.function.blacklist,
+    t.blacklist.help.function.whitelist,
+    t.help.helper.line.white,
+    t.help.helper.line.options,
+    t.blacklist.help.option.all
   ]
 
-  # Manage blacklist
-  on :cmdAuth, :blacklist, /^!blacklist\s|^!bl\s/ do |msg,options|
-    act_anylist msg,"blacklist",options
-  end
-
-  # Manage whitelist
-  on :cmdAuth, :whitelist, /^!whitelist\s|^!wl\s/ do |msg,options|
-    act_anylist msg,"whitelist",options
+  ["black","white"].each do |color|
+    on :cmdAuth, "#{color}list".to_sym, /^!#{color}list\s|^!#{color[0]}l\s/ do |msg,options|
+      message_handler msg do
+        act_anylist "#{color}list",options
+      end
+    end
   end
 
   # Manage for any color list
-  define_method "act_anylist" do |privMsg,colorlist,options|
-    if (mod("module").instance.modules.has_key?(options.who))
-      mod=mod("module").instance.modules[options.who]
-      toAdd = [options.chan]
-      toAdd = mod("admin").instance.chan if options.all?
-      if (options.type == "add")
-        modify_status colorlist,"added",toAdd,options,mod,true
-      end
-      if (options.type == "del")
-        modify_status colorlist,"deleted",toAdd,options,mod,false
-      end
-    else
-      answer(privMsg,"The module #{options.module} is not loaded :(")
+  def act_anylist (colorlist,options)
+    raise MessagingException, t.blacklist.not.loaded unless (master.modules.has_key?(options.who))
+    mod=mod(options.who)
+    toAdd = [options.chan]
+    toAdd = mod("admin").chans if options.all?
+    if (options.type == "add")
+      modify_status colorlist,t.blacklist.act.added,toAdd,options,mod,true
+    end
+    if (options.type == "del")
+      modify_status colorlist,t.blacklist.act.deleted,toAdd,options,mod,false
     end
   end
 
   # Do the job of adding/deleting
-  define_method "modify_status" do |method,action_string,toAdd,options,mod,do_add|
+  def modify_status(method,action_string,toAdd,options,mod,do_add)
     toAdd.each do |chan|
-      talk(options.from_who,"The chan #{chan} have been #{action_string} from the #{method} of the module #{options.who}")
+      talk(options.from_who,t.blacklist.act.global(chan, action_string, method, options.who))
       mod.send(("un_"+method),chan) unless do_add
       mod.send(method,chan) if do_add
     end
@@ -56,8 +51,8 @@ end
 
 module Linael
   # Modification of ModuleType to add blacklist in it
-  class Modules::ModuleType
-  
+  class ModuleIRC
+
     # The 2 different lists
     attr_accessor :blackList,:whiteList
 
@@ -74,7 +69,7 @@ module Linael
 
     # Same methods for black and white lists
     ["black","white"].each do |color|
-      
+
       # Read colorlist
       define_method color+"list?" do
         send(color+"List")
@@ -93,17 +88,16 @@ module Linael
       end
     end
 
-  end
-  
-  # Modification of ModuleIRC to add act_authorized
-  class ModuleIRC
-
     # Check if an instance is authorized in a chan
     def act_authorized?(instance,msg)
-      return true unless msg.kind_of? PrivMessage
-      moduleAdmin = @runner.master
-      mod = moduleAdmin.modules[instance.class::Name]
+      return true unless msg.kind_of? Linael::Privmsg
+      p instance.class
+      p instance.class::Name
+      mod = mod(instance.class::Name)
       result = true
+      p mod.methods(false)
+      p mod.class
+      p mod.class.ancestors
       result &= !mod.in_blacklist?(msg.place) 
       result &= mod.in_whitelist?(msg.place) 
       result

@@ -2,18 +2,17 @@
 
 linael :link, require_auth: true do
 
-  # TODO
-  # Un petit %Q ici ;)
   help [
-    "Module : Link",
-    " ",
-    "A module for associate things like \"ruby\" => [\"it's so great\",\"much better than perl\"]",
-    " ",
-    "=====Functions=====",
-    "!link XXX?                        => answer a random thing for its assoc table",
-    "!links XXX?                       =>",
-    "!link [-add|-del] <id> <value>    => add/del the <value> association to the <id>",
-    "!link_user [-add|-del] <username> => add/del a user who can add links"
+    t.link.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.link.help.function.link,
+    t.link.help.function.links,
+    t.link.help.function.add,
+    t.help.helper.line.white,
+    t.help.helper.line.admin,
+    t.link.help.function.del,
+    t.link.help.function.user
   ]
 
   on_init do 
@@ -26,7 +25,7 @@ linael :link, require_auth: true do
       @users.include?(priv_msg.who.downcase)
     end
     @links[options.id.downcase] = ((@links[options.id.downcase] || []) << options.value)
-    answer(priv_msg,"#{options.id} is now : #{options.value}")
+    answer(priv_msg, t.link.act.add(options.id, options.value))
   end
 
   on :cmdAuth, :del_link, /^!link\s+-del\s+\S+\s+\S+/ do |priv_msg,options|
@@ -34,37 +33,37 @@ linael :link, require_auth: true do
       @users.include?(priv_msg.who.downcase)
     end
     (@links[options.id.downcase] || []).delete_at(options.value.to_i - 1)
-    answer(priv_msg,"deleting entry number #{options.value} of #{options.id}")
+    answer(priv_msg, t.link.act.del(options.value,options.id))
   end
 
   on :cmd, :link, /^!link\s+[^-\s]\S*\s/ do |priv_msg,options|
     links = @links[options.link.downcase] || []
     if links.empty? 
-      answer(priv_msg,"#{priv_msg.who}: I'm sorry, I really don't know :(")
+      answer(priv_msg,t.no.link(priv_msg.who))
     else
-      answer(priv_msg,"#{priv_msg.who}: #{links[Random.rand(links.size)]}")
+      answer(priv_msg,t.link.act.link(priv_msg.who,links.sample)
     end
   end
 
   on :cmd, :links, /^!links\s+\S+/ do |priv_msg,options|
     links = @links[options.link.downcase] || []
     if links.empty?
-      answer(priv_msg,"#{priv_msg.who}: I'm sorry, I really don't know :(")
+      answer(priv_msg,t.no.link(priv_msg.who))
     else
       to_print=[]
-      links.each_with_index {|val,i| to_print << "##{i + 1}: #{val}"}
+      links.each_with_index {|val,i| to_print << t.link.act.links(i + 1, val)}
       talk(priv_msg.who,"#{to_print.join(",")}")
     end
   end
 
   on :cmdAuth, :add_user_link, /^!link_user\s+-add\s/ do |priv_msg,options|
     @users << options.who.downcase unless @users.include? options.who.downcase
-    answer(priv_msg,"Oki doki! #{options.who.downcase.capitalize} can now link :)")
+    answer(priv_msg,t.link.act.user.add(options.who))
   end
 
   on :cmdAuth, :del_user_link, /^!link_user\s+-del\s/ do |priv_msg,options|
     @users.delete options.who.downcase
-    answer(priv_msg,"Oki doki! #{options.who.downcase.capitalize} will no longer link anything")
+    answer(priv_msg,t.link.act.user.del(options.who))
   end
 
   value :link  => /^!link[s]?\s+([^-\s?][^?\s]*)\s*\??/,

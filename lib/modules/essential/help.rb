@@ -4,14 +4,27 @@
 linael :help do
 
   help [
-    "Module Help:",
-    "!help module_name => display the help for the module modName"
+    t.help.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.help.help.function.help
   ]
 
+
+  Default = [
+    t.help.default.master,
+    t.help.default.help
+  ]
+
+  def default_act msg
+    Default.each {|helpSent| answer(msg,helpSent)}
+  end
+
   def help_act msg,name
+    return default_act(msg) unless name != ""
     klass = master.module_class_from_name(name)
     p !defined?(klass::Help)
-    raise MessagingException, "No help for the module #{name}. Ask #{klass::Constructor} for this :)" if !defined?(klass::Help) || klass::Help.empty?
+    raise MessagingException, t.help.none(name,klass::Constructor) if !defined?(klass::Help) || klass::Help.empty?
     klass::Help.each {|helpSent| answer(msg,helpSent)}
   end
 

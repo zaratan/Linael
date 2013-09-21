@@ -9,26 +9,41 @@ require 'net/http'
 linael :name do
 
   help [
-    "Module: Name",
-    "A module to generate names.", 
-    "Thx to http://www.behindthename.com",
-    " ",
-    "=====Fonctions=====",
-    "!name        => display a random name from a database",
-    "!name -types => display the different types of names available",
-    "!name -info  => display information on name",
-    " ",
-    "=====Options=====",
-    "!name -g{m|f} -s[1-4] -[0-9] -a -tType1,Type2,...",
-    "    -g    : Gender male or female",
-    "    -s    : Size of the name",
-    "    -     : Number of result",
-    "    -a    : All ignore all the other options",
-    "    -t    : Types of names",
-    "!name types regex",
-    "    regex : regex like b* for every type begining with b"
+    t.name.help.description,
+    t.name.help.source,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.name.help.function.name,
+    t.name.help.function.type,
+    t.name.help.function.info,
+    t.help.helper.line.white,
+    t.help.helper.line.options,
+    t.name.help.option.name.full,
+    t.name.help.option.name.gender,
+    t.name.help.option.name.size,
+    t.name.help.option.name.number,
+    t.name.help.option.name.type
   ]
 
+  def generate_url(size,gender,types)
+      url="http://www.behindthename.com/random/random.php?"
+      url+="number=#{size}"
+      url+="&"
+      url+="gender=#{gender}"
+      types.each do |type|
+        url+="&usage_#{type}=1"
+      end
+      url
+  end
+
+  def parse_name(page)
+    coder = HTMLEntities.new
+      name = (page/"div.body span.heavybig a")
+      if name.empty?
+        name = (page/"div.body span") 
+      end
+      name = name.inject("") {|str, nam| str += " #{coder.decode(nam.inner_html)}"}
+  end
 
   #generate a name
   on :cmd, :get_names, /^!name\s/ do |msg,options|
@@ -36,77 +51,93 @@ linael :name do
       !options.types? and !options.info?
     end
 
-    coder = HTMLEntities.new
+    url=generate_url(options.size,options.gender,types(options))
 
     time(options).times do |i|
-      url="http://www.behindthename.com/random/random.php?"
-      url+="number=#{options.size}"
-      url+="&"
-      url+="gender=#{options.gender}"
-      url+="&all=yes" if options.all?
-      url+="&all=no" if !options.all?
-      types(options).each do |type|
-        url+="&usage_#{type}=1"
-      end
-      page = Hpricot(open(url))
-      name = (page/"div.body span.heavybig a").inject("") {|str, nam| str += " #{coder.decode(nam.inner_html)}"}
-      name = (page/"div.body span").inject("") {|str, nam| str += " #{coder.decode(nam.inner_html.gsub(/\s/,""))}"} if name.empty?
+      parse_name(Hpricot(open(url)))
       answer(msg,"#{i+1} - #{name}")
+    end
+  end
 
+
+  def generate_url_info who
+    uri = URI('http://www.behindthename.com/names/search.php')
+    redirect = Net::HTTP.post_form(uri, 'terms' => who)
+    "http://www.behindthename.com"+redirect.get_fields('location')[0]
+  end
+
+  def parse_gender page
+    page =~ /GENDER[^>]*>[^>]*info[^>]*><[^<]*>([A-z]*)<[^<]*<\/span/m
+    $1
+  end
+
+  def parse_usages page
+    usages = page.scan /<a[^>]*usg[^>]*>([A-z\s]*)</
+    usages.join(", ")
+  end
+
+  def parse_description page
+    page =~ /padding:3px;padding-left:10px;[^>]*>.(.*)<.div.*nameheading.*triangle.gif[^>]*>[^>]*related/m
+    $1.gsub!(/<[^>]*>/,"")
+  end
+
+  def split_string string
+    string.split("\n").each do |splited|
+      splited.gsub!("\r","")
+      splited += " "
+      splited.scan(/.{0,400}\s/).each do |line|
+        yield line
+      end
     end
   end
 
   #info on a name... this fonction is SO UGLY
   on :cmd, :info_name, /!name\s.*\s*-info\s/ do |msg,options|
     coder = HTMLEntities.new
+    url = generate_url_info(options.who)
+    page = coder.decode(Hpricot(open(url)))
+    answer(msg,t.name.info.gender(parse_gender(page)))
+    answer(msg,t.name.info.usages(parse_usages(page)))
+    answer(msg,t.name.info.description)
+    description = parse_description(page)
+    split_string(description) do |line|
+      answer(msg,line)
+    end
+  end
 
-    uri = URI('http://www.behindthename.com/names/search.php')
-    redirect = Net::HTTP.post_form(uri, 'terms' => options.who)
-    redirect.each_header {|h,v| p h; p v}
-    url = "http://www.behindthename.com"+redirect.get_fields('location')[0]
-    page = Hpricot(open(url))
-    page = coder.decode(page)
-    page =~ /GENDER[^>]*>[^>]*info[^>]*><[^<]*>([A-z]*)<[^<]*<\/span/m
-    gender = $1
-    answer(msg,"Gender: #{gender}")
-    usages = page.scan /<a[^>]*usg[^>]*>([A-z\s]*)</
-    answer(msg,"Usages: #{usages.join(", ")}")
-    page =~ /padding:3px;padding-left:10px;[^>]*>.(.*)<.div.*nameheading.*triangle.gif[^>]*>[^>]*related/m
-    description = $1
-    description.gsub!(/<[^>]*>/,"")
-    answer(msg,"Description:")
-    description.split("\n").each do |to_print|
-      to_print.gsub!("\r","")
-      to_print += " "
-      to_print.scan(/.{0,400}\s/).each do |line|
-        answer(msg,line)
+  def parse_search message
+    if (message =~ /^!name\s.*\s*-types\s+([A-z\*]*)/)
+      search=$1
+      search.gsub!("*",".*")
+    end
+    return nil if !search || search.empty?
+    search
+  end
+
+  def parse_types page,search
+    types_names = (page/"div.body td.emcell table.emtable td")
+    types_to_parse = (page/"div.body td.emcell table.emtable input").map! do |input| 
+      if input.to_html.match(/usage/)
+        type=input.to_html.match(/usage_([A-z]*)/)[0].gsub(/usage_/,"")
+        index=types_names.find_index {|item| item.to_html.match(/usage_#{type}"/)}
+        td_to_parse=types_names[index]
+        td_to_parse.to_html.match "usage_#{type}[^>]*>[^A-z]*([A-z]+\s*[A-z]*)"
+        name=$1
+        "#{type} : #{coder.decode(name)}" if !search || type.match("^#{search}$")
       end
     end
+    typesToParse
   end
 
   #show the differents types of names
   on :cmd, :what_types, /^!name\s.*\s*-types\s/ do |msg,options|
+    search = parse_search msg.message
     coder = HTMLEntities.new
-
-    if (msg.message =~ /^!name\s.*\s*-types\s+([A-z\*]*)/)
-      search=$1
-      search.gsub!("*",".*")
-    end
     url ="http://www.behindthename.com/random/"
     page = Hpricot(open(url))
-    typesNames = (page/"div.body td.emcell table.emtable td")
-    typesToParse = (page/"div.body td.emcell table.emtable input").map! do |input| 
-      if input.to_html.match(/usage/)
-        type=input.to_html.match(/usage_([A-z]*)/)[0].gsub(/usage_/,"")
-        index=typesNames.find_index {|item| item.to_html.match(/usage_#{type}"/)}
-        tdToParse=typesNames[index]
-        tdToParse.to_html.match "usage_#{type}[^>]*>[^A-z]*([A-z]+\s*[A-z]*)"
-        name=$1
-        "#{type} : #{coder.decode(name)}" if search.nil? || search.empty? || type.match("^#{search}$")
-      end
-    end
-    typesToParse.compact!
-    typesToParse.cycle do |type|
+    types = parse_types page, search
+    types.compact!
+    types.cycle do |type|
       talk(msg.who,typesToParse.shift(5).join("   "))
     end
   end
@@ -122,11 +153,11 @@ linael :name do
         :types => /\s-types\s/,
         :info  => /\s-info\s/
 
-  define_method "types" do |options|
+  def types options
     options.types_string.split(',')
   end
 
-  define_method "time" do |options|
+  def time options
     options.time_string.to_i
   end
 

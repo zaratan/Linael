@@ -2,8 +2,12 @@
 
 linael :lovely do
 
-    on :msg, :love, /^#{Linael::BotNick}.*je.*aime|#{Linael::BotNick}.*♥|#{Linael::BotNick}.*<3/ do |msg,options|
-      answer(msg,"Moi aussi je t'aime #{msg.who}! ♥")
-    end
+  help [
+    t.lovely.help.description
+  ]
+
+  on :msg, :love, /^#{Linael::BotNick.downcase}.*(je.*aime|♥|<3)/ do |msg,options|
+    answer(msg, t.lovely.act.love(options.from_who))
+  end
 
 end

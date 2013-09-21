@@ -32,6 +32,9 @@ GEM
     mime-types (1.24)
     minitest (4.7.5)
     multi_json (1.7.9)
+    r18n-core (1.1.6)
+    r18n-desktop (1.1.6)
+      r18n-core (= 1.1.6)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     reverso (0.0.1)
@@ -56,6 +59,7 @@ DEPENDENCIES
   google-search
   hpricot
   htmlentities
+  r18n-desktop
   reverso
   ruby-units
   weather-underground

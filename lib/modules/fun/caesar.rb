@@ -1,24 +1,23 @@
 # -*- encoding : utf-8 -*-
 
 # A module to make caesar code
-linael :caesar, constructor:"Aranelle" do
+linael :caesar, author:"Aranelle" do
 
   help [
-    "Module: Caesar",
-    " ",
-    "=====Fonctions=====",
-    "!caesar [string you want to code] => display your string, replacing each letter with the one following it in the alphabet",
-    " ",
-    "=====Options=====",
-    "!caesar -s[a-z] -t[a-z]",
-    "        -s    : Source letter (default: a)",
-    "        -t    : Target letter (default: b)"
+    t.caesar.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.caesar.help.function.caesar,
+    t.help.helper.line.white,
+    t.help.helper.line.options,
+    t.caesar.help.option.source,
+    t.caesar.help.option.target
   ]
 
   #encode
   on :cmd,:caesar,/^!caesar\s/ do |msg,options|
     gap = AlphabetArray.index(options.target) - AlphabetArray.index(options.source)
-    result = all(options).split(//).map do |c|
+    result = format_all(options).split(//).map do |c|
       c = AlphabetArray[(AlphabetArray.index(c) + gap) % 26] if AlphabetArray.include? c
       c
     end
@@ -32,7 +31,7 @@ linael :caesar, constructor:"Aranelle" do
   value_with_default :source => {regexp: /\s-s([a-z])\s/,default: "a"},
     :target => {regexp: /\s-t([a-z])\s/,default: "b"}
 
-  define_method "all" do |options|
+  def format_all (options)
     options.all.gsub(/(-s[a-z]\s+)?(-t[a-z]\s+)?/,"").gsub("\r","")
   end
 end

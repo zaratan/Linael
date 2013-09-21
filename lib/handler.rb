@@ -75,7 +75,7 @@ module Linael
         puts e.backtrace.join("\n").red
       end
     end
-    
+
     # Initialize
     def initialize(master_module,modules)
       Handler.toDo << :handlePrivMsg

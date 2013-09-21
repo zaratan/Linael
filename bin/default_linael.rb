@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
-
+  
+#default translation you can either declare an array or a single string
+LinaelLanguages = 'en' unless defined? LinaelLanguages
 require_relative '../lib/irc.rb'
+
 
 module Linael
 
@@ -15,6 +18,7 @@ module Linael
 
   # Char that will be used for commands
   CmdChar = '!'
+
 
   # Module which 
   MasterModule = Modules::Master

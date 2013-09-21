@@ -1,0 +1,34 @@
+or: ou
+
+and: et
+
+help:
+  helper:
+    line:
+      functions: ______Fonctions______
+      white: ' '  
+
+master:
+  help:
+    description: Module maitre pour gerer les autres modules.
+    function:
+      add:    '!module -add nom      => Ajoute le module *nom*.'
+      del:    '!module -del nom      => Supprime le module *nom*.'
+      reload: '!module -reload nom   => Recharge le module *nom*.'
+      show:   "!module -show [regex] => Affiche les différents modules. Une regex peut être fournie pour filtrer les résultats (avec * pour n'importe quoi)."
+
+  not:
+    loaded:    Le module %1 n'est pas chargé.
+    exist:     Ce module n'existe pas.
+    unique:    Plusieurs modules possèdent le même nom. Lequel voulez-vous %1 ?
+    unloaded:  Ce module est déjà chargé, supprimer le d'abord.
+    enough:
+      auth:    Un module d'autentification est neccéssaire pour charger ce module.
+      require: Vous n'avez pas chargé tous les modules neccessaires au fonctionnnement de ce module (%1).
+  show:
+    all:    'Liste des modules de %1: [%2].'
+    loaded: 'Liste des modules chargés: [%1].'
+  act:
+    add:    Module %1 chargé.
+    del:    Module %1 supprimé.
+    reload: Module %1 rechargé.

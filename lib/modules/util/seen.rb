@@ -2,59 +2,69 @@
 
 linael :seen do
 
-on :cmd, :seen, /!seen\s/ do |msg,options|
-  to_parse= options.all.gsub("\r","").gsub(" ","").downcase
-  seens = @users.find_all {|k,u| u.nick == to_parse || u.host == to_parse}
-  to_print = seens.max_by {|k,u| u.last_seen}
-  to_print = to_print.last
-  p to_print
-  answer(msg,"Last seen #{ago(to_print.last_seen)} under #{to_print.nick} with #{to_print.host} doing: #{to_print.last_act.to_s}")
+  help [
+    t.seen.help.description,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.seen.help.function.seen,
+    t.seen.help.function.first
+  ]
+
+  on :cmd, :seen, /^!seen\s/ do |msg,options|
+    to_print = find_user(options) {|seens| seens.max_by {|k,u| u.last_seen}}
+    answer(msg,t.seen.last(to_print.last_seen.ago, to_print.last_act.to_s))
+  end
+
+  on :cmd, :first_seen, /^!first_seen\s/ do |msg,options|
+    to_print = find_user(options) {|seens| seens.min_by {|k,u| u.first_seen}}
+    answer(msg,t.seen.first(to_print.first_seen.ago, to_print.first_act.to_s))
+  end
+
+  [:quit,:cmd,:cmd_auth,:msg,:nick,:join,:part].each do |type|
+    on type, "seen_#{type}".to_sym do |msg|
+      update_user(msg.sender.downcase,msg)
+    end
+  end
+
+  def find_user(options)
+    to_parse= options.all.gsub("\r","").gsub(" ","").downcase
+    seens = users.find_all {|k,u| u.nick == to_parse || u.host == to_parse}
+    to_print = yield(seens)
+    to_print.last
+  end
+
+  def update_user user_name,msg
+    if users[user_name]
+      users[user_name].update(msg)
+    else
+      users[user_name] = Linael::User.new(msg)
+    end
+  end
+
+  attr_accessor :users
+
+  on_init do
+    @users={}
+  end
+
 end
 
-define_method "ago" do |time|
+class Time
 
-  sec = (Time.now - time).round
+  include R18n::Helpers
 
-  mm, ss = sec.divmod(60)
-  hh, mm = mm.divmod(60)
-  dd, hh = hh.divmod(24)
+  def ago
+    sec = (Time.now - self).round
 
-  result = ""
-  if dd != 0
-    result += "#{dd} day#{"s" if dd > 1} "
-  end
-  if result != "" and ss == 0 and hh != 0 and mm == 0
-    result += "and "
-  end
-  if hh != 0
-    result += "#{hh} hour#{"s" if hh >1} "
-  end
-  if result != "" and ss == 0 and mm != 0
-    result += "and "
-  end
-  if mm != 0
-    result += "#{mm} minute#{"s" if mm >1} "
-  end
-  if result != "" and ss != 0
-    result += "and "
-  end
-  if ss != 0
-    result += "#{ss} second#{"s" if ss >1} "
-  end
-  result += "ago"
+    mm, ss = sec.divmod(60)
+    hh, mm = mm.divmod(60)
+    dd, hh = hh.divmod(24)
 
-end
+    result = [t.day(dd),t.hour(hh),t.minute(mm),t.second(ss)]
+    result.delete("")
+    result.join(", ").gsub(/(, )([^,]*)$/) {|s| " #{t.and} #{$2}"} + " #{t.ago}"
 
-[:quit,:msg,:nick,:join,:part].each do |type|
-  on type, :seen_part do |msg|
-    @users[msg.sender.downcase] = Linael::User.new(msg)
   end
-end
-
-
-on_init do
-  @users={}
-end
 
 end
 
@@ -62,15 +72,22 @@ end
 class Linael::User
 
   #should be obvious
-  attr_accessor :nick,:host,:last_seen,:last_act
-  
+  attr_accessor :nick,:host,:last_seen,:last_act,:first_seen,:first_act
+
   #init
   def initialize(msg)
     @nick = msg.sender.downcase
     @host = msg.identification.downcase
+    @first_seen = Time.now
+    @first_act = msg
     @last_seen = Time.now
     @last_act = msg
   end
 
+  def update msg
+    @host = msg.identification.downcase
+    @last_seen = Time.now
+    @last_act = msg
+  end
 
 end
