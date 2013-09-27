@@ -3,7 +3,7 @@
 require('open-uri')
 require('htmlentities')
 
-# A module to spoil movies (french)
+# A module to get dev excuses (french)
 linael :excuse_fr do
 
   help [

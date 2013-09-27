@@ -128,5 +128,36 @@ autokick:
   help:
     description: Module qui gère les auto-kicks.
     function:
-      add:  "!akick -add  chan regex => Ajouter une règle d'auto-kick sur un *chan*. La *regex* est vérifiée à la fois sur le nick et le vhost. On peut faire des regex avec *."
+      add:  "!akick -add  chan regex => Ajouter une règle d'auto-kick sur un *chan*. La *regex* est vérifiée à la fois sur le nick et le vhost. On peut faire des regex avec des *."
+      del:  "!akick -del  chan rule  => Supprime une *rule* (a partir de son numéro) sur un *chan*."
+      show: "!akick -show chan       => Affiche les règles d'akick pour un *chan*."
+  act:
+    akick:
+      answer: "%1, tu es auto-kick sur ce chan."
+      kick: NON.
+    add: "%1 a été ajouté aux auto-kick de %2."
+    del: La règle %1 a été retirée du chan %2.
      
+system:
+  help:
+    description: Un module pour intéragir avec le systeme.
+    function:
+      bash: "!bash cmd => execute la commande *cmd* avec bash."
+  act:
+    bash: "%1: Commande executée."
+
+autorejoin:
+  help:
+    description: Un module pour faire revenir le bot apres un kick.
+
+rejoin:
+  help:
+    description: Un module pour faire revenir le bot meme apres un ban.
+    function:
+      start: "!start => démarre le module."
+
+talk:
+  help:
+    description: Un module pour faire parler le bot.
+    function:
+      talk: "!talk chan :message => Faire dire au bot *message* sur *chan*."
