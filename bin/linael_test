@@ -13,7 +13,7 @@ module Linael
   
 
   Core::start_linael do
-    Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "rizon", url: "irc.rizon.net", nick: BotNick, port: 6667
+    Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "rizon", url: ServerAddress, nick: BotNick, port: Port
   end
 
 

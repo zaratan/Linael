@@ -25,6 +25,8 @@ module Linael
   #The names of differents modules you want to autoload
   ModulesToLoad = ["basic_auth","admin","identify"]
 
-  IRC::linael_start
+  Core::start_linael do
+    Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "", url: ServerAddress, nick: BotNick, port: Port
+  end
 
 end
