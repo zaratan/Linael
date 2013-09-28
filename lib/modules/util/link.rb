@@ -52,7 +52,7 @@ linael :link, require_auth: true do
     else
       to_print=[]
       links.each_with_index {|val,i| to_print << t.link.act.links(i + 1, val)}
-      talk(priv_msg.who,"#{to_print.join(",")}")
+      talk(priv_msg.who,"#{to_print.join(",")}",priv_msg.server_id)
     end
   end
 

@@ -34,7 +34,7 @@ Linael::Translation=[
   end
 
   on :cmd, :reverso_lang, /^!reverso_lang/ do |msg,options|
-    talk(options.from_who,t.reverso.act.lang(Linael::Translation.join(", ")))
+    talk(options.from_who,t.reverso.act.lang(Linael::Translation.join(", ")),msg.server_id)
 
   end
 

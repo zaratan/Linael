@@ -17,9 +17,9 @@ linael :rejoin, require_auth: true do
   end
 
 
-  define_method "rejoin_all" do 
-    @chan_to_rejoin.each do |chan|
-      join_channel :dest => chan
+  def rejoin_all 
+    @chan_to_rejoin.each do |server,chan|
+      join_channel server, :dest => chan
     end
     at 1.minute.from_now do
       rejoin_all
@@ -36,14 +36,14 @@ linael :rejoin, require_auth: true do
     before(msg) do |msg| 
       msg.who.downcase == Linael::BotNick.downcase 
     end
-    @chan_to_rejoin << msg.place
+    @chan_to_rejoin << [msg.server_id,msg.place]
   end
 
   on :join, :do_i_join? do |msg|
     before(msg) do |msg|
       msg.who.downcase == Linael::BotNick.downcase
     end
-    @chan_to_rejoin.delete(msg.where)
+    @chan_to_rejoin.delete([msg.server_id,msg.where])
   end
 
 end

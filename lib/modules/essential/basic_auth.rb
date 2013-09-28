@@ -13,16 +13,16 @@ linael :basic_auth,:auth => true do
 
   on_init do
     @user = Hash.new
-    ask_user Linael::Master
+    ask_user Linael::Master,nil
   end
 
   #ask for a user status to nickserv
-  def ask_user user
-    talk("nickserv","status #{user}")
+  def ask_user user,server
+    talk("nickserv","status #{user}",server)
   end
 
   on :auth, :basic_auth do |msg,options|
-    ask_user Linael::Master
+    ask_user Linael::Master,msg.server_id
     sleep(0.3)
     msg.who.downcase == Linael::Master.downcase && 
       (@user[Linael::Master] == "3")

@@ -9,50 +9,20 @@ linael :grands_anciens do
     sacrifice = options.who 
     sacrifice = msg.sender if sacrifice.downcase == "cultiste" or sacrifice.downcase == "zaratan"
     old= choose_old_one
-    talk(msg.where,"#{old}, #{Linael::GrandsAnciens[old]}, Je t'invoque! Viens à moi!")
+    talk(msg.where,"#{old}, #{Linael::GrandsAnciens[old]}, Je t'invoque! Viens à moi!",msg.server_id)
 
-    kick_channel :dest => msg.where,
-                 :who  => sacrifice,
-                 :msg  => "For greater good!"
+    kick_channel msg.server_id,
+                  :dest => msg.where,
+                  :who  => sacrifice,
+                  :msg  => "For greater good!"
   end
 
-  on :kick, :invoque do |msg|
-    #old= choose_old_one
-    #talk(msg.where,"#{old}, #{Linael::GrandsAnciens[old]}, Je t'invoque! Viens à moi!")
-  end
-
-  define_method "choose_old_one" do
+  def choose_old_one
     @not_invoqued.sample
   end
 
-
-  define_method "create_old_one" do
-    old_one= choose_old_one
-    unless File.exist?("bin/#{old_one}") 
-      system "cp bin/old_one bin/#{old_one}"
-      system "sed -i -e \"s/Master\s.*$/Master = '#{Linael::BotNick.downcase}'/\" bin/#{old_one}"
-      system "sed -i -e \"s/BotNick.*$/BotNick = '#{old_one}'/\" bin/#{old_one}"
-    end
-    old_one
-  end
-
-  define_method "launch_old_one" do |name|
-    Thread.new {system "bin/#{name}"}
-    @not_invoqued.delete(name)
-    sleep(3)
-    talk(name,"!j #cthulhu")
-    sleep(3)
-    talk(name,"!j #cthulhu")
-    sleep(5)
-    talk(name,"!j #cthulhu")
-    sleep(10)
-    talk(name,"!j #cthulhu")
-    sleep(30)
-    talk(name,"!j #cthulhu")
-  end
-
   on :join, :praise do |msg|
-    talk(msg.where,Linael::GrandsAnciens[msg.who])
+    talk(msg.where,Linael::GrandsAnciens[msg.who],msg.server_id)
   end
 
 end

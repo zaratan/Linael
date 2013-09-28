@@ -31,14 +31,14 @@ linael :test,:constructor => "Skizzk",:require_auth => true,:required_mod => ["a
   on :cmd, :test2, /^!test2\s/ do |msg,options|
     
     at(4.seconds.from_now,options) do |options|
-      talk(options.from_who,"A kikoo from 4 seconds in the past")
+      talk(options.from_who,"A kikoo from 4 seconds in the past",msg.server_id)
     end
 
   end
   
   on :cmd, :test3, /^!test3\s/ do |msg,options|
     150.times do
-      talk(options.from_who,"TESTTESTESTETETETETETETETTETETETETETTETETETETTETETETETETETETETTETETETESTESTETSTETS")
+      talk(options.from_who,"TESTTESTESTETETETETETETETTETETETETETTETETETETTETETETETETETETETTETETETESTESTETSTETS",msg.server_id)
     end
   end
 

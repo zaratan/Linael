@@ -41,7 +41,7 @@ linael :blacklist, require_auth: true,required_mod: ["admin"] do
   # Do the job of adding/deleting
   def modify_status(method,action_string,toAdd,options,mod,do_add)
     toAdd.each do |chan|
-      talk(options.from_who,t.blacklist.act.global(chan, action_string, method, options.who))
+      talk(options.from_who,t.blacklist.act.global(chan, action_string, method, options.who),options.message.server_id)
       mod.send(("un_"+method),chan) unless do_add
       mod.send(method,chan) if do_add
     end
@@ -91,13 +91,8 @@ module Linael
     # Check if an instance is authorized in a chan
     def act_authorized?(instance,msg)
       return true unless msg.kind_of? Linael::Privmsg
-      p instance.class
-      p instance.class::Name
       mod = mod(instance.class::Name)
       result = true
-      p mod.methods(false)
-      p mod.class
-      p mod.class.ancestors
       result &= !mod.in_blacklist?(msg.place) 
       result &= mod.in_whitelist?(msg.place) 
       result

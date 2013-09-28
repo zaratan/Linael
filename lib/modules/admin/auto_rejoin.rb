@@ -8,7 +8,7 @@ linael :auto_rejoin do
     before(msg) do |msg|
       msg.who.downcase == Linael::BotNick.downcase
     end
-    join_channel dest: msg.place
+    join_channel msg.server_id, dest: msg.place
 
   end
 

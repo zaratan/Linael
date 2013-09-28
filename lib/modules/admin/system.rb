@@ -13,7 +13,7 @@ linael :system,require_auth: true do
     result = system(options.all)
     answer(msg, t.system.act.bash(options.from_who))
     result.gsub("\r",'').split("\n").each do |line|
-      talk(options.from_who,line)
+      talk(options.from_who,line,msg.server_id)
     end
   end
 

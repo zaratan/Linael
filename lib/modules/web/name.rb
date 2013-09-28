@@ -138,7 +138,7 @@ linael :name do
     types = parse_types page, search
     types.compact!
     types.cycle do |type|
-      talk(msg.who,typesToParse.shift(5).join("   "))
+      talk(msg.who,typesToParse.shift(5).join("   "),msg.server_id)
     end
   end
 

@@ -33,7 +33,7 @@ linael :admin, require_auth: true do
   end
 
   def part_act server_id, chan
-    talk(chan,t.admin.act.part.message)
+    talk(chan,t.admin.act.part.message,server_id)
     chans.delete [server_id, chan]
     part_channel server_id, :dest => chan
   end
@@ -44,7 +44,7 @@ linael :admin, require_auth: true do
   end
 
   def kick_act server_id, who,chan,reason
-    talk(chan,t.admin.act.kick.message(who))
+    talk(chan,t.admin.act.kick.message(who),server_id)
     kick_channel server_id, :dest => chan,
                  :who  => who, 
                  :msg  => reason

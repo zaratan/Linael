@@ -12,7 +12,7 @@ linael :roulette do
     before(msg) do |msg|
       msg.who == "marvin"
     end
-    kick_channel(msg.place,options.who_lose, t.roulette.act.kick)	
+    kick_channel(msg.server_id,msg.place,options.who_lose, t.roulette.act.kick)	
   end
 
   value who_lose: /^(\S*):\s/

@@ -44,7 +44,7 @@ module Linael
         answer(msg,error_message)
         return
       rescue Exception => error
-        talk(msg.who,error.to_s)
+        talk(msg.who,error.to_s,msg.server_id)
         puts error.backtrace.join("\n").red
         return
       end
@@ -161,11 +161,10 @@ module Linael
     attr_reader :message,:where,:from_who
 
     # Initialize
-    def initialize privMsg
-      p privMsg
-      @message = privMsg.message || ""
-      @where = privMsg.place || ""
-      @from_who = privMsg.who || ""
+    def initialize priv_msg
+      @message = priv_msg.message || ""
+      @where = priv_msg.place || ""
+      @from_who = priv_msg.who || ""
     end
 
     # Magic method to generate class methods for matching regex

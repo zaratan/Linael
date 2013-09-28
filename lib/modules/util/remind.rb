@@ -36,7 +36,7 @@ linael :remind,require_auth: true do
       @reminds << [options,time]
     end
     at(time,options) do |options|
-      talk(who,t.remind.remind(options.action.gsub("\r","")))
+      talk(who,t.remind.remind(options.action.gsub("\r","")),options.message.server_id)
       @reminds.delete_if {|rem| rem[1] < Time.now}
     end
   end

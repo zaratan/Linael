@@ -16,8 +16,6 @@ module Linael
 
     def puts msg
       @messages << msg
-      p @messages.size
-      p msg
     end
 
   end

@@ -18,7 +18,7 @@ linael :auto_kick,require_auth: true do
     end
 
     #autokick on join
-    on :join, :autokick, /./ do
+    on :join, :autokick, /./ do |join|
 
       before(join) do |join|
         !@akick[join.where.downcase].nil? and 
@@ -28,8 +28,8 @@ linael :auto_kick,require_auth: true do
           end
       end
 
-      talk(join.where,t.autokick.act.akick.answer(join.who))
-      kick_channel dest: join.where, who: join.who, msg: t.autokick.act.akick.kick
+      talk(join.where,t.autokick.act.akick.answer(join.who),join.server_id)
+      kick_channel join.server_id, dest: join.where, who: join.who, msg: t.autokick.act.akick.kick
 
     end
 
@@ -47,7 +47,7 @@ linael :auto_kick,require_auth: true do
 
     #show rules for a chan
     on :cmdAuth, :show_akick, /!akick\s-show\s/ do |msg,options|
-      print_rules options.chan.downcase,msg.who
+      print_rules options.chan.downcase,msg.who,msg.server_id
     end
 
     def add_akick_rule(where,rule)
@@ -65,9 +65,9 @@ linael :auto_kick,require_auth: true do
       end
     end
 
-    def print_rules(where,who)
+    def print_rules(where,who,server_id)
       if !@akick[where].nil?
-        @akick[where].each_with_index {|rule,index| talk(who,"#{(index + 1)} - #{rule}")}
+        @akick[where].each_with_index {|rule,index| talk(who,"#{(index + 1)} - #{rule}",server_id)}
       end
     end
 
