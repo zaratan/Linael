@@ -24,18 +24,18 @@ linael :admin, require_auth: true do
 
   #on load rejoin all the chan
   on_load do
-    @chans.each {|chan| join_channel :dest => chan}
+    @chans.each {|server_id,chan| join_channel server_id, :dest => chan}
   end
 
-  def join_act chan
-    chans << chan unless chans.include? chan
-    join_channel :dest => chan
+  def join_act server_id, chan
+    chans << [server_id, chan] unless chans.include? chan
+    join_channel server_id, :dest => chan
   end
 
-  def part_act chan
+  def part_act server_id, chan
     talk(chan,t.admin.act.part.message)
-    chans.delete chan
-    part_channel :dest => chan
+    chans.delete [server_id, chan]
+    part_channel server_id, :dest => chan
   end
 
   def die_act
@@ -43,15 +43,16 @@ linael :admin, require_auth: true do
     exit 0
   end
 
-  def kick_act who,chan,reason
+  def kick_act server_id, who,chan,reason
     talk(chan,t.admin.act.kick.message(who))
-    kick_channel :dest => chan,
+    kick_channel server_id, :dest => chan,
                  :who  => who, 
                  :msg  => reason
   end
 
-  def mode_act chan,what,args
-    mode_channel  :dest => chan,
+  def mode_act server_id, chan,what,args
+    mode_channel  server_id,
+                  :dest => chan,
                   :what => what,
                   :args => args
   end
@@ -59,13 +60,13 @@ linael :admin, require_auth: true do
   #join chan
   on :cmdAuth, :join, /^!admin_join\s|^!join\s|^!j\s/ do |msg,options|
     answer(msg,t.admin.act.join.answer(options.chan))	
-    join_act options.chan
+    join_act msg.server_id, options.chan
   end
 
   #part chan
   on :cmdAuth, :part, /^!admin_part\s|^!part\s/ do |msg,options|
     answer(msg,t.admin.act.part.answer(options.chan))	
-    part_act options.chan
+    part_act msg.server_id, options.chan
   end
 
   #exit 0
@@ -77,7 +78,7 @@ linael :admin, require_auth: true do
   #kick
   on :cmdAuth, :kick, /^!admin_kick\s|^!kick\s|^!k\s/ do |msg,options|
     answer(msg,t.admin.act.kick.answer(options.who,options.chan))	
-    kick_act options.who,options.chan,options.reason
+    kick_act msg.server_id, options.who, options.chan, options.reason
   end
 
   #(re)load a file
@@ -88,7 +89,7 @@ linael :admin, require_auth: true do
   #change mode on a chan
   on :cmdAuth, :mode, /^!admin_mode\s|^!mode\s/ do |msg,options|
     answer(msg,t.admin.act.mode.answer("#{options.what} #{options.reason+" " unless options.reason.empty?}",options.chan))
-    mode_act options.chan,options.what,options.reason
+    mode_act msg.server_id, options.chan, options.what, options.reason
   end
 
 end

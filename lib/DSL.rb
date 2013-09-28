@@ -114,7 +114,7 @@ module Linael
         # Is it matching the regex?
         if self.class::Options.send("#{name}?",msg.message)
           # if it's a message: generate options
-          options = self.class::Options.new msg if msg.kind_of? Privmsg
+          options = self.class::Options.new msg.element if msg.element.kind_of? Linael::Irc::Privmsg
           execute_method(type,msg,options,&block)
         end
       end

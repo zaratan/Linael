@@ -54,7 +54,7 @@ linael :name do
     url=generate_url(options.size,options.gender,types(options))
 
     time(options).times do |i|
-      parse_name(Hpricot(open(url)))
+      name = parse_name(Hpricot(open(url)))
       answer(msg,"#{i+1} - #{name}")
     end
   end

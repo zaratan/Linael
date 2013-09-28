@@ -12,7 +12,9 @@ module Linael
   BotNick = 'LinaelTest'
   
 
-  IRC::linael_start
+  Core::start_linael do
+    Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "rizon", url: "irc.rizon.net", nick: BotNick, port: 6667
+  end
 
 
 end

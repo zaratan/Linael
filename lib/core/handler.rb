@@ -7,7 +7,7 @@ module Linael
     def handle message
       begin
         message.element = format_message message
-        Handler.to_do.detect{|m| self.send(m,msg)}
+        self.class.to_do.detect{|m| self.send(m,message)}
       rescue Exception => e
         puts e.to_s.red	
         puts e.backtrace.join("\n").red
@@ -20,21 +20,20 @@ module Linael
     
     # To get ToDo list
     def self.to_do
-      @to_do
+      @to_do ||= []
     end
     
     # To get to_handle list
     def self.to_handle
-      @to_handle
+      @to_handle ||= []
     end
 
-    @to_handle = []
     
     def self.add_act (klass)
       klass_name = klass.name.gsub(/.*:/,"").downcase
       attr_accessor "#{klass_name}Act".to_sym
       define_method "handle_#{klass_name}" do |message|
-        if klass.match?(message)
+        if klass.match?(message.element)
           message.element = klass.new message.element
           pretty_print_message message
           instance_variable_get("@#{klass_name}Act").values.each {|act| act.call message}
@@ -61,17 +60,20 @@ module Linael
       send("#{type}Act").delete(proc_name.to_sym)
     end
 
-    def initialize(master_module,modules)
-      self.create_handle
-      self.to_handle.each {|klass| instance_variable_set "@#{klass.name.gsub(/.*:/,"").downcase}Act",Hash.new}
-      @master = master_module.new(self)
+    def initialize
+      self.class.create_handle
+      self.class.to_handle.each {|klass| instance_variable_set "@#{klass.name.gsub(/.*:/,"").downcase}Act",Hash.new}
+    end
+
+    def configure options
+      @master = options[:master_module].new(self)
       @master.start!
-      modules.each {|modName| @master.add_action(modName)}
+      options[:modules].each {|modName| @master.add_action(modName)}
     end
 
     private
 
-    def pretty_print_message
+    def pretty_print_message msg
       raise NotImplementedError
     end
 

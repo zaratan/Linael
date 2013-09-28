@@ -3,7 +3,7 @@ module Linael
 
   class ModuleIRC
 
-    include Action
+    include Linael::Irc::Action
 
     R18n.default_places = './translation/'
 
@@ -162,6 +162,7 @@ module Linael
 
     # Initialize
     def initialize privMsg
+      p privMsg
       @message = privMsg.message || ""
       @where = privMsg.place || ""
       @from_who = privMsg.who || ""

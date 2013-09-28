@@ -2,7 +2,7 @@
   
 #default translation you can either declare an array or a single string
 LinaelLanguages = 'en' unless defined? LinaelLanguages
-require_relative '../lib/irc.rb'
+require_relative '../lib/core/core.rb'
 
 
 module Linael

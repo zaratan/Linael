@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-module Linael
+module Linael::Irc
 
   # General class for messages 
   # It covers Quit, Ping and Nick messages
@@ -18,8 +18,8 @@ module Linael
     def self.generate_message_class (name,super_class,motif=nil,&block)
       motif ||= super_class.default_regex(name.to_s.upcase)
       new_message_class = Class.new(super_class) {self.const_set('Motif', motif)}
-      Linael.const_set(name.to_s.camelize,new_message_class)
-      "Linael::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
+      Linael::Irc.const_set(name.to_s.camelize,new_message_class)
+      "Linael::Irc::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
     end
 
     # Is matching motif?
@@ -165,7 +165,7 @@ module Linael
     end
   end
   
-  Message.generate_message_class :quit, Linael::Message do
+  Message.generate_message_class :quit, Message do
     def to_s
       t.message.quit print_user, message
     end

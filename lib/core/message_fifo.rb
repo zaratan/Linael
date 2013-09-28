@@ -1,4 +1,5 @@
-require 'message_fifo.rb'
+require 'monitor.rb'
+
 module Linael
   class MessageFifo
 
@@ -6,14 +7,17 @@ module Linael
 
     def initialize 
       @messages = []
+      @messages.extend MonitorMixin
     end
 
     def gets 
-      @messages.pop || MessageStruct.new("","",:none)
+      @messages.pop || :none
     end
 
     def puts msg
       @messages << msg
+      p @messages.size
+      p msg
     end
 
   end
