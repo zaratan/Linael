@@ -181,7 +181,7 @@ caesar:
   help:
     description: A module to code a message using caesar cryptographic method.
     function:
-      caesar: "!caesar [-s(letter)] [-t(letter)] string => Display your string, replacing each letter with the one following it in the alphabet."
+      caesar: "!caesar [-s(letter)] [-t(letter)] string => Display your *string*, replacing each letter with the one following it in the alphabet."
     option:
       source: "-s[a-z] => Source letter(default: a)."
       target: "-t[a-z] => Target letter(default: b)."
@@ -190,7 +190,7 @@ dice:
   help:
     description: A module to launch dices.
     function:
-      dice: XXXdYYY => launch XXX dice YYY (for exemple 3d6 launch 3 dices with 6 faces each)
+      dice: XXXdYYY => launch XXX dice YYY (for example 3d6 launch 3 dices with 6 faces each).
   act:
     dice: "%1: Dices = [%2]"
     sum: "%1: Sum = %2"
@@ -217,7 +217,7 @@ roulette:
 
 birthday:
   help:
-    description: "Module to remind of birthday"
+    description: "Module to remind of birthday."
     function:
       add:      "!birthday -add user DD/MM/YYYY => Add a birthday for *user*."
       del:      "!birthday -del user            => Del a birthday for *user*."
@@ -306,8 +306,8 @@ seen:
     function:
       seen:  "!seen user       => Tell the last time a *user* have been seen."
       first: "!first_seen user => Tell the first time a *user* have been seen."
-  first: "Last seen %1 doing: %2."
-  seen: "First seen %1 doing: %2."
+  first: "First seen %1 doing: %2."
+  seen: "Last seen %1 doing: %2."
 
 message:
   join:    "%1 has joined %2"

@@ -161,3 +161,257 @@ talk:
     description: Un module pour faire parler le bot.
     function:
       talk: "!talk chan :message => Faire dire au bot *message* sur *chan*."
+
+banana:
+  help:
+    description: Un module pour faire chanter la chanson de la banane.
+    function:
+      banana: "!banana                 => Chante la chanson."
+      user:   "!banana -(add|del) user => Ajoute/supprime un *user* de ce module."
+  user:
+    add: "%1 peut maintenant !banana."
+    del: "%1 ne peut plus !banana."
+
+caesar:
+  help:
+    description: Un module pour encoder un message selon la methode cryptographique caesar.
+    function:
+      caesar: "!caesar [-s(letter)] [-t(letter)] string => Affiche la *string* remplacant chaque lettre par la suivante dans l'alphabet."
+    option:
+      source: "-s[a-z] => Lettre d'origine(defaut: a)."
+      target: "-t[a-z] => Lettre de destination(defaut: b)."
+
+dice:
+  help:
+    description: Un module pour lancer des dés.
+    function:
+      dice: XXXdYYY => Lance XXX dés YYY (par exemple 3d6 lance 3 dés à 6 faces).
+  act:
+    dice: "%1: Dés = [%2]"
+    sum: "%1: Somme = %2"
+
+lovely:
+  help:
+    description: Un module pour donner de l'amour.
+  act:
+    love: Moi aussi je t'aime, %1.
+
+morse:
+  help:
+    description: Un module pour encoder les messages en morse.
+    function:
+      morse: "!morse message => Traduit le *message* en morse."
+
+roulette:
+  help:
+    description:
+      a: "Auto kick les perdants a la roulette."
+      b: "Ce module a besoin du bot marvin pour fonctionner."
+  act:
+    kick: ECHEC!
+
+birthday:
+  help:
+    description: "Un module pour se souvenir des anniversaires."
+    function:
+      add:      "!birthday -add user DD/MM/YYYY => Ajoute l'anniversaire de *user*."
+      del:      "!birthday -del user            => Supprime l'anniversaire de *user*."
+      tell:     "!birthday user                 => Affiche l'anniversaire de *user*."
+      remind:   "!birthday -remind user         => Vous rappellera l'anniversaire de *user*."
+      unremind: "!birthday -unremind user       => Ne vous rappellera plsu l'anniversaire de *user*."
+      start:    "!start                         => Demarre la fonctionnalité de rappel."  
+  print: C'est l'anniversaire de %1 aujourd'hui (%2).
+  age: Il/Elle a %1 ans.
+  act:
+    add: "L'anniversaire de %1 est maintenant le %2."
+    del: "L'anniversaire de %1 est supprimé."
+    tell: "Il/Elle est né(e) le %1/%2/%3."
+    remind: "Je vous rappellerai l'anniversaire de %1."
+    unremind: "Je ne vous rappellerai plus l'anniversaire de %1."
+    start: "Démarrage des rappels."
+    
+calc:
+  help:
+    description: Calculette
+    function: 
+      calc: "!calc string => calcule avec  bc (http://unixhelp.ed.ac.uk/CGI/man-cgi?bc+1)"
+  result: "%1: %2"
+
+griffor:
+  help:
+    description: Un module pour se souvenir des scores du test de Griffor.
+    function: 
+      show: "!griffor name       => Le score de *name*."
+      add:  "!griffor -add score => Met a jour votre *score*."
+  no:
+    score: Pas de score pour %1. Faites le test sur http://test.griffor.com .
+  act:
+    add:  "%1: Votre score est maintenant: %2."
+    show: "%1: %2."
+
+karma:
+  help:
+    description: "Un module pour compter les +1."
+    function:
+      self:      "!karma             => Affiche votre karma."
+      karma:     "!karma user        => Affiche le karma de *user*."
+      plus_one:  "user +1 or user ++ => Ajoute 1 au karma de *user*."
+      minus_one: "user -1 or user -- => Enlève 1 au karma de *user*."
+  karma: "Le karma de %1 est: %2."
+      
+link:
+  help:
+    description: Un module pour associer des choses entre elles.
+    function:
+      link:  "!link word[?]               => Donne une des descriptions associées a *word*."
+      links: "!links word[?]              => Donne toutes les descriptions associées a *word* en query."
+      add:   "!link -add word description => Ajoute une *description* a *word*." 
+      del:   "!link -del word id          => Supprime une description pour *word* en utilisant son *id*."
+      user:  "!link_user -(add|del) user  => Ajoute/Supprime un *user* qui peut link."
+  act:
+    add: "%1 est maintenant: %2."
+    del: Suppression de l'entrée %1 de %2.
+    link:  "%1: %2."
+    links: "#%1: %2"
+    user:
+      add: "%1 peut maintenant link."
+      del: "%1 ne peut plus link."
+  no:
+    link: "%1: Je n'ai pas cette entrée."
+
+remind:
+  help:
+    description: Un module pour se rappeller des choses.
+    function:
+      me:        "!remind me in time to something       => Vous rappelle *something* dans *time"
+      else:      "!remind somebody in time to something => Rappelle a *somebody* *something*dans *time*"
+    time:
+      head:      ______Time______
+      line1:     Prend comme valeur des seconds, minutes, hours, days, weeks, months et years
+      line2:     "Ajoute differente formes avec 'and'"
+      line3:     "Exemple: 1 day and 2 hours and 30 minutes"
+  remind: Rappelle toi de %1.
+  act:
+    me:   Je vous rappellerai ca dans %1.
+    else: Je rappellerai ca à %1 dans %2.
+
+seen:
+  help:
+    description: Un module pour retenir les actions des utilisateurs.
+    function:
+      seen:  "!seen user       => Indique la dernière fois qu'*user* à été vu."
+      first: "!first_seen user => Indique la premiere fois qu'*user* à été vu."
+  first: "J'ai vu %1 pour la première fois faisant: %2."
+  seen: "J'ai vu %1 pour la dernière fois faisaint: %2."
+
+message:
+  join:    "%1 a rejoin %2"
+  part:    "%1 est parti de %2 disant: %3"
+  notice:  "%1 a notifié %2 disant: %3"
+  privmsg: "%1 a dit sur %2: %3"
+  quit:    "%1 a quité: %2"
+  ping:    "Ping de %1"
+  nick:    "%1 a changé son nick pour %2"
+  mode:    "%1 a changé le mode de %2: %3 %4"
+  kick:    "%1 a kické %2 de %3 a cause de: %4"
+  invite:  "%1 a invité %2 sur %3"
+  server:  "%1 %2 %3: %4"
+
+tell:
+  help:
+    description: Un module pour dire quelquechose à quelqu'un la prochaine fois que le bot le/la vois.
+    function:
+      tell: "!tell somebody :something => dit *something* à *somebody*."
+  act:
+    tell: Je dirai ça à %1.
+    do:   "%1 m'a dit de te dire: %2 (%3)"
+  time: "%d/%m/%Y à %H:%M"
+
+enfaitalafin:
+  help:
+    description: Un module pour spoiler des films (francais).
+    source: Depuis enfaitalafin.fr
+    function:
+      spoil: "!spoil [-t] [id] => Spoil un film."
+    option:
+      title: "-t => Donne le titre du film."
+      id:    "id => Spoil un film ayant cette id."
+
+excuse:
+  help:
+    description: Un module pour obtenir des excuses de dev (francais).
+    source: Depuis www.excusesdedev.com
+    function: 
+      excuse: "!excuse => Donne une excuse."
+
+google:
+  help:
+    description: Un module pour faire des recherches sur google.
+    source: Depuis www.google.com
+    function:
+      google:  "!g search   => Fait une recherche google sur *search*"
+      youtube: "!yt search  => Fait une recherche youtube sur *search*"
+      image:   "!img search => Fait une recherche google-image sur *search*"
+
+name:
+  help:
+    description: "Un module pour générer des noms."
+    source: "Depuis http://www.behindthename.com"
+    function:
+      name:  "!name                => Affiche un nom aléatoire."
+      types: "!name -types [regex] => Affiche les differents types de noms disponibles. Peut eventuellement prendre une regex."
+      info:  "!name -info *name*   => Donne des informations sur *name*."
+    option:
+      name:
+        full:   "!name [-g(m|f)] [-s(1-4)] [-(0-9)] [-tType1,Type2,...]"
+        gender: "    -g    : Genre masculin ou feminin"
+        size:   "    -s    : Taille du nom"
+        number: "    -     : Nombre de résultats"
+        type:   "    -t    : Types des noms"
+  info:
+    gender: "Genre: %1"
+    usages: "Utilisation: %1"
+    description: "Description:"
+
+reverso:
+  help:
+    description: Un module pour traduire.
+    source: Depuis reverso.net
+    function:
+      reverso: "!reverso [-f(depuis)] [-t(vers)] message => Traduit un *message* *depuis* une langue *vers* une autre."
+      lang:    "!reverso_lang                            => Affiche les différentes langues."
+  act:
+    reverso: "%1: %2"
+    lang: "[%1]"
+
+weather:
+  help:
+    description: Un module pour la météo.
+    source: "Depuis http://www.wunderground.com"
+    function:
+      weather:  "!weather or !w [location]  => Météo actuelle pour *location*."
+      forecast: "!forecast or !f [location] => Prévisions à 3 jours pour *location*."
+      location: "!location location         => Enregistre une *location* pour votre utilisateur."
+  no:
+    location: "Pas de localisation pour: %1"
+    register: "Pas de localisation enregistrée pour %1. Utilisez !location pour enregistrer votre localisation."
+  act:
+    weather: "Météo pour %1: \u0002Condition\u000F: %2 %3°C (%4°F). \u0002Vent\u000F: De %5 allant à %6 (%7 mi/h). \u0002Pression\u000F: %8 mb. \u0002Humidité\u000F: %9"
+    forecast:
+      main: "Prévision pour %1: "
+      day: "\u0002%1\u000F: %2. "
+    location: Localisation enregistrée pour %1
+
+youtube:
+  help:
+    description: Un module pour spoil les liens youtube.
+
+linaeltranslation:
+  help:
+    description: Un module pour choisir la langue du bot.
+    function:
+      reload: "!translation -reload                      => Recharge les fichiers de traduction"
+      set:    "!translation -set ([\"lang1\",\"lang2\"]) => Change la langue du bot pour *lang1*, *lang2*"
+  act:
+    reload: Traductions rechargée.
+    set:    "Translations are now: %1."
