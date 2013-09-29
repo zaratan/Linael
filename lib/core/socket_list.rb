@@ -16,14 +16,14 @@ module Linael
     end
 
     def add klass, options
-      options[:name] ||= options[:url] + options[:port].to_s
+      options[:name] ||= "#{options[:url]}:#{options[:port]}"
       raise Exception, "Already used name" if sockets.detect {|s| s.name == options[:name]}
       sockets << klass.new(options)
       options[:name]
     end
 
     def connect name
-      server_by_name(name).listen
+      socket_by_name(name).listen
     end
 
     def remove name
@@ -31,21 +31,20 @@ module Linael
     end
 
     def [](name)
-      raise Exception, "No server." if sockets.empty?
+      raise Exception, "No socket." if sockets.empty?
       return sockets[0] unless name
       result = sockets.detect {|s| s.name == name}
-      raise Exception, "No server with this name (#{name})." unless result
+      raise Exception, "No socket with this name (#{name})." unless result
       result
     end
 
-    alias_method :server_by_name, :[]
+    alias_method :socket_by_name, :[]
 
     def send_message(msg)
-      server_by_name(msg.server_id).puts(msg.element)
+      socket_by_name(msg.server_id).puts(msg.element)
     end
 
     def gets
-      sleep(0.001)
       @fifo.gets
     end
 

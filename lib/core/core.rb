@@ -1,8 +1,3 @@
-require 'active_support/inflector'
-require 'active_support/core_ext/numeric/time'
-require 'socket'
-require 'colorize'
-require 'r18n-desktop'
 
 module Linael
   module Core
@@ -37,17 +32,3 @@ module Linael
   end
 end
 
-require_relative 'message_struct'
-require_relative 'message_fifo.rb'
-require_relative 'socket_list'
-require_relative 'handler_list'
-require_relative 'socketable'
-require_relative 'handler'
-require_relative '../messages.rb'
-require_relative '../irc/irc_handler.rb'
-require_relative '../irc/irc_socket.rb'
-require_relative '../irc/irc_act.rb'
-
-require_relative '../modules.rb'
-require_relative '../DSL.rb'
-require_relative '../modules/master.rb'
