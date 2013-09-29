@@ -1,4 +1,5 @@
 require 'monitor.rb'
+require 'singleton'
 
 module Linael
   class MessageFifo
@@ -11,11 +12,11 @@ module Linael
     end
 
     def gets 
-      @messages.pop || :none
+      @messages.shift || :none
     end
 
     def puts msg
-      @messages << msg
+      @messages.push msg
     end
 
   end

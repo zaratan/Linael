@@ -10,14 +10,12 @@ module Linael
     end
 
     def restart
-      p "RESTARTING #{name}!"
       return if @on_restart
         begin          
           @on_restart = true
           @socket.close
-          p "CLOSED!"
           @socket = nil
-          sleep 100
+          sleep 300
           @socket = socket_klass.open(server,port)
           @on_restart = false
         rescue Exception
@@ -29,10 +27,16 @@ module Linael
       raise NotImplementedError
     end
 
+    def socket_klass
+      raise NotImplementedError
+    end
+
     def gets
       begin
-        message = @socket.gets unless @on_restart
-        return MessageStruct.new(name,message,type) unless @on_restart
+        unless @on_restart
+          message = @socket.gets
+          return MessageStruct.new(name,message,type)
+        end
       rescue Exception => e
         restart unless @on_restart
       end
