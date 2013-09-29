@@ -11,16 +11,16 @@ module Linael
 
     def restart
       return if @on_restart
-        begin          
-          @on_restart = true
-          @socket.close
-          @socket = nil
-          sleep 300
-          @socket = socket_klass.open(server,port)
-          @on_restart = false
-        rescue Exception
-          retry
-        end
+      begin          
+        on_restart = true
+        @socket.close
+        @socket = nil
+        sleep 300
+        @socket = socket_klass.open(server,port)
+        on_restart = false
+      rescue Exception
+        retry
+      end
     end
 
     def type
@@ -51,15 +51,23 @@ module Linael
       end
     end
 
+
+
     def listen
       fifo = Linael::MessageFifo.instance
       Thread.new do
         while(1)
-          line = gets unless @on_restart
-          sleep(0.001)
-          fifo.puts line if line && line.element
+          listening fifo
         end
       end
+    end
+
+    private 
+
+    def listening fifo
+      line = gets unless @on_restart
+      sleep(0.001)
+      fifo.puts line if line && line.element
     end
 
   end
