@@ -15,18 +15,18 @@ module Linael::Irc
     ]
     
     def initialize
-      self.class.to_do << :handlePrivMsg
-      @msgAct=Hash.new
-      @cmdAct=Hash.new
-      @authAct=Hash.new
-      @cmdAuthAct=Hash.new
+      self.class.to_do << :handle_privmsg
+      @msg_act=Hash.new
+      @cmd_act=Hash.new
+      @auth_act=Hash.new
+      @cmd_auth_act=Hash.new
       super
     end
     
-    attr_accessor :msgAct,
-      :cmdAct,
-      :authAct,
-      :cmdAuthAct,
+    attr_accessor :msg_act,
+      :cmd_act,
+      :auth_act,
+      :cmd_auth_act,
       :master
 
     def format_message msg
@@ -34,17 +34,17 @@ module Linael::Irc
     end
     
     # A method to handle private messages
-    def handlePrivMsg(msg)
+    def handle_privmsg(msg)
       if Privmsg.match?(msg.element) 
         msg.element = Privmsg.new msg.element
         pretty_print_message msg
         if (msg.command?) 
-          @cmdAct.values.each {|act| act.call msg}
-          if (@authAct.values.all? {|auth| auth.call msg})
-            @cmdAuthAct.values.each {|act| act.call msg}
+          @cmd_act.values.each {|act| act.call msg}
+          if (@auth_act.values.all? {|auth| auth.call msg})
+            @cmd_auth_act.values.each {|act| act.call msg}
           end
         else
-          @msgAct.values.each {|act| act.call msg}
+          @msg_act.values.each {|act| act.call msg}
         end
         true
       end

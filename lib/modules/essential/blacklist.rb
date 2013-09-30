@@ -17,7 +17,7 @@ linael :blacklist, require_auth: true,required_mod: ["admin"] do
   ]
 
   ["black","white"].each do |color|
-    on :cmdAuth, "#{color}list".to_sym, /^!#{color}list\s|^!#{color[0]}l\s/ do |msg,options|
+    on :cmd_auth, "#{color}list".to_sym, /^!#{color}list\s|^!#{color[0]}l\s/ do |msg,options|
       message_handler msg do
         act_anylist "#{color}list",options
       end

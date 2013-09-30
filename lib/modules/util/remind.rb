@@ -64,7 +64,7 @@ linael :remind,require_auth: true do
   end
   
   #remind somebody else
-  on :cmdAuth, :remind_auth, /^!remind\s/ do |msg,options|
+  on :cmd_auth, :remind_auth, /^!remind\s/ do |msg,options|
     before(options) do |options|
       options.who != "me"
     end

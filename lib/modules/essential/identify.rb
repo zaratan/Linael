@@ -4,12 +4,12 @@
 linael :identify, require_auth: true do
 
   #identify Linael
-  on :cmdAuth, :identify, /^!identify\s/ do |msg,options|
+  on :cmd_auth, :identify, /^!identify\s/ do |msg,options|
     talk("nickserv","identify #{options.who}",msg.server_id)
   end
 
   #ask for op
-  on :cmdAuth, :ask_op, /^!op\s/ do |msg,options|
+  on :cmd_auth, :ask_op, /^!op\s/ do |msg,options|
     talk("chanserv","op #{options.chan} #{options.who}",msg.server_id)
   end
 

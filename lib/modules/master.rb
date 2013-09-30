@@ -66,19 +66,19 @@ linael :master, require_auth: true do
     answer(msg, t.master.show.loaded(result_loaded.join(', ')))
   end
 
-  on :cmdAuth, :add, /^!module\s-add\s/ do |msg,options|
+  on :cmd_auth, :add, /^!module\s-add\s/ do |msg,options|
     message_handler msg, t.master.act.add(options.who) do
       add_action options.who
     end
   end
 
-  on :cmdAuth, :del, /^!module\s-del\s/ do |msg,options|
+  on :cmd_auth, :del, /^!module\s-del\s/ do |msg,options|
     message_handler msg, t.master.act.del(options.who) do
       del_action options.who
     end
   end
 
-  on :cmdAuth, :reload, /^!module\s-reload\s/ do |msg,options|
+  on :cmd_auth, :reload, /^!module\s-reload\s/ do |msg,options|
     message_handler msg, t.master.act.reload(options.who) do
       reload_action options.who
     end

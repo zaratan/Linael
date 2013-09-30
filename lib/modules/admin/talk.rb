@@ -8,7 +8,7 @@ linael :talk, require_auth: true do
     t.talk.help.function.talk
   ]
 
-  on :cmdAuth, :talking,/^!talk\s/ do |msg,options|
+  on :cmd_auth, :talking,/^!talk\s/ do |msg,options|
     talk(options.chan,options.reason,msg.server_id)
   end
 

@@ -28,7 +28,7 @@ linael :link, require_auth: true do
     answer(priv_msg, t.link.act.add(options.id, options.value))
   end
 
-  on :cmdAuth, :del_link, /^!link\s+-del\s+\S+\s+\S+/ do |priv_msg,options|
+  on :cmd_auth, :del_link, /^!link\s+-del\s+\S+\s+\S+/ do |priv_msg,options|
     before(priv_msg) do |priv_msg|
       @users.include?(priv_msg.who.downcase)
     end
@@ -56,12 +56,12 @@ linael :link, require_auth: true do
     end
   end
 
-  on :cmdAuth, :add_user_link, /^!link_user\s+-add\s/ do |priv_msg,options|
+  on :cmd_auth, :add_user_link, /^!link_user\s+-add\s/ do |priv_msg,options|
     @users << options.who.downcase unless @users.include? options.who.downcase
     answer(priv_msg,t.link.act.user.add(options.who))
   end
 
-  on :cmdAuth, :del_user_link, /^!link_user\s+-del\s/ do |priv_msg,options|
+  on :cmd_auth, :del_user_link, /^!link_user\s+-del\s/ do |priv_msg,options|
     @users.delete options.who.downcase
     answer(priv_msg,t.link.act.user.del(options.who))
   end

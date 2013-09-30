@@ -48,14 +48,14 @@ linael :banana,require_auth: true do
   end
 
   #add a user
-  on :cmdAuth, :add_user, /!banana\s-add\s/ do |msg,options|
+  on :cmd_auth, :add_user, /!banana\s-add\s/ do |msg,options|
     answer(msg, t.banana.user.add(options.who))
     @user << options.who.downcase
 
   end
 
   #del a user
-  on :cmdAuth, :del_user, /!banana\s-del\s/ do |msg,options|
+  on :cmd_auth, :del_user, /!banana\s-del\s/ do |msg,options|
     answer(msg, t.banana.user.del(options.who))
     @user.delete options.who.downcase
   end

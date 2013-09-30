@@ -9,7 +9,7 @@ linael :system,require_auth: true do
     t.system.function.bash
   ]
 
-  on :cmdAuth, :bash, /^!bash\s+\S/ do |msg,options|
+  on :cmd_auth, :bash, /^!bash\s+\S/ do |msg,options|
     result = system(options.all)
     answer(msg, t.system.act.bash(options.from_who))
     result.gsub("\r",'').split("\n").each do |line|

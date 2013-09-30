@@ -34,19 +34,19 @@ linael :auto_kick,require_auth: true do
     end
 
     #add rule
-    on :cmdAuth, :add_akick, /^!akick\s-add\s/ do |msg,options|
+    on :cmd_auth, :add_akick, /^!akick\s-add\s/ do |msg,options|
       answer(msg, t.autokick.act.add(options.who, options.chan))
       add_akick_rule options.chan.downcase,options.who.downcase
     end
 
     #del rule
-    on :cmdAuth, :del_akick, /^!akick\s-del\s/ do |msg,options|
+    on :cmd_auth, :del_akick, /^!akick\s-del\s/ do |msg,options|
       answer(msg,"Oki doki! I'll no longuer match rule #{options.who} on #{options.chan}.")
       del_akick_rule options.chan.downcase,(options.who.to_i)
     end
 
     #show rules for a chan
-    on :cmdAuth, :show_akick, /!akick\s-show\s/ do |msg,options|
+    on :cmd_auth, :show_akick, /!akick\s-show\s/ do |msg,options|
       print_rules options.chan.downcase,msg.who,msg.server_id
     end
 

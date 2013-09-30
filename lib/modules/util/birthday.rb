@@ -128,7 +128,7 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
     Time.now.to_date.next_day.to_time
   end
 
-  on :cmdAuth, :start, /^!start/ do
+  on :cmd_auth, :start, /^!start/ do
     before(@started) {|start| !start}
     @started = true
     start_remind

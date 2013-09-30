@@ -29,12 +29,12 @@ linael :linael_translation, require_auth: true do
     load_translation
   end
 
-  on :cmdAuth, :reload, /^!translation\s-reload\s/ do |msg|
+  on :cmd_auth, :reload, /^!translation\s-reload\s/ do |msg|
     load_translation
     answer(msg,t.linaeltranslation.act.reload)
   end
 
-  on :cmdAuth, :set, /^!translation\s-set\s/ do |msg,options|
+  on :cmd_auth, :set, /^!translation\s-set\s/ do |msg,options|
     @translations = JSON.parse(options.who)
     load_translation
     answer(msg,t.linaeltranslation.act.set(options.who))

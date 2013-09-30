@@ -26,7 +26,7 @@ linael :rejoin, require_auth: true do
     end
   end
 
-  on :cmdAuth, :launch, /^!start/ do |msg,options|
+  on :cmd_auth, :launch, /^!start/ do |msg,options|
     before(@started) {|start| !start}
     @started = true
     rejoin_all

@@ -95,17 +95,17 @@ linael :save, require_auth: true do
   end
 
 
-on :cmdAuth, :auto_save, /^!auto_save\s/ do |msg|
+on :cmd_auth, :auto_save, /^!auto_save\s/ do |msg|
   auto_save_act msg
 end
 
-on :cmdAuth, :save, /^!save(\s|\r|\n)/ do |msg,options|
+on :cmd_auth, :save, /^!save(\s|\r|\n)/ do |msg,options|
   message_handler msg do
     save_act msg, options.what
   end
 end
 
-on :cmdAuth, :load_save, /^!load(\s|\r|\n)/ do |msg,options|
+on :cmd_auth, :load_save, /^!load(\s|\r|\n)/ do |msg,options|
   message_handler msg do
     load_act msg, options.what
   end
