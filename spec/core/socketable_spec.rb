@@ -160,6 +160,41 @@ describe Linael::Socketable do
 
   end
 
+  describe "#close" do
+    before(:each) do
+      Linael::Socketable.any_instance.stub(socket_klass: @socket_stub)
+      @instance = Linael::Socketable.new(name: :test)
+      allow(@instance).to receive(:type) {:type}
+      allow(@instance).to receive(:restart) {true}
+    end
+
+    it "close the socket" do
+      @instance.close
+      expect(@opened_socket).to have_received(:close)
+    end
+  end
+
+  describe "#stop_listen" do
+    before(:each) do
+      Linael::MessageFifo = double("fifo")
+      allow(Linael::MessageFifo).to receive(:instance) {@fifo}
+
+      Linael::Socketable.any_instance.stub(socket_klass: @socket_stub)
+      @instance = Linael::Socketable.new(name: :test)
+      allow(@instance).to receive(:type) {:type}
+      allow(@instance).to receive(:restart) {true}
+      allow(@instance).to receive(:sleep) {true}
+      allow(@instance).to receive(:type) {:type}
+    end
+
+    it "kill the thread" do
+      @instance.listen
+      @instance.stop_listen
+      sleep(0.01) #otherwise the thread is still alive
+      @instance.instance_variable_get(:@thread).alive?.should be false
+    end
+  end
+
   describe "#listen" do
     before(:each) do
 

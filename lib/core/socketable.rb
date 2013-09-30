@@ -51,11 +51,19 @@ module Linael
       end
     end
 
+    def close
+      @socket.close
+    end
+
+    def stop_listen
+      @thread.kill
+    end
+
 
 
     def listen
       fifo = Linael::MessageFifo.instance
-      Thread.new do
+      @thread = Thread.new do
         while(1)
           listening fifo
         end

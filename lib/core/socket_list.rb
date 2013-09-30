@@ -12,10 +12,10 @@ module Linael
     end
 
     def each
-      @sockets.each
+      @sockets.each {|s| yield s}
     end
 
-    def add klass, options
+    def add klass, options={}
       options[:name] ||= "#{options[:url]}:#{options[:port]}"
       raise Exception, "Already used name" if sockets.detect {|s| s.name == options[:name]}
       sockets << klass.new(options)
@@ -27,10 +27,13 @@ module Linael
     end
 
     def remove name
+      sock = socket_by_name(name)
+      sock.stop_listen
+      sock.close
       @sockets = @sockets.delete_if {|s| s.name == name}
     end
 
-    def [](name)
+    def [](name=nil)
       raise Exception, "No socket." if sockets.empty?
       return sockets[0] unless name
       result = sockets.detect {|s| s.name == name}
