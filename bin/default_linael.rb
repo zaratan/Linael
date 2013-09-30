@@ -15,13 +15,13 @@ require_relative '../lib/core/socket_list'
 require_relative '../lib/core/handler_list'
 require_relative '../lib/core/socketable'
 require_relative '../lib/core/handler'
-require_relative '../lib/messages.rb'
+require_relative '../lib/irc/messages.rb'
 require_relative '../lib//irc/irc_handler.rb'
 require_relative '../lib/irc/irc_socket.rb'
 require_relative '../lib/irc/irc_act.rb'
 
-require_relative '../lib/modules.rb'
-require_relative '../lib/DSL.rb'
+require_relative '../lib/dsl/modules.rb'
+require_relative '../lib/dsl/module_dsl.rb'
 require_relative '../lib/modules/master.rb'
 
 
