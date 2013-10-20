@@ -321,7 +321,7 @@ tell:
   help:
     description: Un module pour dire quelquechose à quelqu'un la prochaine fois que le bot le/la vois.
     function:
-      tell: "!tell somebody :something => dit *something* à *somebody*."
+      tell: "!tell somebody something => dit *something* à *somebody*."
   act:
     tell: Je dirai ça à %1.
     do:   "%1 m'a dit de te dire: %2 (%3)"

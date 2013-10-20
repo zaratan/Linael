@@ -25,7 +25,7 @@ linael :tell do
   on :cmd, :tell_add, /^!tell/ do |msg,options|
 
     who_tell = options.who.downcase
-    add_tell who_tell, options.from_who, options.reason
+    add_tell who_tell, options.from_who, options.all.gsub(/^\s*\S*\s/,"")
     answer(msg,t.tell.act.tell(who_tell))
 
   end
