@@ -420,3 +420,13 @@ linaeltranslation:
   act:
     reload: Translations reloaded.
     set:    "Translations are now: %1."
+
+exclude:
+  help:
+    description: A module to manage who can use the bot.
+    function:
+      exclude:   "!exclude user   => exclude a *user*."
+      unexclude: "!unexclude user => unexclude a *user*."
+  act:
+    exclude:   "%1 won't use me anymore."
+    unexclude: "%1 can now talk to me."
