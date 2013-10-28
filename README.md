@@ -50,13 +50,6 @@ Read [How to make a new Module](https://github.com/Skizzk/Linael/wiki/How-to-mak
 
 #How contribute?
 
-  Fork it! Do it! Push it!
-
-#To do
-  - [X] How to make a new module
-  - [ ] What module should I use and why?
-  - [X] Add a way to launch mods by default
-  - [X] Config file
-  - [ ] Module for wrapping File reading
-  - [X] Thread it!
-  - [X] Timer
+- Fork the develop branch. 
+- Do it!
+- Submit a pull request.

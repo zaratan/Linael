@@ -10,7 +10,7 @@ linael :calc do
     t.calc.help.function.calc
   ]
 
-  value to_calc: /\s([0-9A-Za-z\/\*\-\+\(\)\s\.<>!=&|]*)/
+  value to_calc: /\s([0-9A-Za-z\/\*\-\+\(\)\%\^\s\.<>!=&|]*)/
 
   on :cmd, :calc, /^!calc\s/ do |msg,options|
     result = `echo "#{options.to_calc.gsub("\r","")}" | bc -l`
