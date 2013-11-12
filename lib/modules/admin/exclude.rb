@@ -11,12 +11,12 @@ linael :exclude, require_auth: true, required_mod: ["blacklist"] do
     t.exclude.help.function.unexclude
   ]
 
-  on :cmdAuth, :exclude, /^!exclude\s/ do |msg,options|
+  on :cmd_auth, :exclude, /^!exclude\s/ do |msg,options|
     act_exclude(options.who)
     answer(msg,t.exclude.act.exclude(options.who))
   end
 
-  on :cmdAuth, :unexclude, /^!unexclude\s/ do |msg,options|
+  on :cmd_auth, :unexclude, /^!unexclude\s/ do |msg,options|
     act_unexclude(options.who)
     answer(msg,t.exclude.act.unexclude(options.who))
   end
@@ -40,7 +40,7 @@ module Linael
 
     def act_authorized_with_exclude?(instance,msg)
       result= act_authorized_without_exclude?(instance,msg)
-      return result unless msg.kind_of? PrivMessage
+      return result unless msg.element.kind_of? Linael::Irc::Privmsg
       exclusions = @master.instance_variable_get(:@exclusions)
       return result unless exclusions.include?(msg.who.downcase) || exclusions.include?(msg.identification.downcase)
     end
@@ -48,8 +48,8 @@ module Linael
 
     unless instance_methods.include?(:act_authorized_without_exclude?)
       alias_method :act_authorized_without_exclude?, :act_authorized? 
-      alias_method :act_authorized?, :act_authorized_with_exclude?
     end
+      alias_method :act_authorized?, :act_authorized_with_exclude?
   end
 
 end

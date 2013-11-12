@@ -90,7 +90,7 @@ module Linael
 
     # Check if an instance is authorized in a chan
     def act_authorized?(instance,msg)
-      return true unless msg.kind_of? Linael::Privmsg
+      return true unless msg.element.kind_of? Linael::Irc::Privmsg
       mod = mod(instance.class::Name)
       result = true
       result &= !mod.in_blacklist?(msg.place) 

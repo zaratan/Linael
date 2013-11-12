@@ -27,12 +27,12 @@ module Linael
     # In new DSL should be setted in linael command.
     Constructor="Zaratan"
 
-    # +behavior+:: actions
+    # +behaviors+:: actions
     # +runner+::   container
-    attr_accessor :behavior,:master
+    attr_accessor :behaviors,:master
     
     def stop!
-      self.behavior.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
+      self.behaviors.each {|type,ident| ident.each { |id| self.send "del_#{type}_behavior",self,id}}
     end
 
     protected
@@ -41,7 +41,7 @@ module Linael
       begin
         yield
       rescue MessagingException => error_message
-        answer(msg,error_message)
+        answer(msg,error_message.message)
         return
       rescue Exception => error
         talk(msg.who,error.to_s,msg.server_id)
@@ -124,9 +124,9 @@ module Linael
       self.class.send("define_method",("add_#{type}_behavior")) do |instance,nom,ident|
         procToAdd = generate_proc nom,instance
         master.add_act type, instance_ident(instance,ident), procToAdd
-        @behavior ||= {}
-        @behavior[type] ||= []
-        @behavior[type] << ident
+        @behaviors ||= {}
+        @behaviors[type] ||= []
+        @behaviors[type] << ident
       end
     end
 
