@@ -170,7 +170,7 @@ module Linael
         return module_name
       else
         #The name do not contain a / so we look EVERYWHERE and ask if many
-        mod_place = recursive_search dir,/#{module_name}\.rb/
+        mod_place = recursive_search dir,/^#{module_name}\.rb/
         raise MessagingException, t.master.not.exist if mod_place.empty?
         raise MessagingException,t.master.not.unique(format_multiples_names(mod_place)) if mod_place.size > 1
         module_name= mod_place.first
