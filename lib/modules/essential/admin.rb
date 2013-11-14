@@ -38,9 +38,9 @@ linael :admin, require_auth: true do
     part_channel server_id, :dest => chan
   end
 
-  def die_act
-    quit_channel :msg => t.admin.act.die.message
-    exit 0
+  def die_act server_id
+    quit_channel server_id, :msg => t.admin.act.die.message
+    exit! 0
   end
 
   def kick_act server_id, who,chan,reason
@@ -72,7 +72,7 @@ linael :admin, require_auth: true do
   #exit 0
   on :cmd_auth, :die, /^!admin_die\s/ do |msg,options|
     answer(msg,t.admin.act.die.answer)
-    die_act
+    die_act msg.server_id
   end
 
   #kick
