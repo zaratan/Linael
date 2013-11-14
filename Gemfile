@@ -22,3 +22,4 @@ group :test do
 end
 
 gem 'coveralls', require: false
+gem "rake"
