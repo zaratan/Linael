@@ -30,10 +30,11 @@ linael :name do
       url+="number=#{size}"
       url+="&"
       url+="gender=#{gender}"
+      url+="&all=no"
       types.each do |type|
         url+="&usage_#{type}=1"
       end
-      url
+      p url
   end
 
   def parse_name(page)
@@ -54,6 +55,7 @@ linael :name do
     url=generate_url(options.size,options.gender,types(options))
 
     time(options).times do |i|
+      p url
       name = parse_name(Hpricot(open(url)))
       answer(msg,"#{i+1} - #{name}")
     end
@@ -115,6 +117,7 @@ linael :name do
   end
 
   def parse_types page,search
+    coder = HTMLEntities.new
     types_names = (page/"div.body td.emcell table.emtable td")
     types_to_parse = (page/"div.body td.emcell table.emtable input").map! do |input| 
       if input.to_html.match(/usage/)
@@ -126,19 +129,17 @@ linael :name do
         "#{type} : #{coder.decode(name)}" if !search || type.match("^#{search}$")
       end
     end
-    typesToParse
   end
 
   #show the differents types of names
   on :cmd, :what_types, /^!name\s.*\s*-types\s/ do |msg,options|
     search = parse_search msg.message
-    coder = HTMLEntities.new
     url ="http://www.behindthename.com/random/"
     page = Hpricot(open(url))
     types = parse_types page, search
     types.compact!
     types.cycle do |type|
-      talk(msg.who,typesToParse.shift(5).join("   "),msg.server_id)
+      talk(msg.who,types.shift(5).join("   "),msg.server_id)
     end
   end
 

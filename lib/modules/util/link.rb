@@ -21,16 +21,16 @@ linael :link, require_auth: true do
   end
 
   on :cmd, :add_link, /^!link\s+-add\s+\S+\s+\S+/ do |priv_msg,options|
-    before(priv_msg) do |priv_msg|
-      @users.include?(priv_msg.who.downcase)
+    before(priv_msg) do |privmsg|
+      @users.include?(privmsg.who.downcase)
     end
     @links[options.id.downcase] = ((@links[options.id.downcase] || []) << options.value)
     answer(priv_msg, t.link.act.add(options.id, options.value))
   end
 
   on :cmd_auth, :del_link, /^!link\s+-del\s+\S+\s+\S+/ do |priv_msg,options|
-    before(priv_msg) do |priv_msg|
-      @users.include?(priv_msg.who.downcase)
+    before(priv_msg) do |privmsg|
+      @users.include?(privmsg.who.downcase)
     end
     (@links[options.id.downcase] || []).delete_at(options.value.to_i - 1)
     answer(priv_msg, t.link.act.del(options.value,options.id))
@@ -41,7 +41,7 @@ linael :link, require_auth: true do
     if links.empty? 
       answer(priv_msg,t.no.link(priv_msg.who))
     else
-      answer(priv_msg,t.link.act.link(priv_msg.who,links.sample)
+      answer(priv_msg,t.link.act.link(priv_msg.who,links.sample))
     end
   end
 

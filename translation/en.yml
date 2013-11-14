@@ -4,7 +4,7 @@ and: and
 
 ago: ago
 
-version: "Linael Version 3.0 running on Ruby"
+version: "Linael Version 3.0 running on %1"
 
 day: !!pl
   0: ""

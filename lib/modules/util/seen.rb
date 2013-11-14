@@ -12,7 +12,7 @@ linael :seen do
 
   on :cmd, :seen, /^!seen\s/ do |msg,options|
     to_print = find_user(options) {|seens| seens.max_by {|k,u| u.last_seen}}
-    answer(msg,t.seen.last(to_print.last_seen.ago, to_print.last_act.to_s))
+    answer(msg,t.seen.seen(to_print.last_seen.ago, to_print.last_act.to_s))
   end
 
   on :cmd, :first_seen, /^!first_seen\s/ do |msg,options|
@@ -54,7 +54,8 @@ class Time
   include R18n::Helpers
 
   def ago
-    sec = (Time.now - self).round
+    sec = (Time.now - self).round 
+    sec = 1 if sec == 0
 
     mm, ss = sec.divmod(60)
     hh, mm = mm.divmod(60)
@@ -79,15 +80,15 @@ class Linael::User
     @nick = msg.sender.downcase
     @host = msg.identification.downcase
     @first_seen = Time.now
-    @first_act = msg
+    @first_act = msg.element
     @last_seen = Time.now
-    @last_act = msg
+    @last_act = msg.element
   end
 
   def update msg
     @host = msg.identification.downcase
     @last_seen = Time.now
-    @last_act = msg
+    @last_act = msg.element
   end
 
 end

@@ -13,7 +13,7 @@ module Linael
       @month = unparse_month(whenz)
       @year = unparse_year(whenz)
       @remind = []
-      end
+    end
 
     def unparse_day whenz
       if whenz =~ /([0-9]+)\/[0-9]+\/?[0-9]*/
@@ -117,7 +117,11 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
   end
 
   on :cmd,:birthday_tell,/^!birthday\s+[A-Za-z]/ do |msg,options|
-    answer(msg,t.birthday.act.tell(@birthday[options.who].day,@birthday[options.who].month},@birthday[options.who].year))
+    birthday = @birthday[options.who.downcase]
+    before(options) do 
+      !birthday.nil?
+    end
+    answer(msg,t.birthday.act.tell(birthday.day,birthday.month,birthday.year))
   end
 
   on :cmd,:birthday_test,/^!test_birthday/ do |msg,options|

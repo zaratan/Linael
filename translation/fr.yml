@@ -106,7 +106,7 @@ savem:
   error:
     saving:    Une erreur est survenue, le module %1 n'a pas été sauvegardé.
   act:
-    save:      Le module %1 aété sauvegardé.
+    save:      Le module %1 a été sauvegardé.
     load:      Le module %1 la été chargé.
 
 blacklist:
@@ -301,8 +301,8 @@ seen:
     function:
       seen:  "!seen user       => Indique la dernière fois qu'*user* à été vu."
       first: "!first_seen user => Indique la premiere fois qu'*user* à été vu."
-  first: "J'ai vu %1 pour la première fois faisant: %2."
-  seen: "J'ai vu %1 pour la dernière fois faisaint: %2."
+  first: "Vu pour la première fois %1 faisant: %2."
+  seen: "Vu pour la dernière fois %1 faisant: %2."
 
 message:
   join:    "%1 a rejoin %2"

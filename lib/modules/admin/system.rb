@@ -10,7 +10,7 @@ linael :system,require_auth: true do
   ]
 
   on :cmd_auth, :bash, /^!bash\s+\S/ do |msg,options|
-    result = system(options.all)
+    result = `#{options.all}`
     answer(msg, t.system.act.bash(options.from_who))
     result.gsub("\r",'').split("\n").each do |line|
       talk(options.from_who,line,msg.server_id)

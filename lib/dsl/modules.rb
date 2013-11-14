@@ -133,7 +133,7 @@ module Linael
     def define_del_behaviour(type)
       self.class.send("define_method",("del_#{type}_behavior")) do |instance,ident|
         master.del_act type,instance_ident(instance,ident)
-        @behavior.delete_if {|k,v| v == ident} 
+        @behaviors.delete_if {|k,v| v == ident} 
       end
     end
 

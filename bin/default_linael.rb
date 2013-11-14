@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'active_support/inflector'
-require 'active_support/core_ext/numeric/time'
+require 'active_support'
 require 'socket'
 require 'colorize'
 require 'r18n-desktop'

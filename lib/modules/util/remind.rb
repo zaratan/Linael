@@ -29,14 +29,14 @@ linael :remind,require_auth: true do
 
   end
 
-  def remind_aux options, time, who
+  def remind_aux options, time, who, server_id=nil
     who ||= options.from_who
     unless time
       time = make_time(options.time)
-      @reminds << [options,time]
+      @reminds << [options,time,server_id]
     end
     at(time,options) do |options|
-      talk(who,t.remind.remind(options.action.gsub("\r","")),options.message.server_id)
+      talk(who,t.remind.remind(options.action.gsub("\r","")),server_id)
       @reminds.delete_if {|rem| rem[1] < Time.now}
     end
   end
@@ -47,7 +47,7 @@ linael :remind,require_auth: true do
 
   on_load do
     @reminds.each do |rem|
-      remind_aux(rem[0],rem[1],nil) if Time.now < rem[1]
+      remind_aux(rem[0],rem[1],nil,rem[2]) if Time.now < rem[1]
     end
   end
 
@@ -58,7 +58,7 @@ linael :remind,require_auth: true do
   #remind me
   on :cmd, :remind, /^!remind\s+me\s/ do |msg,options|
 
-    remind_aux(options,nil,nil)
+    remind_aux(options,nil,nil,msg.server_id)
     answer(msg,t.remind.act.me(options.time))
     
   end
@@ -69,7 +69,7 @@ linael :remind,require_auth: true do
       options.who != "me"
     end
 
-    remind_aux(options,nil,options.who)
+    remind_aux(options,nil,options.who,msg.server_id)
     answer(msg,t.remind.act.else(options.who, options.time))
 
   end
