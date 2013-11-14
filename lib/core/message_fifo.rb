@@ -2,10 +2,8 @@ require 'monitor.rb'
 require 'singleton'
 
 module Linael
-  class MessageFifo
 
-    include Singleton
-
+  class Fifo
     def initialize 
       @messages = []
       @messages.extend MonitorMixin
@@ -18,6 +16,12 @@ module Linael
     def puts msg
       @messages.push msg
     end
+
+  end
+
+  class MessageFifo < Fifo
+
+    include Singleton
 
   end
 end

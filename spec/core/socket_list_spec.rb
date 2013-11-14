@@ -17,6 +17,7 @@ describe Linael::SocketList do
       allow(@owi).to receive(:stop_listen) { :stop_listen }
       allow(@owi).to receive(:close) { :close }
       allow(@owi).to receive(:puts) { :puts }
+      allow(@owi).to receive(:write) { :write }
 
       Owi = double("owi")
       allow(Owi).to receive(:new) { @owi }
@@ -139,7 +140,7 @@ describe Linael::SocketList do
     it "send the message to the right socket" do
       @instance.add(Owi, name: :owi)
       @instance.send_message(Struct.new(:server_id,:element).new(:owi,:message)) 
-      expect(@owi).to have_received(:puts).with(:message)
+      expect(@owi).to have_received(:write).with(:message)
     end
   end
 

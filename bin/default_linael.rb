@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'active_support'
+require 'active_support/all'
 require 'socket'
 require 'colorize'
 require 'r18n-desktop'

@@ -19,29 +19,29 @@ linael :blacklist, require_auth: true,required_mod: ["admin"] do
   ["black","white"].each do |color|
     on :cmd_auth, "#{color}list".to_sym, /^!#{color}list\s|^!#{color[0]}l\s/ do |msg,options|
       message_handler msg do
-        act_anylist "#{color}list",options
+        act_anylist "#{color}list",options,msg.server_id
       end
     end
   end
 
   # Manage for any color list
-  def act_anylist (colorlist,options)
+  def act_anylist (colorlist,options,server_id)
     raise MessagingException, t.blacklist.not.loaded unless (master.modules.has_key?(options.who))
     mod=mod(options.who)
     toAdd = [options.chan]
     toAdd = mod("admin").chans if options.all?
     if (options.type == "add")
-      modify_status colorlist,t.blacklist.act.added,toAdd,options,mod,true
+      modify_status colorlist,t.blacklist.act.added,toAdd,options,mod,true,server_id
     end
     if (options.type == "del")
-      modify_status colorlist,t.blacklist.act.deleted,toAdd,options,mod,false
+      modify_status colorlist,t.blacklist.act.deleted,toAdd,options,mod,false,server_id
     end
   end
 
   # Do the job of adding/deleting
-  def modify_status(method,action_string,toAdd,options,mod,do_add)
+  def modify_status(method,action_string,toAdd,options,mod,do_add,server_id)
     toAdd.each do |chan|
-      talk(options.from_who,t.blacklist.act.global(chan, action_string, method, options.who),options.message.server_id)
+      talk(options.from_who,t.blacklist.act.global(chan, action_string, method, options.who),server_id)
       mod.send(("un_"+method),chan) unless do_add
       mod.send(method,chan) if do_add
     end
@@ -89,14 +89,19 @@ module Linael
     end
 
     # Check if an instance is authorized in a chan
-    def act_authorized?(instance,msg)
-      return true unless msg.element.kind_of? Linael::Irc::Privmsg
+    def act_authorized_with_blacklist?(instance,msg)
+      result = act_authorized_without_blacklist?(instance,msg)      
+      return result unless msg.element.kind_of? Linael::Irc::Privmsg
       mod = mod(instance.class::Name)
-      result = true
       result &= !mod.in_blacklist?(msg.place) 
       result &= mod.in_whitelist?(msg.place) 
       result
     end
+
+    unless instance_methods.include?(:act_authorized_without_blacklist?)
+      alias_method :act_authorized_without_blacklist?, :act_authorized?
+    end
+    alias_method :act_authorized?, :act_authorized_with_blacklist?
 
   end
 

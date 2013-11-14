@@ -7,6 +7,7 @@ module Linael
       @port = options[:port]
       @server = options[:url]
       @socket = socket_klass.open(options[:url],options[:port])
+      @writing_fifo = Linael::Fifo.new
     end
 
     def restart
@@ -37,7 +38,7 @@ module Linael
           message = @socket.gets
           return MessageStruct.new(name,message,type)
         end
-      rescue Exception => e
+      rescue Exception 
         restart unless @on_restart
       end
       nil
@@ -46,7 +47,7 @@ module Linael
     def puts msg
       begin
         @socket.puts "#{msg}\n" unless @on_restart
-      rescue Exception => e
+      rescue Exception
         restart unless @on_restart
       end
     end
@@ -57,18 +58,26 @@ module Linael
 
     def stop_listen
       @thread.kill
+      @writting_thread.kill
     end
 
-
+    def write msg
+      @writing_fifo.puts msg
+    end
 
     def listen
       fifo = Linael::MessageFifo.instance
       @thread = Thread.new do
-        while(1)
+        while(true)
           listening fifo
         end
       end
-    end
+      @writting_thread = Thread.new do
+        while(true)
+          writing
+        end
+      end
+    end    
 
     private 
 
@@ -76,6 +85,18 @@ module Linael
       line = gets unless @on_restart
       sleep(0.001)
       fifo.puts line if line && line.element
+    end
+
+    def writing 
+      sleep(0.001)
+      @timer ||= Time.now
+      if Time.now > @timer
+        line_to_write = @writing_fifo.gets unless @on_restart
+        if line_to_write != :none
+          puts line_to_write
+          @timer = Time.now + 0.5
+        end
+      end
     end
 
   end
