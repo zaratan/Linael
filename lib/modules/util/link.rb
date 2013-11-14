@@ -39,7 +39,7 @@ linael :link, require_auth: true do
   on :cmd, :link, /^!link\s+[^-\s]\S*\s/ do |priv_msg,options|
     links = @links[options.link.downcase] || []
     if links.empty? 
-      answer(priv_msg,t.no.link(priv_msg.who))
+      answer(priv_msg,t.not.link(priv_msg.who))
     else
       answer(priv_msg,t.link.act.link(priv_msg.who,links.sample))
     end
@@ -48,7 +48,7 @@ linael :link, require_auth: true do
   on :cmd, :links, /^!links\s+\S+/ do |priv_msg,options|
     links = @links[options.link.downcase] || []
     if links.empty?
-      answer(priv_msg,t.no.link(priv_msg.who))
+      answer(priv_msg,t.not.link(priv_msg.who))
     else
       to_print=[]
       links.each_with_index {|val,i| to_print << t.link.act.links(i + 1, val)}

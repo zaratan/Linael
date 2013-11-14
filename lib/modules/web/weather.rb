@@ -21,7 +21,7 @@ linael :weather do
 
   def weather_from location
     w = WeatherUnderground::Base.new.CurrentObservations(location)
-    raise MessagingException, t.weather.no.location(location.gsub("\r","")) if w.temp_c == ""
+    raise MessagingException, t.weather.not.location(location.gsub("\r","")) if w.temp_c == ""
     t.weather.act.weather(w.display_location.first.full, w.weather, w.temp_c, w.temp_f, w.wind_dir, Unit("#{w.wind_mph} mi/h").convert_to("km/h").round.to_s, w.wind_mph, w.pressure_mb, w.relative_humidity)
   end
 
@@ -29,7 +29,7 @@ linael :weather do
     w = WeatherUnderground::Base.new.CurrentObservations(location)
     f = WeatherUnderground::Base.new.TextForecast(location)
     result = t.weather.act.forecast.main w.display_location.first.full
-    raise MessagingException, t.weather.no.location(location.gsub("\r","")) if w.temp_c == ""
+    raise MessagingException, t.weather.not.location(location.gsub("\r","")) if w.temp_c == ""
     f.days.first(4).each do |d|
       result += t.weather.act.forecast.day d.title, d.text.gsub("&deg;","°")
     end
@@ -37,7 +37,7 @@ linael :weather do
   end
 
   def local user
-    raise MessagingException, t.weather.no.register(user) unless @location[user.downcase]
+    raise MessagingException, t.weather.not.register(user) unless @location[user.downcase]
   end
   ["weather","forecast"].each do |method|
     on :cmd, "#{method}_search".to_sym, /^!(#{method}|#{method[0]})\s/ do |msg,options|

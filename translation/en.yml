@@ -105,7 +105,7 @@ savem:
       save:      "!save [module] => Save a *module*. If no module given, save all the loaded modules."
       load:      "!load [module] => Load a *module*. If no module given, load all the saved modules."
       autosave:  "!auto_save     => Auto save every modules every hours."
-  no:
+  not:
     module:    There is no module to save.
     directory: No save directory.
   error:
@@ -248,7 +248,7 @@ griffor:
     function: 
       show: "!griffor name       => Score of *name*."
       add:  "!griffor -add score => Update your *score*."
-  no:
+  not:
     score: No score for %1. Do the test on http://test.griffor.com .
   act:
     add:  "%1: Your score is now: %2."
@@ -281,7 +281,7 @@ link:
     user:
       add: "%1 can now link."
       del: "%1 can't link anymore."
-  no:
+  not:
     link: "%1: I don't have this entry."
 
 remind:
@@ -397,7 +397,7 @@ weather:
       weather:  "!weather or !w [location]  => Current weather for location."
       forecast: "!forecast or !f [location] => 3 days forecast for location."
       location: "!location location         => register a location for your user, so you don't have to type it."
-  no:
+  not:
     location: "No location for: %1"
     register: "No location registered for %1. Use !location to register your location."
   act:
