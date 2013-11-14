@@ -13,10 +13,12 @@ gem 'r18n-desktop'
 
 group :test do
 
-  gem 'rspec'
-  gem 'rspec-mocks'
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'cucumber'
+  gem 'rspec', require: false
+  gem 'rspec-mocks', require: false
+  gem 'guard', require: false
+  gem 'guard-rspec', require: false
+  gem 'cucumber', require: false
 
 end
+
+gem 'coveralls', require: false
