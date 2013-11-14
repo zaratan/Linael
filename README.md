@@ -2,6 +2,7 @@ Linael
 ======
 [![Code Climate](https://codeclimate.com/github/Skizzk/Linael.png)](https://codeclimate.com/github/Skizzk/Linael)
 [![Dependency Status](https://gemnasium.com/Skizzk/Linael.png)](https://gemnasium.com/Skizzk/Linael)
+[![Travis](https://travis-ci.org/Skizzk/Linael.png)](https://travis-ci.org/Skizzk/Linael)
 
 Modular collaborative IRC Bot in Ruby. 
 
