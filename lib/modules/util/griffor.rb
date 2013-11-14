@@ -22,7 +22,7 @@ linael :griffor do
     if @scores.has_key? options.who
       answer(msg,t.griffor.act.show(options.who, scores[options.who]))
     else
-      answer(msg, t.griffor.no.score(options.who))
+      answer(msg, t.griffor.not.score(options.who))
     end
   end
 

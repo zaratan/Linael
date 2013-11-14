@@ -100,7 +100,7 @@ savem:
       save:      "!save [module] => Sauvegarder un *module*. Si aucune module n'est précisé, tous les modules chargés seront sauvegardés."
       load:      "!load [module] => Charger un *module*. Si aucune module n'est précisé, tous les modules sauvegardés seront chargés."
       autosave:  "!auto_save     => Sauvegarde automatiquement tous les modules toutes les heures."
-  no:
+  not:
     module:    Il n'y a pas de module à sauvegarder.
     directory: Pas de répertoire de sauvegarde.
   error:
@@ -243,7 +243,7 @@ griffor:
     function: 
       show: "!griffor name       => Le score de *name*."
       add:  "!griffor -add score => Met a jour votre *score*."
-  no:
+  not:
     score: Pas de score pour %1. Faites le test sur http://test.griffor.com .
   act:
     add:  "%1: Votre score est maintenant: %2."
@@ -276,7 +276,7 @@ link:
     user:
       add: "%1 peut maintenant link."
       del: "%1 ne peut plus link."
-  no:
+  not:
     link: "%1: Je n'ai pas cette entrée."
 
 remind:
@@ -392,7 +392,7 @@ weather:
       weather:  "!weather or !w [location]  => Météo actuelle pour *location*."
       forecast: "!forecast or !f [location] => Prévisions à 3 jours pour *location*."
       location: "!location location         => Enregistre une *location* pour votre utilisateur."
-  no:
+  not:
     location: "Pas de localisation pour: %1"
     register: "Pas de localisation enregistrée pour %1. Utilisez !location pour enregistrer votre localisation."
   act:
