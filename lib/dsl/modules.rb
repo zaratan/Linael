@@ -110,10 +110,14 @@ module Linael
 
     def generate_proc nom,instance
       Proc.new do |msg| 
-        if (instance.methods.grep /act_authorized\?/).empty? || act_authorized?(instance,msg)
+        if act_authorized?(instance,msg)
           instance.send(nom,msg) 
         end
       end
+    end
+
+    def act_authorized? instance, msg
+      true
     end
 
     def instance_ident instance,ident

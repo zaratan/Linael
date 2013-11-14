@@ -1,4 +1,5 @@
 require_relative '../../lib/core/socketable'
+require_relative '../../lib/core/message_fifo'
 
 require 'socket'
 
@@ -236,7 +237,7 @@ describe Linael::Socketable do
       Thread = double("thread")
       allow(Thread).to receive(:new) {true}
       @instance.listen.should be true
-      expect(Thread).to have_received(:new)
+      expect(Thread).to have_received(:new).twice
     end
 
   end

@@ -29,9 +29,6 @@ module Linael::Irc
 
     #proxy for sendind a private_message to socket. Just for code readability
     def talk(dest,msg,server=nil)
-      $timer ||= Time.now
-      sleep(0.2) until Time.now > $timer
-      $timer = Time.now + 0.5
       privmsg_channel(server,{dest: dest, msg: msg})
     end
 

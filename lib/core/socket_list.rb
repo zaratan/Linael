@@ -44,7 +44,7 @@ module Linael
     alias_method :socket_by_name, :[]
 
     def send_message(msg)
-      socket_by_name(msg.server_id).puts(msg.element)
+      socket_by_name(msg.server_id).write(msg.element)
     end
 
     def gets
