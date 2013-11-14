@@ -34,7 +34,7 @@ linael :save, require_auth: true do
     end
 
     #if list_to_save empty => error
-    raise MessagingException, t.savem.no.module if list_to_save.empty?
+    raise MessagingException, t.savem.not.module if list_to_save.empty?
 
     #if not present create dir Linael/save
     Dir.mkdir('save',770) unless Dir.exist? ('save')
@@ -66,7 +66,7 @@ linael :save, require_auth: true do
   end
 
   def load_act msg=nil, what=""
-    raise MessagingException, t.save.no.directory unless Dir.exist? 'save'
+    raise MessagingException, t.save.not.directory unless Dir.exist? 'save'
     #construct list to load
     list_to_load = []
 
