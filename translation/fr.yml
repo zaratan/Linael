@@ -414,4 +414,11 @@ linaeltranslation:
       set:    "!translation -set ([\"lang1\",\"lang2\"]) => Change la langue du bot pour *lang1*, *lang2*"
   act:
     reload: Traductions rechargée.
-    set:    "Translations are now: %1."
+    set:    "Les traductions sont maintenant: %1."
+issues:
+  help:
+    description: Un module pour gerer les issues sur Linael.
+    function:
+      add: "!issue -add title => Ajoute l'issue a Linael."
+  act:
+    add: "L'issue a bien été ajoutée."
