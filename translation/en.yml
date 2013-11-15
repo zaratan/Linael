@@ -430,3 +430,10 @@ exclude:
   act:
     exclude:   "%1 won't use me anymore."
     unexclude: "%1 can now talk to me."
+issues:
+  help:
+    description: A module to manage issues on Linael.
+    function:
+      add: "!issue -add *title* => Ajoute add the issue."
+  act:
+    add: "The issue have been added."
