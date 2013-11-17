@@ -3,6 +3,15 @@ module Linael::Irc
     
     attr_accessor :timer
 
+    def to_long? msg
+      msg.size > 512
+    end
+
+    def resize msg
+      msg = msg[0..511] if to_long? msg
+      msg
+    end
+
     # Define a irc sending method
     def define_send(name,short)
       self.class.send("define_method",name) do |server,arg|
@@ -10,6 +19,7 @@ module Linael::Irc
         [:dest,:who,:what,:args,:msg].each do |key|
           msg += "#{":" if key==:msg}#{arg[key]} " unless arg[key].nil?            
         end
+        msg = resize(msg)
         puts "#{server} >>> #{msg}".blue
         to_send = Linael::MessageStruct.new(server,msg,:irc)
         Linael::Core::send_message to_send

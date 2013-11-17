@@ -34,7 +34,7 @@ linael :tell do
   [:join,:nick,:msg].each do |type|
     on type, "tell_on_#{type}" do |msg|
       who = msg.who.downcase if type == :join
-      who = msg.newNick.downcase if type == :nick
+      who = msg.new_nick.downcase if type == :nick
       who = msg.who.downcase if type == :msg
 
       if @tell_list.has_key?(who)

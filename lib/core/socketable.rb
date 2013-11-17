@@ -83,12 +83,12 @@ module Linael
 
     def listening fifo
       line = gets unless @on_restart
-      sleep(0.001)
+      #sleep(0.01)
       fifo.puts line if line && line.element
     end
 
     def writing 
-      sleep(0.001)
+      sleep(0.01)
       @timer ||= Time.now
       if Time.now > @timer
         line_to_write = @writing_fifo.gets unless @on_restart
