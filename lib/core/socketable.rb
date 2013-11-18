@@ -1,4 +1,7 @@
 module Linael
+
+  require 'json' 
+
   class Socketable
     attr_accessor :server,:port,:name,:on_restart
 
@@ -7,7 +10,7 @@ module Linael
       @port = options[:port]
       @server = options[:url]
       @socket = socket_klass.open(options[:url],options[:port])
-      @writing_fifo = Linael::Fifo.new
+      @writing_fifo = Linael::SocketFifo.new @name
     end
 
     def restart
@@ -83,12 +86,10 @@ module Linael
 
     def listening fifo
       line = gets unless @on_restart
-      #sleep(0.01)
-      fifo.puts line if line && line.element
+      fifo.puts line.to_json if line && line.element
     end
 
     def writing 
-      sleep(0.01)
       @timer ||= Time.now
       if Time.now > @timer
         line_to_write = @writing_fifo.gets unless @on_restart

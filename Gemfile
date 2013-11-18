@@ -23,5 +23,6 @@ end
 
 gem 'coveralls', require: false
 gem "rake"
-gem 'ruby-fifo', git: 'https://github.com/mjtko/ruby-fifo'
+gem 'mkfifo'
+gem 'ruby-fifo'
 gem 'github_api'

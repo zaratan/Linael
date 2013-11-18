@@ -23,8 +23,7 @@ module Linael
 
     def self.main_loop
       while message = @sockets.gets
-        sleep(0.001)
-        if message != :none && @handlers[message.type] && message.element
+        if @handlers[message.type] && message.element
           @handlers[message.type].instance.handle message
         end
       end

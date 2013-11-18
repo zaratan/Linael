@@ -4,9 +4,12 @@ require 'active_support/all'
 require 'socket'
 require 'colorize'
 require 'r18n-desktop'
+require 'json'
+require 'fifo'
   
 #default translation you can either declare an array or a single string
 LinaelLanguages = 'en' unless defined? LinaelLanguages
+require_relative '../lib/core-ext/struct.rb'
 require_relative '../lib/core/core'
 require_relative '../lib/core/message_struct'
 require_relative '../lib/core/message_fifo'
