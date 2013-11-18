@@ -105,7 +105,7 @@ describe Linael::Core do
 
       String.any_instance.stub(constantize: @handler)
 
-      SocketList = double("sockets")
+      Linael::Core::SocketList = double("sockets")
       allow(Linael::Core::SocketList).to receive(:new) {@socket}
       
       allow(Linael::Core).to receive(:sleep) {:sleep}
@@ -119,17 +119,9 @@ describe Linael::Core do
       expect(@socket).to have_received(:gets).twice
     end
 
-    it "sleep for a little time between messages" do
-      Linael::Core.main_loop
-      expect(Linael::Core).to have_received(:sleep).with be >= 0.001
-    end
-
 
     it "only send messages that should and can be handled" do
-      allow(@socket).to receive(:gets).and_return(:none,nil)
-      Linael::Core.main_loop 
-      
-      allow(@socket).to receive(:gets).and_return(Struct.new(:type,:element).new(:type,false),nil)
+      allow(@socket).to receive(:gets).and_return(nil)
       Linael::Core.main_loop 
       
       allow(@handler).to receive(:[]) {false}

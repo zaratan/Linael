@@ -2,6 +2,7 @@ require_relative '../../lib/core/socketable'
 require_relative '../../lib/core/message_fifo'
 
 require 'socket'
+require 'json'
 
 describe Linael::Socketable do
 
@@ -220,7 +221,7 @@ describe Linael::Socketable do
 
     it "puts the line into the fifo" do
       @instance.send(:listening,@fifo)
-      expect(@fifo).to have_received(:puts).with @new_message
+      expect(@fifo).to have_received(:puts).with @new_message.to_json
     end
 
     it "don't gets when on restart" do
@@ -228,11 +229,6 @@ describe Linael::Socketable do
       expect(@instance).to_not have_received(:gets)
     end
 
-    it "sleep for some time between gets" do
-      @instance.send(:listening,@fifo)
-      expect(@instance).to have_received(:sleep).with be >= 0.001
-    end
-    
     it "create a new thread" do
       Thread = double("thread")
       allow(Thread).to receive(:new) {true}

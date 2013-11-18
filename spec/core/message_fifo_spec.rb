@@ -1,4 +1,6 @@
 require_relative '../../lib/core/message_fifo.rb'
+require_relative '../../lib/core/message_struct.rb'
+require_relative '../../lib/core-ext/struct.rb'
 
 describe Linael::MessageFifo do
 
@@ -22,35 +24,25 @@ describe Linael::MessageFifo do
 
   describe "#initialize" do
 
-    it "initialize messages" do
-      Linael::MessageFifo.instance.instance_variable_get('@messages').should be_an_instance_of Array
-    end
-
-    it "is thread safe" do
-      Linael::MessageFifo.instance.instance_variable_get('@messages').methods.should include :mon_enter
+    it "initialize a pipe" do
+      File.exist?("sockets/messages.socks").should be true
     end
 
   end 
 
   describe "#gets" do
     
-    before(:each) do
-      Linael::MessageFifo.instance.instance_variable_get('@messages').clear
-    end
-
-    it "return :none when empty" do
-      Linael::MessageFifo.instance.gets.should be :none
-    end
-
     it "return a message message" do
-      Linael::MessageFifo.instance.instance_variable_get('@messages') << "OKI"
-      Linael::MessageFifo.instance.gets.should eq "OKI"
+      Linael::MessageFifo.instance.puts Linael::MessageStruct.new("te","OKI",:st).to_json
+      Linael::MessageFifo.instance.gets.element.should eq "OKI"
     end
 
     it "return the first message" do
-      Linael::MessageFifo.instance.puts "OKI"
-      Linael::MessageFifo.instance.puts "NOT OKI"
-      Linael::MessageFifo.instance.gets.should eq "OKI"
+      Linael::MessageFifo.instance.puts Linael::MessageStruct.new("te","OKI","st").to_json
+      Linael::MessageFifo.instance.puts Linael::MessageStruct.new("te","NOT OKI","st").to_json
+      Linael::MessageFifo.instance.gets.element.should eq "OKI"
+      Linael::MessageFifo.instance.gets.element.should eq "NOT OKI"
+
     end
 
   end
@@ -58,8 +50,11 @@ describe Linael::MessageFifo do
   describe "#puts" do
 
     it "put the message at the end" do
-      Linael::MessageFifo.instance.puts "OKI"
-      Linael::MessageFifo.instance.instance_variable_get('@messages').should include "OKI"
+      Linael::MessageFifo.instance.puts Linael::MessageStruct.new("te","OKI","st").to_json
+      geted = Linael::MessageFifo.instance.gets
+
+      geted.element.should eq "OKI"
+      geted.type.should eq :st
     end
 
   end
