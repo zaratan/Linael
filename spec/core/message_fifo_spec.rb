@@ -25,7 +25,10 @@ describe Linael::MessageFifo do
   describe "#initialize" do
 
     it "initialize a pipe" do
-      File.exist?("sockets/messages.socks").should be true
+      Linael::MessageFifo.instance.instance_variables.should include :@writter
+      Linael::MessageFifo.instance.instance_variables.should include :@reader
+      Linael::MessageFifo.instance.instance_variable_get(:@reader).should_not be nil
+
     end
 
   end 
