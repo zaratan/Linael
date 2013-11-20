@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'json'
 
 linael :linael_translation, require_auth: true do

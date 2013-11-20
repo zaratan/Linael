@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 linael :master, require_auth: true do
   help [
     t.master.help.description,

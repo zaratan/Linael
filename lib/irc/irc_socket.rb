@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Linael::Irc
   class Socket < Linael::Socketable
     def socket_klass 

@@ -1,24 +1,27 @@
+# -*- encoding : utf-8 -*-
 require 'monitor.rb'
 require 'singleton'
 require 'json'
 
 module Linael
 
-  require 'fifo'
 
   class SocketFifo
     def initialize name
-      @writter = Fifo.new("sockets/#{name}.socks", :w, :nowait)
-      @reader = Fifo.new("sockets/#{name}.socks", :r, :wait) 
+      pipe = IO.pipe
+
+      @writter = pipe[1]
+      @reader = pipe[0]
 
     end
 
     def gets 
-      @reader.gets.chomp
+      @reader.gets #.chomp.force_encoding("UTF-8")
     end
 
-    def puts msg
+    def puts msg      
       @writter.puts msg
+      #@writter.flush
     end
 
   end
@@ -32,7 +35,7 @@ module Linael
     end
 
     def gets
-      result = JSON.parse(super.chomp)
+      result = JSON.parse(super)
       MessageStruct.new(result["server_id"].to_sym,result["element"],result["type"].to_sym)
     end
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Linael::Irc
   class Handler < Linael::Handler
    

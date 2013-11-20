@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Linael
 
   require 'json' 
@@ -95,7 +96,7 @@ module Linael
         line_to_write = @writing_fifo.gets unless @on_restart
         if line_to_write != :none
           puts line_to_write
-          @timer = Time.now + 0.5
+          @timer = Time.now + 0.3
         end
       end
     end
