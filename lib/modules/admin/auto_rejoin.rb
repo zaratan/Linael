@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 linael :auto_rejoin do
 
   help [

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 linael :version do
 
   on :msg, :vers, /\001version\001/ do |msg,options|

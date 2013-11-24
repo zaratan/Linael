@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 linael :griffor do
 
   help [

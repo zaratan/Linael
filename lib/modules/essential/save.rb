@@ -28,16 +28,17 @@ linael :save, require_auth: true do
 
     #fill list_to_save
     unless what.empty? 
-      list_to_save << what if what != "master" and mod(what)
+      list_to_save << what if what != "master" && what != "save" && mod(what)
     else
       list_to_save = master.modules.keys
+      list_to_save.delete "save"
     end
 
     #if list_to_save empty => error
     raise MessagingException, t.savem.not.module if list_to_save.empty?
 
     #if not present create dir Linael/save
-    Dir.mkdir('save',770) unless Dir.exist? ('save')
+    Dir.mkdir('save',770) unless Dir.exist?('save')
 
     #for each mod to save
     list_to_save.each do |mod_name|

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # DSL for writing linael's module.
 # It's backward compatible with the old way of writing modules
 
