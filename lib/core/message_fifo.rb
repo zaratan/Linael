@@ -10,15 +10,20 @@ module Linael
     def initialize name
       @writter = Fifo.new("sockets/#{name}.socks", :w, :nowait)
       @reader = Fifo.new("sockets/#{name}.socks", :r, :wait) 
-
+      @writter.extend(MonitorMixin)
+      @reader.extend(MonitorMixin)
     end
 
     def gets 
-      @reader.gets.chomp
+      @reader.synchronize do
+        @reader.gets.chomp
+      end
     end
 
     def puts msg
-      @writter.puts msg
+      @writter.synchronize do
+        @writter.puts msg
+      end
     end
 
   end
