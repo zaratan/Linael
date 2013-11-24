@@ -9,7 +9,6 @@ module Linael
   class SocketFifo
     def initialize name
       pipe = IO.pipe
-
       @writter = pipe[1]
       @reader = pipe[0]
       @writter.extend(MonitorMixin)
