@@ -1,5 +1,40 @@
 # -*- encoding : utf-8 -*-
 
+module Linael
+
+  class AdminChan < ActiveRecord::Base
+
+    scope :joined, -> {where(joined: true)}
+
+    def self.new_chan server_id, chan      
+      create(name: chan, server_id: server_id.to_s)
+    end
+
+    def self.find_or_create(server_id, chan)
+      chan = chan.downcase
+      unless result_chan = find_by_server_id_and_name(server_id, chan)
+        result_chan = new_chan(server_id, chan)
+      end
+      result_chan
+    end
+
+    def self.join server_id, chan
+      chan = find_or_create(server_id, chan)
+      chan.join_date = Time.now
+      chan.joined = true
+      chan.save
+    end
+
+    def self.part server_id,chan
+      chan = find_or_create(server_id, chan)
+      chan.part_date = Time.now
+      chan.joined = false
+      chan.save
+    end
+
+  end
+end
+
 #A module for adminsitration
 linael :admin, require_auth: true do
 
@@ -16,25 +51,19 @@ linael :admin, require_auth: true do
   ]
 
   on_init do
-    @chans =[]
-  end
-
-  #List of joined chan
-  attr_accessor :chans
-
-  #on load rejoin all the chan
-  on_load do
-    @chans.each {|server_id,chan| join_channel server_id, :dest => chan}
+    Linael::AdminChan.joined.each do |chan|
+      join_channel chan.server_id, :dest => chan.name
+    end
   end
 
   def join_act server_id, chan
-    chans << [server_id, chan] unless chans.include? chan
+    Linael::AdminChan.join(server_id, chan)
     join_channel server_id, :dest => chan
   end
 
   def part_act server_id, chan
     talk(chan,t.admin.act.part.message,server_id)
-    chans.delete [server_id, chan]
+    Linael::AdminChan.part(server_id, chan)
     part_channel server_id, :dest => chan
   end
 
@@ -93,3 +122,4 @@ linael :admin, require_auth: true do
   end
 
 end
+

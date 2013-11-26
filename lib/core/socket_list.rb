@@ -37,7 +37,7 @@ module Linael
     def [](name=nil)
       raise Exception, "No socket." if sockets.empty?
       return sockets[0] unless name
-      result = sockets.detect {|s| s.name == name}
+      result = sockets.detect {|s| s.name == name.to_sym}
       raise Exception, "No socket with this name (#{name})." unless result
       result
     end
@@ -45,7 +45,13 @@ module Linael
     alias_method :socket_by_name, :[]
 
     def send_message(msg)
-      socket_by_name(msg.server_id).write(msg.element)
+      begin
+        socket_by_name(msg.server_id).write(msg.element)
+      rescue Exception => e
+        puts "message not sended".red
+        puts e.message.to_s.red
+        puts e.backtrace.join("\n").red
+      end
     end
 
     def gets

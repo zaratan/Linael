@@ -19,6 +19,7 @@ include ActiveRecord::Tasks
 
 DatabaseTasks.env = 'linael'
 DatabaseTasks.db_dir = 'db'
+DatabaseTasks.root = './'
 DatabaseTasks.migrations_paths = $migration_path
 DatabaseTasks.database_configuration = YAML::load(File.open('config/database.yml'))
 

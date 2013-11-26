@@ -4,3 +4,6 @@
 *.swp
 save
 doc
+db/*.rb
+db/*.sqlite3
+

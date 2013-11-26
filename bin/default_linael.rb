@@ -33,7 +33,9 @@ module Linael
   CONFIG = YAML::load(File.open('config/config.yml'))
   MODULES_CONFIG = YAML::load(File.open('config/modules.yml'))
   connection_details = YAML::load(File.open('config/database.yml'))
-  ActiveRecord::Base.establish_connection(connection_details)
+  p connection_details
+  ActiveRecord::Base.establish_connection(connection_details["linael"])
+  ActiveRecord::Base.logger = Logger.new(STDERR)
 
   # The server to join
   ServerAddress = ''
