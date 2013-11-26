@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require 'active_support/all'
+require 'active_record'
 require 'socket'
 require 'colorize'
 require 'r18n-desktop'
@@ -28,6 +29,11 @@ require_relative '../lib/modules/master.rb'
 
 
 module Linael
+
+  CONFIG = YAML::load(File.open('config/config.yml'))
+  MODULES_CONFIG = YAML::load(File.open('config/modules.yml'))
+  connection_details = YAML::load(File.open('config/database.yml'))
+  ActiveRecord::Base.establish_connection(connection_details)
 
   # The server to join
   ServerAddress = ''
