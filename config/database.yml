@@ -1,0 +1,14 @@
+#PG
+#host: 'localhost'
+#adapter: 'postgresql'
+#database: 'linael'
+#username: 'linael' 
+#password: 'password'
+
+#SQLITE
+linael:
+  adapter: sqlite3
+  database: db/linael.sqlite3
+  pool: 5
+  timeout: 5000
+  encoding: 'utf8'

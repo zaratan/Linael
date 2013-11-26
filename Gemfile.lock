@@ -30,7 +30,7 @@ GEM
       simplecov (>= 0.7)
       term-ansicolor
       thor
-    cucumber (1.3.9)
+    cucumber (1.3.10)
       builder (>= 2.1.2)
       diff-lcs (>= 1.1.3)
       gherkin (~> 2.12)
@@ -53,7 +53,7 @@ GEM
       oauth2
     google-search (1.0.3)
       json
-    guard (2.2.3)
+    guard (2.2.4)
       formatador (>= 0.2.4)
       listen (~> 2.1)
       lumberjack (~> 1.0)
@@ -77,7 +77,6 @@ GEM
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-    lockfile (2.1.0)
     lumberjack (1.0.4)
     method_source (0.8.2)
     mime-types (2.0)
@@ -97,7 +96,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml (~> 0.5)
       rack (~> 1.2)
-    pry (0.9.12.3)
+    pry (0.9.12.4)
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
@@ -123,13 +122,13 @@ GEM
     rspec-mocks (2.14.4)
     ruby-fifo (0.0.1)
     ruby-units (1.4.4)
-    simplecov (0.8.1)
+    simplecov (0.8.2)
       docile (~> 1.1.0)
-      lockfile (>= 2.1.0)
       multi_json
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
     slop (3.4.7)
+    sqlite3 (1.3.8)
     temperature (1.2)
     term-ansicolor (1.2.2)
       tins (~> 0.8)
@@ -167,5 +166,6 @@ DEPENDENCIES
   rspec-mocks
   ruby-fifo
   ruby-units
+  sqlite3
   weather-underground
   ya2yaml

@@ -1,15 +1,15 @@
 source 'https://rubygems.org'
 
-gem 'hpricot'
-gem 'htmlentities'
 gem 'ya2yaml'
 gem 'activerecord'
-gem 'google-search'
-gem 'ruby-units'
-gem 'weather-underground'
-gem 'reverso'
 gem 'colorize'
 gem 'r18n-desktop'
+gem "rake"
+gem 'mkfifo'
+gem 'ruby-fifo'
+
+#DB
+gem 'sqlite3'
 
 group :test do
 
@@ -22,7 +22,13 @@ group :test do
 end
 
 gem 'coveralls', require: false
-gem "rake"
-gem 'mkfifo'
-gem 'ruby-fifo'
+
+#modules gems
 gem 'github_api'
+gem 'reverso'
+gem 'google-search'
+gem 'weather-underground'
+gem 'ruby-units'
+gem 'hpricot'
+gem 'htmlentities'
+
