@@ -28,12 +28,11 @@ linael :griffor do
   end
 
   on :cmd, :griffor_add, /^!griffor\s-add\s/ do |msg,options|
-    before(options) do |options|
-      options.who =~ /^\d*$/
-    end
 
-    @scores[options.from_who] = options.who
-    answer(msg, t.griffor.act.add(options.from_who,options.who))
+    @scores[options.from_who] = options.score
+    answer(msg, t.griffor.act.add(options.from_who,options.score))
   end
+
+  value :score => /^!griffor\s+-add\s+(-?\d+)/
 end
            
