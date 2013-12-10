@@ -38,7 +38,7 @@ linael :master, require_auth: true do
 
   def initialize handler
     @handler=handler
-    @modules = Linael::Modules::ModuleList.new(self,"./lib/modules/")
+    @modules = Linael::Modules::ModuleList.new(self,Place + "lib/modules/")
     super self
   end
 
