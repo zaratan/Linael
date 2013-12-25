@@ -5,8 +5,6 @@ module Linael
 
     include Linael::Irc::Action
 
-    R18n.default_places = Place + 'translation/'
-    p R18n.default_places
 
     #use en by default
 

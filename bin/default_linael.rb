@@ -9,6 +9,7 @@ require 'fifo'
 
 #default translation you can either declare an array or a single string
 LinaelLanguages = 'en' unless defined? LinaelLanguages
+R18n.default_places = Place + 'translation/'
 Place = File.dirname(__FILE__) +'/../'
 
 def require_rel place
@@ -19,7 +20,6 @@ require_rel 'lib/core-ext/*.rb'
 require_rel 'lib/core/*.rb'
 require_rel 'lib/irc/messages.rb'
 require_rel 'lib/irc/*.rb'
-#require_rel 'lib/dsl/*.rb'
 require_rel 'lib/dsl/modules.rb'
 require_rel 'lib/dsl/module_dsl.rb'
 require_rel 'lib/modules/master.rb'
