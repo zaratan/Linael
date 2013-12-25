@@ -5,7 +5,8 @@ module Linael
 
     include Linael::Irc::Action
 
-    R18n.default_places = './translation/'
+    R18n.default_places = Place + 'translation/'
+    p R18n.default_places
 
     #use en by default
 
@@ -100,7 +101,7 @@ module Linael
       method_hash.each do |k,v|
         self.methods.grep(/add_#{k.to_s}_behavior/) do |name| 
           v.each do |behav|
-            self.send (name.to_sym),self,behav,behav.to_s
+            self.send((name.to_sym),self,behav,behav.to_s)
           end
         end
       end
