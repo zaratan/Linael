@@ -2,7 +2,9 @@
 
 #A module to launch dice
 linael :dice do
-
+  
+  before(options) {|opt| opt.dice.to_i != 0}
+  
   help [
     t.dice.help.description,
     t.help.helper.line.white,
@@ -46,7 +48,7 @@ module Linael
 
     #result of the dice
     attr_reader :value
-
+    
     #init with dice value
     def initialize dice
       @value = rand(dice) + 1
