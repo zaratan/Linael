@@ -2,7 +2,9 @@
 
 #A module to launch dice
 linael :dice do
-
+  
+  before(options) {|opt| opt.dice.to_i != 0}
+  
   help [
     t.dice.help.description,
     t.help.helper.line.white,
