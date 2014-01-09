@@ -9,8 +9,8 @@ require 'fifo'
 
 #default translation you can either declare an array or a single string
 LinaelLanguages = 'en' unless defined? LinaelLanguages
-R18n.default_places = Place + 'translation/'
 Place = File.dirname(__FILE__) +'/../'
+R18n.default_places = Place + 'translation/'
 
 def require_rel place
   Dir[Place + place].sort.each {|file| p file;require file }

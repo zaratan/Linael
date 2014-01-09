@@ -63,8 +63,8 @@ linael :master, require_auth: true do
     regex = Regexp.new("#{regex}[^\\/]*\.rb")
     result = modules.find_all_modules(regex).map {|path| path.gsub(/.*\//,'').gsub(/\.rb/,'') }
     result_loaded = result.select {|k| module_instance(k)}
-    answer(msg, t.master.show.all(Linael::BotNick,result.join(', ')))
-    answer(msg, t.master.show.loaded(result_loaded.join(', ')))
+    answer(msg, t.master.show.all(Linael::BotNick,result.sort.join(', ')))
+    answer(msg, t.master.show.loaded(result_loaded.sort.join(', ')))
   end
 
   on :cmd_auth, :add, /^!module\s-add\s/ do |msg,options|
