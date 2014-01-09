@@ -39,11 +39,12 @@ linael :name do
 
   def parse_name(page)
     coder = HTMLEntities.new
-      name = (page/"div.body span.heavybig a")
+      name = (page/"div.body span.heavyhuge a")
       if name.empty?
-        name = (page/"div.body span") 
+        name = (page/"div.body span.heavyhuge") 
+
       end
-      name = name.inject("") {|str, nam| str += " #{coder.decode(nam.inner_html)}"}
+      name = name.inject("") {|str, nam| str += " #{coder.decode(nam.inner_html.gsub(/\r\s*/,''))}"}
   end
 
   #generate a name
@@ -148,7 +149,7 @@ linael :name do
                      :size => {regexp: /\s-s([1-4])\s/, default: "1"}
 
   value :gender        => /\s-g([mfa])\s/,
-        :types_string  => /\s-t([A-z0-9]*)\s/
+        :types_string  => /\s-t([A-z0-9,]*)\s/
 
   match :all   => /\s-a\s/,
         :types => /\s-types\s/,
