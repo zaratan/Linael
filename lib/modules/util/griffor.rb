@@ -34,5 +34,11 @@ linael :griffor do
   end
 
   value :score => /^!griffor\s+-add\s+(-?\d+)/
+  
+  on :cmd, :griffor_top, /^!griffor\s-top\s/ do |msg,options|
+    @scores.sort_by {|_, val| val}
+    line = @scores.first(5).each.map {|a| a[0].to_s +" => " + a[1].to_s }.join(", ")   
+    answer(msg, line)
+  end
 end
            
