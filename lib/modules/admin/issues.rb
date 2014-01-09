@@ -12,12 +12,11 @@ linael :issues do
   ]
 
   on_init do  
-    config = YAML.load_file('config/config.yaml')
-    @issues = git = Github::Issues.new basic_auth: config["github_login"]
+    @config = YAML.load_file('config/config.yaml')
   end
 
   def add_issue user, title
-    @issues.create "Skizzk","Linael",title: "#{title} (#{user})"  
+    Github::Issues.new(basic_auth: @config["github_login"]).create "Skizzk","Linael",title: "#{title.chomp} (#{user})"  
   end
 
   on :cmd, :act_add_issue, /^!issue -add/ do |msg,options|
