@@ -34,5 +34,13 @@ linael :griffor do
   end
 
   value :score => /^!griffor\s+-add\s+(-?\d+)/
+  
+  on :cmd, :griffor_top, /^!griffor\s-top\s/ do |msg,options|
+    @scores.sort_by {|_, val| val}
+    ar = @scores.to_a
+    (0..4).each {|i| 
+      line = "#" + i.to_s + " est: " + ar.at(i).at(0).to_s + " avec un score de: " + ar.at(i).at(1).to_s
+      answer(msg, line)
+  end
 end
            
