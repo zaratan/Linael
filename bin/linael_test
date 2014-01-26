@@ -2,7 +2,7 @@
 # -*- encoding : utf-8 -*-
 
 LinaelLanguages = 'fr'
-require_relative 'default_linael'
+require_relative '../config/environment'
 
 module Linael
 
@@ -14,6 +14,7 @@ module Linael
 
   Core::start_linael do
     Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "rizon", url: ServerAddress, nick: BotNick, port: Port
+    Core::start_server :irc, master_module: MasterModule, modules: [], name: "iiens", url: 'irc.iiens.net', nick: BotNick, port: Port
   end
 
 

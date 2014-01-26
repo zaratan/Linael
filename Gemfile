@@ -1,10 +1,11 @@
 source 'https://rubygems.org'
 
 gem 'ya2yaml'
-gem 'activerecord'
+gem 'activerecord', :require => ['active_record','active_support/all']
 gem 'colorize'
 gem 'r18n-desktop'
 gem "rake"
+# gem "squeel"
 gem 'mkfifo'
 gem 'ruby-fifo'
 
@@ -21,14 +22,13 @@ group :test do
 
 end
 
-gem 'coveralls', require: false
 
 #modules gems
 gem 'github_api'
 gem 'reverso'
-gem 'google-search'
-gem 'weather-underground'
-gem 'ruby-units'
+#gem 'google-search'
+#gem 'weather-underground'
+#gem 'ruby-units'
 gem 'hpricot'
 gem 'htmlentities'
 

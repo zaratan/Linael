@@ -13,28 +13,33 @@ linael :karma do
     t.karma.help.function.minus_one
   ]
 
-  on_init do
-    @karma = Hash.new(0)
-  end
-
-  on_load do
-    @karma.default = 0
-  end
-
   on :msg, :add_karma, /\S\s*(\+\+|\+1)/ do |msg,options|
-    to_karma = options.karma.downcase.gsub(":","").gsub(",","")
-    @karma[to_karma] = @karma[to_karma] + 1 unless to_karma == msg.who.downcase
+    to_karma(msg.server_id,options) {|k| k.karma += 1}
   end
 
   on :msg, :del_karma, /\S\s*(--|-1)/ do |msg,options|
-    to_karma = options.karma.downcase.gsub(":","").gsub(",","")
-    @karma[to_karma] = @karma[to_karma] - 1 unless to_karma == msg.who.downcase
+    to_karma(msg.server_id,options) {|k| k.karma -= 1}
+  end
+
+  def to_karma(server,options,&block)
+    to_who = options.karma.downcase
+    unless options.from_who.downcase == to_who
+      k = karma_for(msg.server_id, to_who)
+      block.call(k) if block_given?
+      k.save
+    end
+
+  end
+
+  def karma_for(server,name)
+    Linael::Karma.find_or_create_by(server_id: server, name: name)
   end
 
   on :cmd, :karma, /^!karma\s/ do |msg,options|
-    answer(msg, t.karma.karma(options.who,@karma[options.who.downcase]))
+    karma = karma_for(msg.server_id,options.who.downcase).karma
+    answer(msg, t.karma.karma(options.who,karma))
   end
 
-  value :karma => /(\S*)\s*(\+|-)/
+  value :karma => /(\w*)\S*\s*(\+|-)/
 
 end
