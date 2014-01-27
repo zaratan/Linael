@@ -96,12 +96,14 @@ module Linael
       else
         #execute block
         Thread.new do
-          begin
-            instance_exec(msg,options,&block)
-          rescue InterruptLinael
-          rescue Exception => e
-            puts e.to_s.red
-            puts e.backtrace.join("\n").red
+          ActiveRecord::Base.connection_pool.with_connection do
+            begin
+              instance_exec(msg,options,&block)
+            rescue InterruptLinael
+            rescue Exception => e
+              puts e.to_s.red
+              puts e.backtrace.join("\n").red
+            end
           end
         end
       end

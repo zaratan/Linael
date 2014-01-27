@@ -271,7 +271,7 @@ link:
       link:  "!link word[?]               => Anwser one of the description associated with the *word*."
       links: "!links word[?]              => Anwser all the descriptions of the *word* in query."
       add:   "!link -add word description => Add a *description* to a *word*." 
-      del:   "!link -del word id          => Remove a description from a *word* using its *id*."
+      del:   "!link -del id               => Remove a description using its *id*."
       user:  "!link_user -(add|del) user  => Add/remove a *user* who can link."
   act:
     add: "%1 is now: %2."
@@ -308,6 +308,7 @@ seen:
       first: "!first_seen user => Tell the first time a *user* have been seen."
   first: "First seen %1 doing: %2."
   seen: "Last seen %1 doing: %2."
+  previous: "And just before (%1): %2."
 
 message:
   join:    "%1 has joined %2"

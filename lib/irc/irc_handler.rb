@@ -50,7 +50,7 @@ module Linael::Irc
         true
       end
     end
-    
+
     private
 
     # Pretty print messages

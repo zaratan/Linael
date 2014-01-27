@@ -266,11 +266,11 @@ link:
       link:  "!link word[?]               => Donne une des descriptions associées a *word*."
       links: "!links word[?]              => Donne toutes les descriptions associées a *word* en query."
       add:   "!link -add word description => Ajoute une *description* a *word*." 
-      del:   "!link -del word id          => Supprime une description pour *word* en utilisant son *id*."
+      del:   "!link -del id               => Supprime une description en utilisant son *id*."
       user:  "!link_user -(add|del) user  => Ajoute/Supprime un *user* qui peut link."
   act:
     add: "%1 est maintenant: %2."
-    del: Suppression de l'entrée %1 de %2.
+    del: Suppression de l'entrée %1.
     link:  "%1: %2."
     links: "#%1: %2"
     user:
@@ -303,6 +303,7 @@ seen:
       first: "!first_seen user => Indique la premiere fois qu'*user* à été vu."
   first: "Vu pour la première fois %1 faisant: %2."
   seen: "Vu pour la dernière fois %1 faisant: %2."
+  previous: "Et %1: %2."
 
 message:
   join:    "%1 a rejoin %2"

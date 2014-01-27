@@ -5,7 +5,6 @@ gem 'activerecord', :require => ['active_record','active_support/all']
 gem 'colorize'
 gem 'r18n-desktop'
 gem "rake"
-# gem "squeel"
 gem 'mkfifo'
 gem 'ruby-fifo'
 

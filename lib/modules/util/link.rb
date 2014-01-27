@@ -12,58 +12,43 @@ linael :link, require_auth: true do
     t.help.helper.line.white,
     t.help.helper.line.admin,
     t.link.help.function.del,
-    t.link.help.function.user
   ]
 
-  on_init do 
-    @links = {}
-    @users = []
+  def link_for(server,name)
+    Linael::Link.where(server_id: server, name: name)
   end
 
   on :cmd, :add_link, /^!link\s+-add\s+\S+\s+\S+/ do |priv_msg,options|
-    before(priv_msg) do |privmsg|
-      @users.include?(privmsg.who.downcase)
-    end
-    @links[options.id.downcase] = ((@links[options.id.downcase] || []) << options.value)
+    Linael::Link.create(
+      server_id: priv_msg.server_id,
+      name: options.id.downcase,
+      definition: options.value
+    )
     answer(priv_msg, t.link.act.add(options.id, options.value))
   end
 
   on :cmd_auth, :del_link, /^!link\s+-del\s+\S+\s+\S+/ do |priv_msg,options|
-    before(priv_msg) do |privmsg|
-      @users.include?(privmsg.who.downcase)
-    end
-    (@links[options.id.downcase] || []).delete_at(options.value.to_i - 1)
+    Linael::Link.destroy(options.value.to_i)
     answer(priv_msg, t.link.act.del(options.value,options.id))
   end
 
   on :cmd, :link, /^!link\s+[^-\s]\S*\s/ do |priv_msg,options|
-    links = @links[options.link.downcase] || []
-    if links.empty? 
+    links = link_for(priv_msg.server_id,options.link.downcase).take
+    unless links
       answer(priv_msg,t.not.link(priv_msg.who))
     else
-      answer(priv_msg,t.link.act.link(priv_msg.who,links.sample))
+      answer(priv_msg,t.link.act.link(priv_msg.who,links.definition))
     end
   end
 
   on :cmd, :links, /^!links\s+\S+/ do |priv_msg,options|
-    links = @links[options.link.downcase] || []
-    if links.empty?
+    links = link_for(priv_msg.server_id,options.link.downcase)
+    unless links
       answer(priv_msg,t.not.link(priv_msg.who))
     else
-      to_print=[]
-      links.each_with_index {|val,i| to_print << t.link.act.links(i + 1, val)}
+      to_print = links.all.map {|val| t.link.act.links(val.id, val.definition)}
       talk(priv_msg.who,"#{to_print.join(",")}",priv_msg.server_id)
     end
-  end
-
-  on :cmd_auth, :add_user_link, /^!link_user\s+-add\s/ do |priv_msg,options|
-    @users << options.who.downcase unless @users.include? options.who.downcase
-    answer(priv_msg,t.link.act.user.add(options.who))
-  end
-
-  on :cmd_auth, :del_user_link, /^!link_user\s+-del\s/ do |priv_msg,options|
-    @users.delete options.who.downcase
-    answer(priv_msg,t.link.act.user.del(options.who))
   end
 
   value :link  => /^!link[s]?\s+([^-\s?][^?\s]*)\s*\??/,
