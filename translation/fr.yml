@@ -32,11 +32,11 @@ help:
       options:   ______Options______
       white:     ' '  
   help:
-    description: Module qui décrit les autres modiles.
+    description: Module qui décrit les autres modules.
     function:
       help: "!help module_name => Affiche l'aide pour le module *module_name*"
   default:
-    master: "Utilisez !help master pour obtenir la liste de modules"
+    master: "Utilisez !help master pour obtenir la liste des modules"
     help:   "Utilisez !help module_name pour obtenir l'aide d'un module spécifique"
   none: "Aucune d'aide pour le module %1. Merci de vous adresser à %2."
   
@@ -56,7 +56,7 @@ master:
     unique:    Plusieurs modules possèdent le même nom. Lequel voulez-vous %1 ?
     unloaded:  Ce module est déjà chargé, supprimez le d'abord.
     enough:
-      auth:    Un module d'autentification est nécessaire pour charger ce module.
+      auth:    Un module d'authentification est nécessaire pour charger ce module.
       require: Vous n'avez pas chargé tous les modules nécessaires au fonctionnement de ce module (%1).
   show:
     all:    'Liste des modules de %1: [%2].'
@@ -97,8 +97,8 @@ savem:
   help:
     description: "Module de sauvegarde qui sauve l'état des autres modules dans un fichier yaml." 
     function:
-      save:      "!save [module] => Sauvegarder un *module*. Si aucune module n'est précisé, tous les modules chargés seront sauvegardés."
-      load:      "!load [module] => Charger un *module*. Si aucune module n'est précisé, tous les modules sauvegardés seront chargés."
+      save:      "!save [module] => Sauvegarder un *module*. Si aucun module n'est précisé, tous les modules chargés seront sauvegardés."
+      load:      "!load [module] => Charger un *module*. Si aucun module n'est précisé, tous les modules sauvegardés seront chargés."
       autosave:  "!auto_save     => Sauvegarde automatiquement tous les modules toutes les heures."
   not:
     module:    Il n'y a pas de module à sauvegarder.
@@ -107,7 +107,7 @@ savem:
     saving:    Une erreur est survenue, le module %1 n'a pas été sauvegardé.
   act:
     save:      Le module %1 a été sauvegardé.
-    load:      Le module %1 la été chargé.
+    load:      Le module %1 a été chargé.
 
 blacklist:
   help:
@@ -140,19 +140,19 @@ autokick:
      
 system:
   help:
-    description: Un module pour intéragir avec le systeme.
+    description: Un module pour interagir avec le système.
     function:
-      bash: "!bash cmd => execute la commande *cmd* avec bash."
+      bash: "!bash cmd => exécute la commande *cmd* avec bash."
   act:
-    bash: "%1: Commande executée."
+    bash: "%1: Commande exécutée."
 
 autorejoin:
   help:
-    description: Un module pour faire revenir le bot apres un kick.
+    description: Un module pour faire revenir le bot après un kick.
 
 rejoin:
   help:
-    description: Un module pour faire revenir le bot meme apres un ban.
+    description: Un module pour faire revenir le bot même après un ban.
     function:
       start: "!start => démarre le module."
 
@@ -176,10 +176,10 @@ caesar:
   help:
     description: Un module pour encoder un message selon la methode cryptographique caesar.
     function:
-      caesar: "!caesar [-s(letter)] [-t(letter)] string => Affiche la *string* remplacant chaque lettre par la suivante dans l'alphabet."
+      caesar: "!caesar [-s(letter)] [-t(letter)] string => Affiche la *string* remplaçant chaque lettre par la suivante dans l'alphabet."
     option:
-      source: "-s[a-z] => Lettre d'origine(defaut: a)."
-      target: "-t[a-z] => Lettre de destination(defaut: b)."
+      source: "-s[a-z] => Lettre d'origine(défaut: a)."
+      target: "-t[a-z] => Lettre de destination(défaut: b)."
 
 dice:
   help:
@@ -205,7 +205,7 @@ morse:
 roulette:
   help:
     description:
-      a: "Auto kick les perdants a la roulette."
+      a: "Auto kick les perdants à la roulette."
       b: "Ce module a besoin du bot marvin pour fonctionner."
   act:
     kick: ECHEC!
@@ -218,8 +218,8 @@ birthday:
       del:      "!birthday -del user            => Supprime l'anniversaire de *user*."
       tell:     "!birthday user                 => Affiche l'anniversaire de *user*."
       remind:   "!birthday -remind user         => Vous rappellera l'anniversaire de *user*."
-      unremind: "!birthday -unremind user       => Ne vous rappellera plsu l'anniversaire de *user*."
-      start:    "!start                         => Demarre la fonctionnalité de rappel."  
+      unremind: "!birthday -unremind user       => Ne vous rappellera plus l'anniversaire de *user*."
+      start:    "!start                         => Démarre la fonctionnalité de rappel."  
   print: C'est l'anniversaire de %1 aujourd'hui (%2).
   age: Il/Elle a %1 ans.
   act:
@@ -234,7 +234,7 @@ calc:
   help:
     description: Calculette
     function: 
-      calc: "!calc string => calcule avec  bc (http://unixhelp.ed.ac.uk/CGI/man-cgi?bc+1)"
+      calc: "!calc string => calcule avec bc (http://unixhelp.ed.ac.uk/CGI/man-cgi?bc+1)"
   result: "%1: %2"
 
 griffor:
@@ -284,32 +284,32 @@ remind:
     description: Un module pour se rappeller des choses.
     function:
       me:        "!remind me in time to something       => Vous rappelle *something* dans *time"
-      else:      "!remind somebody in time to something => Rappelle a *somebody* *something*dans *time*"
+      else:      "!remind somebody in time to something => Rappelle a *somebody* *something* dans *time*"
     time:
       head:      ______Time______
       line1:     Prend comme valeur des seconds, minutes, hours, days, weeks, months et years
-      line2:     "Ajoute differente formes avec 'and'"
+      line2:     "Ajoute différente formes avec 'and'"
       line3:     "Exemple: 1 day and 2 hours and 30 minutes"
   remind: Rappelle toi de %1.
   act:
-    me:   Je vous rappellerai ca dans %1.
-    else: Je rappellerai ca à %1 dans %2.
+    me:   Je vous rappellerai ça dans %1.
+    else: Je rappellerai ça à %1 dans %2.
 
 seen:
   help:
     description: Un module pour retenir les actions des utilisateurs.
     function:
-      seen:  "!seen user       => Indique la dernière fois qu'*user* à été vu."
-      first: "!first_seen user => Indique la premiere fois qu'*user* à été vu."
+      seen:  "!seen user       => Indique la dernière fois qu'*user* a été vu."
+      first: "!first_seen user => Indique la première fois qu'*user* a été vu."
   first: "Vu pour la première fois %1 faisant: %2."
   seen: "Vu pour la dernière fois %1 faisant: %2."
 
 message:
-  join:    "%1 a rejoin %2"
+  join:    "%1 a rejoint %2"
   part:    "%1 est parti de %2 disant: %3"
   notice:  "%1 a notifié %2 disant: %3"
   privmsg: "%1 a dit sur %2: %3"
-  quit:    "%1 a quité: %2"
+  quit:    "%1 a quitté: %2"
   ping:    "Ping de %1"
   nick:    "%1 a changé son nick pour %2"
   mode:    "%1 a changé le mode de %2: %3 %4"
@@ -319,7 +319,7 @@ message:
 
 tell:
   help:
-    description: Un module pour dire quelquechose à quelqu'un la prochaine fois que le bot le/la vois.
+    description: Un module pour dire quelquechose à quelqu'un la prochaine fois que le bot le/la voit.
     function:
       tell: "!tell somebody something => dit *something* à *somebody*."
   act:
@@ -329,17 +329,17 @@ tell:
 
 enfaitalafin:
   help:
-    description: Un module pour spoiler des films (francais).
+    description: Un module pour spoiler des films (français).
     source: Depuis enfaitalafin.fr
     function:
       spoil: "!spoil [-t] [id] => Spoil un film."
     option:
       title: "-t => Donne le titre du film."
-      id:    "id => Spoil un film ayant cette id."
+      id:    "id => Spoil un film ayant cet id."
 
 excuse:
   help:
-    description: Un module pour obtenir des excuses de dev (francais).
+    description: Un module pour obtenir des excuses de dev (français).
     source: Depuis www.excusesdedev.com
     function: 
       excuse: "!excuse => Donne une excuse."
@@ -351,7 +351,7 @@ google:
     function:
       google:  "!g search   => Fait une recherche google sur *search*"
       youtube: "!yt search  => Fait une recherche youtube sur *search*"
-      image:   "!img search => Fait une recherche google-image sur *search*"
+      image:   "!img search => Fait une recherche google images sur *search*"
 
 name:
   help:
@@ -359,7 +359,7 @@ name:
     source: "Depuis http://www.behindthename.com"
     function:
       name:  "!name                => Affiche un nom aléatoire."
-      types: "!name -types [regex] => Affiche les differents types de noms disponibles. Peut eventuellement prendre une regex."
+      types: "!name -types [regex] => Affiche les différents types de noms disponibles. Peut éventuellement prendre une regex."
       info:  "!name -info *name*   => Donne des informations sur *name*."
     option:
       name:
@@ -398,7 +398,7 @@ weather:
   act:
     weather: "Météo pour %1: \u0002Condition\u000F: %2 %3°C (%4°F). \u0002Vent\u000F: De %5 allant à %6 (%7 mi/h). \u0002Pression\u000F: %8 mb. \u0002Humidité\u000F: %9"
     forecast:
-      main: "Prévision pour %1: "
+      main: "Prévisions pour %1: "
       day: "\u0002%1\u000F: %2. "
     location: Localisation enregistrée pour %1
 
@@ -413,12 +413,12 @@ linaeltranslation:
       reload: "!translation -reload                      => Recharge les fichiers de traduction"
       set:    "!translation -set ([\"lang1\",\"lang2\"]) => Change la langue du bot pour *lang1*, *lang2*"
   act:
-    reload: Traductions rechargée.
+    reload: Traductions rechargées.
     set:    "Les traductions sont maintenant: %1."
 issues:
   help:
-    description: Un module pour gerer les issues sur Linael.
+    description: Un module pour gérer les issues sur Linael.
     function:
-      add: "!issue -add title => Ajoute l'issue a Linael."
+      add: "!issue -add title => Ajoute l'issue à Linael."
   act:
     add: "L'issue a bien été ajoutée."
