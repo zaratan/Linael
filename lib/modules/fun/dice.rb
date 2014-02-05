@@ -3,7 +3,6 @@
 #A module to launch dice
 linael :dice do
   
-  before(options) {|opt| opt.dice.to_i != 0}
   
   help [
     t.dice.help.description,
@@ -21,6 +20,7 @@ linael :dice do
 
   #launch dices
   on :msg, :dice, Regexp.new("^#{number}d#{number}") do |msg,options|
+    before(options) {|opt| opt.dice.to_i != 0}
     unless to_much?(options)
       dices=[]
       options.number.to_i.times { dices << Linael::DiceLauncher.new(options.dice.to_i)}
