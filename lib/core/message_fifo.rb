@@ -38,7 +38,7 @@ module Linael
     end
 
     def gets
-      result = JSON.parse(super)
+      result = CGI::unescapeHTML(JSON.parse(super))
       MessageStruct.new(result["server_id"].to_sym,result["element"],result["type"].to_sym)
     end
 

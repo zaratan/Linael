@@ -109,7 +109,7 @@ module Linael
     end
 
     def each(&block)
-      modules.each &block
+      modules.each(&block)
     end
 
     def [](name)
@@ -238,24 +238,24 @@ module Linael
     def initialize master,params
       @name = (params[:klass] || params[:instance].class)::Name
       @instance = (if params[:klass]
-                   params[:klass].new(master)
-    else
-      params[:instance]
-    end)
-  end
+                    params[:klass].new(master)
+                  else
+                    params[:instance]
+                  end)
+    end
 
-  def ==(mod)
-    name == mod.name
-  end
+    def ==(mod)
+      name == mod.name
+    end
 
-  def stop!
-    @instance.stop!
-  end
+    def stop!
+      @instance.stop!
+    end
 
-  def start!
-    @instance.start!
-  end
+    def start!
+      @instance.start!
+    end
 
-end
+  end
 
 end
