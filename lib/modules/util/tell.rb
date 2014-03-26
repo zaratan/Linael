@@ -22,7 +22,7 @@ linael :tell do
   end
 
   #add a tell
-  on :cmd, :tell_add, /^!tell/ do |msg,options|
+  on :cmd, :tell_add, /^!tell\s+/ do |msg,options|
 
     who_tell = options.who.downcase.gsub(/[,:]$/,"")
     add_tell who_tell, options.from_who, options.all.gsub(/^\s*\S*\s/,"")
