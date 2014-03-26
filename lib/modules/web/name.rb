@@ -34,7 +34,6 @@ linael :name do
       types.each do |type|
         url+="&usage_#{type}=1"
       end
-      p url
   end
 
   def parse_name(page)

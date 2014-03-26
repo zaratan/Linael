@@ -55,7 +55,7 @@ module Linael::Irc
 
     # Pretty print messages
     def pretty_print_message msg
-      puts "<<< #{msg.element}".colorize( 
+      puts "<<< #{CGI::unescapeHTML(msg.element.to_s)}".colorize( 
         if msg.element.kind_of? Linael::Irc::Server
           :yellow
         else
