@@ -17,7 +17,10 @@ module Linael
 
     def gets 
       @reader.synchronize do
-        CGI::unescapeHTML(@reader.gets).chomp
+        begin
+          CGI::unescapeHTML(@reader.gets).chomp
+        rescue Exception
+        end
       end
     end
 
@@ -38,8 +41,11 @@ module Linael
     end
 
     def gets
-      result = JSON.parse(super)
-      MessageStruct.new(result["server_id"].to_sym,CGI::unescapeHTML(result["element"]),result["type"].to_sym)
+      begin
+        result = JSON.parse(super)
+        MessageStruct.new(result["server_id"].to_sym,CGI::unescapeHTML(result["element"]),result["type"].to_sym)
+      rescue Exception
+      end
     end
 
   end
