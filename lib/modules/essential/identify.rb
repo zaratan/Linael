@@ -18,4 +18,8 @@ linael :identify, require_auth: true do
     talk("chanserv","voice #{msg.place} #{options.who}", msg.server_id)
   end
 
+  on :cmd_auth, :ask_hostserv, /^!activate\svhost/ do |msg|
+    talk("hostserv","ON", msg.server_id)
+  end
+
 end

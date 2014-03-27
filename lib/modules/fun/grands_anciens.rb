@@ -7,14 +7,15 @@ linael :grands_anciens do
 
   on :cmd, :sacrifice, /^!sacrifice/ do |msg,options|
     sacrifice = options.who 
-    sacrifice = msg.sender if sacrifice.downcase == "cultiste" or sacrifice.downcase == "zaratan"
+    sacrifice = msg.sender if sacrifice.downcase == "linael" or sacrifice.downcase == "zaratan" || sacrifice.downcase == "skizzk"
+
     old= choose_old_one
-    talk(msg.where,"#{old}, #{Linael::GrandsAnciens[old]}, Je t'invoque! Viens à moi!",msg.server_id)
+    talk(msg.where,"#{old}, #{Linael::GrandsAnciens[old]}, je t'invoque! Viens à moi!",msg.server_id)
 
     kick_channel msg.server_id,
                   :dest => msg.where,
                   :who  => sacrifice,
-                  :msg  => "For greater good!"
+                  :msg  => "Ph’nglui mglw’nafh Cthulhu R’lyeh wgah-nagl ftaghn"
   end
 
   def choose_old_one
@@ -22,7 +23,13 @@ linael :grands_anciens do
   end
 
   on :join, :praise do |msg|
-    talk(msg.where,Linael::GrandsAnciens[msg.who],msg.server_id)
+    if Linael::GrandsAnciens.has_key? msg.who
+      talk(msg.where,"Priez #{msg.who}, #{Linael::GrandsAnciens[msg.who]}!",msg.server_id)
+      mode_channel msg.server_id,
+                  :dest => msg.where,
+                  :what  => "+v",
+                  :args  => msg.who
+    end
   end
 
 end
