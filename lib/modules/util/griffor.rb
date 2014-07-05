@@ -17,7 +17,7 @@ linael :griffor do
 
   on :cmd, :griffor, /^!griffor\s/ do |msg,options|
     before(options) do |options|
-      options.type != "add" && options.type != "max"
+      options.type != "add" && options.type != "max" && options.type != "min"
     end
 
     if @scores.has_key? options.who
@@ -36,9 +36,17 @@ linael :griffor do
   value :score => /^!griffor\s+-add\s+(-?\d+)/
   
   on :cmd, :griffor_max, /^!griffor\s-max\s/ do |msg,options|
-    sorted = @scores.sort_by {|k,v| v.to_i}.reverse
     s = sorted.first(10).map{|person| "#{person[0]} => #{person[1]}" }.join("; ")
     answer(msg, s)
+  end
+
+  on :cmd, :griffor_min, /^!griffor\s-min\s/ do |msg,options|
+    s = sorted.last(10).map{|person| "#{person[0]} => #{person[1]}" }.join("; ")
+    answer(msg, s)
+  end
+
+  def sorted
+    @scores.sort_by {|k,v| v.to_i}.reverse
   end
 end
            
