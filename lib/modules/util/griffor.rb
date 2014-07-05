@@ -36,9 +36,18 @@ linael :griffor do
   value :score => /^!griffor\s+-add\s+(-?\d+)/
   
   on :cmd, :griffor_max, /^!griffor\s-max\s/ do |msg,options|
-    sorted = @scores.sort_by {|k,v| v.to_i}.reverse
-    s = sorted.first(10).map{|person| "#{person[0]} => #{person[1]}" }.join("; ")
-    answer(msg, s)
+    answer(msg, griffor_scores_to_s(sorted.last(10)))
+  end
+
+  on :cmd, :griffor_min, /^!griffor\s-min\s/ do |msg,options|
+    answer(msg, griffor_scores_to_s(sorted.first(10)))
+  end
+
+  def griffor_scores_to_s(scores)
+    scores.map{|person| "#{person[0]} => #{person[1]}" }.join("; ")
+  end
+
+  def sorted
+    @scores.sort_by {|k,v| v.to_i}
   end
 end
-           
