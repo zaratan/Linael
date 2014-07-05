@@ -96,7 +96,7 @@ linael :birthday,require_auth: true,required_mod: ["tell"] do
     if @birthday[options.who] != nil
       @birthday[options.who].change_date(options.date)
     else
-      @birthday[options.who] = Linael::Birthday.new(options.who,options.date)
+      @birthday[options.who] = Linael::Birthday.new(options.who.downcase,options.date)
     end
     answer(msg,t.birthday.act.add(options.who, options.date))
   end

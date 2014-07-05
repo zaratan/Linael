@@ -45,6 +45,7 @@ module Linael
         result = JSON.parse(super)
         MessageStruct.new(result["server_id"].to_sym,CGI::unescapeHTML(result["element"]),result["type"].to_sym)
       rescue Exception
+        MessageStruct.new(:non,"",:non)
       end
     end
 
