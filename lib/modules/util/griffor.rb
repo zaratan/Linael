@@ -17,7 +17,7 @@ linael :griffor do
 
   on :cmd, :griffor, /^!griffor\s/ do |msg,options|
     before(options) do |options|
-      options.type != "add"
+      options.type != "add" && options.type != "max"
     end
 
     if @scores.has_key? options.who
