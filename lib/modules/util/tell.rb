@@ -18,14 +18,16 @@ linael :tell do
 
   def add_tell who_tell,from,message
     @tell_list[who_tell] ||= []
-    @tell_list[who_tell] << [from,message, Time::now.strftime(t.tell.time) ]
+    
+    @tell_list[who_tell] << [from, message, Time::now.strftime(t.tell.time) ]
   end
 
   #add a tell
   on :cmd, :tell_add, /^!tell\s+/ do |msg,options|
 
     who_tell = options.who.downcase.gsub(/[,:]$/,"")
-    add_tell who_tell, options.from_who, options.all.gsub(/^\s*\S*\s/,"")
+    #FIXME remove \r from options.all
+    add_tell who_tell, options.from_who, options.all.gsub(/^\s*\S*\s/,"").gsub("\r", "")
     answer(msg,t.tell.act.tell(who_tell))
 
   end
