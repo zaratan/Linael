@@ -1,8 +1,5 @@
 # -*- encoding : utf-8 -*-
-
 require 'duck_duck_go'
-
-
 linael :duckduckgo do
 
   help [
@@ -13,44 +10,53 @@ linael :duckduckgo do
     t.duckduckgo.help.function.duckduckgo,
   ]
 
-  def print_search (msg,options,clazz)
-    ddg = clazz.new
-    zci = ddg.zeroclickinfo(options.all)
+  def print_search (msg,options)
+    zci = DuckDuckGo.new.zeroclickinfo(options.all)
     # Type may be A (article), D (disambiguation), C (category),
     # N (name), E (exclusive), or empty
     # see https://api.duckduckgo.com/api
-    case zci.type
-    when 'A'
-        answer(msg,"#{options.from_who}: [#{zci.heading}] >> #{zci.abstract}")
-    when 'C'
-        ans = ""
-        zci.related_topics['_'].each do |r|
-            ans += r.text.gsub(/(.*)? - .*/, "#{$1} - ")
-        end
-        answer(msg,"#{options.from_who}: #{ans}")
-    when 'D'
-        ans = ""
-        zci.related_topics.each do |topic|
-            topic.each do |r|
-                if r.class == String
-                    ans += " [#{r}]"
-                else
-                    r.each do |t|
-                        ans += " - #{t.text}"
-                    end
-                end
-            end
-        end
-        answer(msg,"#{options.from_who}: #{ans}")
-    when 'E'
-        answer(msg,"#{options.from_who}: #{zci.answer ? zci.answer : zci.redirect}")
-    else
-        answer(msg,"#{options.from_who}: #{zci.answer}")
+
+    begin
+      send("answer_to_#{zci.type}",zci,msg,options)
+    rescue NoMethodError
+      answer(msg,"#{options.from_who}: #{zci.answer}")
     end
   end
 
   on :cmd, :duckduckgo_search, /^!ddg\s/ do |msg,options|
-    print_search(msg,options,DuckDuckGo)
+    print_search(msg,options)
+  end
+
+  private
+
+  def answer_to_A(zci, msg, options)
+    answer(msg,"#{options.from_who}: [#{zci.heading}] >> #{zci.abstract}")
+  end
+
+  def answer_to_C(zci, msg, options)
+    ans = ""
+    zci.related_topics['_'].each do |r|
+      ans += r.text.gsub(/(.*)? - .*/, "#{$1} - ")
+    end
+    answer(msg,"#{options.from_who}: #{ans}")
+  end
+
+  def answer_to_D(zci, msg, options)
+    ans = ""
+    zci.related_topics.each do |topic|
+      topic.each do |r|
+        if r.class == String
+          ans += " [#{r}]"
+        else
+          r.each {|t| ans += " - #{t.text}"}
+        end
+      end
+    end
+    answer(msg,"#{options.from_who}: #{ans}")
+  end
+
+  def answer_to_E(zci, msg, options)
+    answer(msg,"#{options.from_who}: #{zci.answer ? zci.answer : zci.redirect}")
   end
 
 end

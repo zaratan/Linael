@@ -26,3 +26,4 @@ gem "rake"
 gem 'mkfifo'
 gem 'ruby-fifo'
 gem 'github_api'
+gem 'duck-duck-go',require: 'duck_duck_go'
