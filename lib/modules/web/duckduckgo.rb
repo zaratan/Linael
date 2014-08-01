@@ -56,7 +56,9 @@ linael :duckduckgo do
   end
 
   def answer_to_E(zci, msg, options)
-    answer(msg,"#{options.from_who}: #{zci.answer ? zci.answer : zci.redirect}")
+    answer(msg,"#{options.from_who}: #{zci.answer ?
+                                       zci.answer.ans.gsub(/.*}\\n/,"").gsub(/<(.*?)>/, "") :
+                                       zci.redirect}")
   end
 
 end
