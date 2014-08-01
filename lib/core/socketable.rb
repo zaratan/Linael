@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Linael
 
-  require 'json' 
+  require 'json'
 
   class Socketable
     attr_accessor :server,:port,:name,:on_restart
@@ -16,7 +16,7 @@ module Linael
 
     def restart
       return if @on_restart
-      begin          
+      begin
         on_restart = true
         @socket.close
         @socket = nil
@@ -42,7 +42,7 @@ module Linael
           message = @socket.gets
           return MessageStruct.new(name,message,type)
         end
-      rescue Exception 
+      rescue Exception
         restart unless @on_restart
       end
       nil
@@ -81,16 +81,16 @@ module Linael
           writing
         end
       end
-    end    
+    end
 
-    private 
+    private
 
     def listening fifo
       line = gets unless @on_restart
       fifo.puts line.to_json if line && line.element
     end
 
-    def writing 
+    def writing
       @timer ||= Time.now
       if Time.now > @timer
         line_to_write = @writing_fifo.gets unless @on_restart
