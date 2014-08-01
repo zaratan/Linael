@@ -18,7 +18,7 @@ linael :tell do
 
   def add_tell who_tell,from,message
     @tell_list[who_tell] ||= []
-    @tell_list[who_tell] << [from,message, Time::now.strftime(t.tell.time) ]
+    @tell_list[who_tell] << [from, message.gsub("\r",""), Time.now.strftime(t.tell.time) ]
   end
 
   #add a tell
@@ -41,6 +41,7 @@ linael :tell do
         to_tell = @tell_list[who]
         @tell_list.delete(who)
         to_tell.each do |message|
+          p message
           talk(who,t.tell.act.do(message[0], message[1], message[2]),msg.server_id)
           sleep(1)
         end
