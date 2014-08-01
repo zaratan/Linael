@@ -137,6 +137,81 @@ describe Linael::Core do
     end
 
 
+       assert :hash do
+             x = nil
+              
+                 x.is_a?(Hash)
+                   end
+        
+         assert :array do
+               x = nil
+                
+                   x.is_a?(Array)
+                     end
+          
+           assert :is_a_fixnum do
+                 x = nil
+                  
+                     x.is_a?(Integer)
+                       end
+            
+             assert :is_a_fixnum do
+                   x = nil
+                    
+                       x.is_a?(Fixnum)
+                         end
+              
+               assert :is_a_numeric do
+                     x = nil
+                      
+                         x.is_a?(Numeric)
+                           end
+                
+                 assert :is_a_string do
+                       x = nil
+                        
+                           x.is_a?(String)
+                             end
+                  
+                   assert :is_a_symbol do
+                         x = nil
+                          
+                             x.is_a?(Symbol)
+                               end
+                    
+                     assert :is_a_class do
+                           x = nil
+                            
+                               x.is_a?(Class)
+                                 end
+                      
+                       assert :is_a_module do
+                             x = nil
+                              
+                                 x.is_a?(Module)
+                                   end
+                        
+                         assert :global_variable do
+                            
+                               defined?($x) == 'global-variable'
+                                 end
+                          
+                           assert :local_variable do
+                              
+                                 defined?(x) == 'local-variable'
+                                   end
+                            
+                             assert :instance_variable do
+                                
+                                   defined?(@x) == 'instance-variable'
+                                     end
+                              
+                               assert :constant do
+                                  
+                                     defined?(X) == 'constant'
+                                       end
+
+
   end
 
 end

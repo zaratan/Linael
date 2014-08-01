@@ -25,7 +25,8 @@ linael :tell do
   on :cmd, :tell_add, /^!tell\s+/ do |msg,options|
 
     who_tell = options.who.downcase.gsub(/[,:]$/,"")
-    add_tell who_tell, options.from_who, options.all.gsub(/^\s*\S*\s/,"")
+    #FIXME remove \r from options.all
+    add_tell who_tell, options.from_who, options.all.gsub(/^\s*\S*\s/,"").gsub("\r", "")
     answer(msg,t.tell.act.tell(who_tell))
 
   end
