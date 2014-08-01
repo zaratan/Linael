@@ -353,6 +353,13 @@ google:
       youtube: "!yt search  => Fait une recherche youtube sur *search*"
       image:   "!img search => Fait une recherche google images sur *search*"
 
+duckduckgo:
+  help:
+    description: Un module pour faire des recherches instantanées sur DuckDuckGo.
+    source: Depuis duckduckgo.com
+    function:
+      duckduckgo: "!ddg recherche => Fait une recherche DuckDuckGo sur *recherche*. Voir fonctions disponibles sur duckduckhack.com et ddg.gg/bang.html"
+
 name:
   help:
     description: "Un module pour générer des noms."
