@@ -363,7 +363,7 @@ duckduckgo:
     description: A module to make instant search on  DuckDuckGo.
     source: From duckduckgo.com
     function:
-      duckduckgo: "!ddg search   => make a duckduckgo search on *search*"
+      duckduckgo: "!ddg search => make a DuckDuckGo search on *search*. See duckduckhack.com and ddg.gg/bang.html for what's available."
 
 name:
   help:

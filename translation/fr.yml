@@ -358,7 +358,7 @@ duckduckgo:
     description: Un module pour faire des recherches instantanées sur DuckDuckGo.
     source: Depuis duckduckgo.com
     function:
-      duckduckgo: "!ddg search   => Fait une recherche duckduckgo sur *search*"
+      duckduckgo: "!ddg recherche => Fait une recherche DuckDuckGo sur *recherche*. Voir fonctions disponibles sur duckduckhack.com et ddg.gg/bang.html"
 
 name:
   help:
