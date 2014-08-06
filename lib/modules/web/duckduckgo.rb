@@ -16,11 +16,9 @@ linael :duckduckgo do
     # N (name), E (exclusive), or empty
     # see https://api.duckduckgo.com/api
 
-    if !zci.answer.empty?
-        answer(msg,"#{options.from_who}: #{zci.answer ?
-                                           zci.answer.ans.gsub(/.*}\\n/,"").gsub(/<(.*?)>/, "") :
-                                           zci.redirect}")
-    elsif !zci.type.empty?
+    if zci.answer
+        answer(msg,"#{options.from_who}: #{zci.answer.gsub(/.*\n/,"").gsub(/<(.*?)>/, "")}")
+    elsif zci.type
         begin
           send("answer_to_#{zci.type}",zci,msg,options)
         rescue NoMethodError
