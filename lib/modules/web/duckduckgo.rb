@@ -16,10 +16,13 @@ linael :duckduckgo do
     # N (name), E (exclusive), or empty
     # see https://api.duckduckgo.com/api
 
-    begin
-      send("answer_to_#{zci.type}",zci,msg,options)
-    rescue NoMethodError
-      answer(msg,"#{options.from_who}: #{zci.answer}")
+    if zci.answer
+        answer(msg,"#{options.from_who}: #{zci.answer.gsub(/.*\n/,"").gsub(/<(.*?)>/, "")}")
+    elsif zci.type
+        begin
+          send("answer_to_#{zci.type}",zci,msg,options)
+        rescue NoMethodError
+        end
     end
   end
 
@@ -56,9 +59,9 @@ linael :duckduckgo do
   end
 
   def answer_to_E(zci, msg, options)
-    answer(msg,"#{options.from_who}: #{zci.answer ?
-                                       zci.answer.ans.gsub(/.*}\\n/,"").gsub(/<(.*?)>/, "") :
-                                       zci.redirect}")
+    # We should arrive here only for redirect links via !bang syntax.
+    # For other exclusives we just print zci.answer.
+    answer(msg,"#{options.from_who}: #{zci.redirect.to_s}")
   end
 
 end
