@@ -9,7 +9,6 @@ linael :bible do
 
   def generate_link(booknum, book, chapter, verse)
     str = "http://www.kingjamesbibleonline.org/"
-	puts(booknum, book, chapter, verse)
 	if booknum.nil?
 		str += booknum + '-'
 	end
