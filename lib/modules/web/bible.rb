@@ -12,8 +12,7 @@ linael :bible do
 	if options.booknum.nil?
 		str += options.booknum + '-'
 	end
-	str += options.book 
-	str += '-' + options.chapter + '-' + options.verse
+	str += options.book + '-' + options.chapter + '-' + options.verse
   end
 
   def get_text(options)
