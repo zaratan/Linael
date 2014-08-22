@@ -19,7 +19,7 @@ linael :bible do
   def get_text(options)
     link = generate_link(options)
     html = Nokogiri::HTML(open(link))
-    html.css('h2')[1].text
+    html.css('h2').last.text
   end
 
   on :cmd, :bible, /^!bible\s/ do |msg,options|
