@@ -7,7 +7,7 @@ linael :grands_anciens do
 
   on :cmd, :sacrifice, /^!sacrifice/ do |msg,options|
     sacrifice = options.who 
-    sacrifice = msg.sender if sacrifice.downcase == "linael" or sacrifice.downcase == "zaratan" || sacrifice.downcase == "skizzk"
+    sacrifice = msg.sender if sacrifice.downcase == "linael" || sacrifice.downcase == "zaratan" || sacrifice.downcase == "skizzk" || Random.rand(100) < 10
 
     old= choose_old_one
     talk(msg.where,"#{old}, #{Linael::GrandsAnciens[old]}, je t'invoque! Viens à moi!",msg.server_id)

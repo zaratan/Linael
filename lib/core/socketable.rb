@@ -37,23 +37,24 @@ module Linael
     end
 
     def gets
-      begin
+      #begin
         unless @on_restart
-          message = @socket.gets
+          message = encode_utf8(@socket.gets)
           return MessageStruct.new(name,message,type)
         end
-      rescue Exception
-        restart unless @on_restart
-      end
+      #rescue Exception
+        
+      #  restart unless @on_restart
+      #end
       nil
     end
 
     def puts msg
-      begin
+      #begin
         @socket.puts "#{msg}\n" unless @on_restart
-      rescue Exception
-        restart unless @on_restart
-      end
+      #rescue Exception
+      #  restart unless @on_restart
+      #end
     end
 
     def close
@@ -84,6 +85,21 @@ module Linael
     end
 
     private
+    def encode_utf8(new_value)
+      begin
+        # Try it as UTF-8 directly
+        cleaned = new_value.dup.force_encoding('UTF-8')
+        unless cleaned.valid_encoding?
+          #                     # Some of it might be old Windows code page
+          cleaned = new_value.encode( 'UTF-8', 'ISO-8859-1' )
+        end
+        new_value = cleaned
+      rescue EncodingError
+        #                                                   # Force it to UTF-8, throwing out invalid bits
+        new_value.encode!( 'UTF-8', invalid: :replace, undef: :replace )
+      end
+      new_value
+    end
 
     def listening fifo
       line = gets unless @on_restart
