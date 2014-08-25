@@ -7,6 +7,14 @@ require 'nokogiri'
 
 linael :bible do
 
+  help [
+    t.bible.help.description,
+    t.bible.help.source,
+    t.help.helper.line.white,
+    t.help.helper.line.functions,
+    t.bible.help.function.bible
+  ]
+
   def generate_link(options)
     str = "http://www.kingjamesbibleonline.org/"
 	if options.booknum.nil?
