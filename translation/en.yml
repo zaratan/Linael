@@ -444,3 +444,10 @@ issues:
       add: "!issue -add *title* => Ajoute add the issue."
   act:
     add: "The issue have been added."
+
+bible:
+  help:
+    description: A module to cite the Bible.
+    source: From kingjamesbibleonline.org
+    function:
+      bible: "!bible book chapter verse => print the verse of the Bible."

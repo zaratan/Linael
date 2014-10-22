@@ -429,3 +429,10 @@ issues:
       add: "!issue -add title => Ajoute l'issue à Linael."
   act:
     add: "L'issue a bien été ajoutée."
+
+bible:
+  help:
+    description: Un module pour citer la Bible.
+    source: Depuis kingjamesbibleonline.org
+    function:
+      bible: "!bible livre chapitre verset => cite le verset de la Bible."
