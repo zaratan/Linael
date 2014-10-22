@@ -5,7 +5,7 @@
 require 'open-uri'
 require 'nokogiri'
 
-linael :bible do
+linael :bible, author: "Zag" do
 
   help [
     t.bible.help.description,
@@ -17,25 +17,41 @@ linael :bible do
 
   def generate_link(options)
     str = "http://www.kingjamesbibleonline.org/"
-	if options.booknum.nil?
-		str += options.booknum + '-'
-	end
-	str += options.book + '-' + options.chapter + '-' + options.verse
+    unless options.booknum.blank?
+      str += options.booknum + '-'
+    end
+    str += options.book + '-' + options.chapter + '-' + options.verse
   end
 
   def get_text(options)
-    link = generate_link(options)
+    p link = generate_link(options)
     html = Nokogiri::HTML(open(link))
     html.css('h2').last.text
   end
 
-  on :cmd, :bible, /^!bible\s/ do |msg,options|
+  on :cmd, :bible, /^!bible\s*[^-]/ do |msg,options|
     text = get_text(options)
     answer(msg, text)
   end
 
-  value	booknum: /!bible\s*(\d?)/,
-        book:    /!bible\s*\d?\s*(\S*)/,
-        chapter: /!bible\s*\d?\s*\S*\s*(\d*)/,
-        verse:   /!bible\s*\d?\s*\S*\s*\d*\s*(\d*)/
+  def get_books
+    url = "http://www.kingjamesbibleonline.org/"
+    page = Nokogiri::HTML(open(url))
+    page.css('.c1 a').map {|e| e.text}.each_slice(10).to_a.map{|e| e.join(", ")}
+  end
+
+  def split_books
+    
+  end
+  
+  on :cmd, :bible_book, /^!bible\s*-book/ do |msg,options|
+    get_books.each do |books|
+      answer(msg, "[#{books}]")
+    end
+  end
+
+  value	booknum: /!bible\s*(\d+)/,
+    book:    /!bible\s*\d?\s*(\S*)/,
+    chapter: /!bible\s*\d?\s*\S*\s*(\d*)/,
+    verse:   /!bible\s*\d?\s*\S*\s*\d*\s*(\d*)/
 end
