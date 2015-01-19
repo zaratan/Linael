@@ -1,5 +1,7 @@
 Linael
 ======
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Skizzk/Linael?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Climate](https://codeclimate.com/github/Skizzk/Linael.png)](https://codeclimate.com/github/Skizzk/Linael)
 [![Dependency Status](https://gemnasium.com/Skizzk/Linael.png)](https://gemnasium.com/Skizzk/Linael)
 [![Travis](https://travis-ci.org/Skizzk/Linael.png)](https://travis-ci.org/Skizzk/Linael)
