@@ -34,5 +34,11 @@ linael :griffor do
     @scores[options.from_who] = options.who
     answer(msg, t.griffor.act.add(options.from_who,options.who))
   end
+  
+  on :cmd, :griffor_max, /^!griffor\s-max\s/ do |msg,options|
+    sorted = @scores.sort_by {|k,v| v.to_i}.reverse
+    s = sorted.first(10).map{|person| "#{person[0]} => #{person[1]}" }.join("; ")
+    answer(msg, s)
+  end
 end
            
