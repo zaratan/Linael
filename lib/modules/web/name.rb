@@ -36,11 +36,11 @@ linael :name do
 
   def parse_name(page)
     coder = HTMLEntities.new
-    name = (page / "div.body span.heavybig a")
+    name = (page / "div.body a.plain")
     if name.empty?
       name = (page / "div.body span")
     end
-    name = name.inject("") { |str, nam| str += " #{coder.decode(nam.inner_html)}" }
+    name.inject("") { |str, nam| "#{str} #{coder.decode(nam.inner_html)}" }
   end
 
   # generate a name
