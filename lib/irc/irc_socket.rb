@@ -1,16 +1,14 @@
 module Linael::Irc
   class Socket < Linael::Socketable
-    def socket_klass 
+    def socket_klass
       TCPSocket
     end
 
-    def initialize options
-
+    def initialize(options)
       super
       @nick = options[:nick]
       ident options[:nick]
       listen
-
     end
 
     def restart
@@ -18,7 +16,7 @@ module Linael::Irc
       ident @nick
     end
 
-    def ident nick
+    def ident(nick)
       puts "USER #{nick} 0 * :Linael"
       puts "NICK #{nick}"
     end

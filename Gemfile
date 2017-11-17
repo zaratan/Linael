@@ -1,24 +1,23 @@
 source 'https://rubygems.org'
 
+gem 'activesupport'
+gem 'colorize'
+gem 'google-search'
 gem 'hpricot'
 gem 'htmlentities'
-gem 'ya2yaml'
-gem 'activerecord'
-gem 'google-search'
+gem 'r18n-desktop'
+gem 'reverso'
 gem 'ruby-units'
 gem 'weather-underground'
-gem 'reverso'
-gem 'colorize'
-gem 'r18n-desktop'
+gem 'ya2yaml'
+
+group :development do
+  gem 'rubocop'
+end
 
 group :test do
-
-  gem 'rspec', require: false
-  gem 'rspec-mocks', require: false
-  gem 'guard', require: false
   gem 'guard-rspec', require: false
-  gem 'cucumber', require: false
-
+  gem 'rspec', require: false
 end
 
 gem 'coveralls', require: false

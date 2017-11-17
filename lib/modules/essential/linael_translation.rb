@@ -1,7 +1,6 @@
 require 'json'
 
 linael :linael_translation, require_auth: true do
-
   help [
     t.linaeltranslation.help.description,
     t.help.helper.line.white,
@@ -11,7 +10,7 @@ linael :linael_translation, require_auth: true do
   ]
 
   def load_translation
-    if translations.kind_of? Array
+    if translations.is_a? Array
       R18n.set (translations + ['en'])
     else
       R18n.set [translations, 'en']
@@ -31,13 +30,12 @@ linael :linael_translation, require_auth: true do
 
   on :cmd_auth, :reload, /^!translation\s-reload\s/ do |msg|
     load_translation
-    answer(msg,t.linaeltranslation.act.reload)
+    answer(msg, t.linaeltranslation.act.reload)
   end
 
-  on :cmd_auth, :set, /^!translation\s-set\s/ do |msg,options|
+  on :cmd_auth, :set, /^!translation\s-set\s/ do |msg, options|
     @translations = JSON.parse(options.who)
     load_translation
-    answer(msg,t.linaeltranslation.act.set(options.who))
+    answer(msg, t.linaeltranslation.act.set(options.who))
   end
-
 end

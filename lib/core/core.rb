@@ -1,20 +1,19 @@
 
 module Linael
   module Core
-
     def self.start_linael
-      @handlers= {}
-      @sockets= SocketList.new
+      @handlers = {}
+      @sockets = SocketList.new
       yield if block_given?
       main_loop
     end
 
-    def self.send_message message
+    def self.send_message(message)
       @sockets.send_message(message)
     end
 
-    def self.start_server type,options
-      @sockets.add "Linael::#{type.capitalize}::Socket".constantize,options
+    def self.start_server(type, options)
+      @sockets.add "Linael::#{type.capitalize}::Socket".constantize, options
       unless @handlers[type]
         @handlers[type] = "Linael::#{type.capitalize}::Handler".constantize
         @handlers[type].instance.configure options
@@ -31,4 +30,3 @@ module Linael
     end
   end
 end
-

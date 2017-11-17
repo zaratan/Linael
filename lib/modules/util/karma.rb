@@ -1,8 +1,5 @@
-# -*- encoding : utf-8 -*-
-
-#A module to count ++ on people
+# A module to count ++ on people
 linael :karma do
-
   help [
     t.karma.help.description,
     t.help.helper.line.white,
@@ -21,20 +18,19 @@ linael :karma do
     @karma.default = 0
   end
 
-  on :msg, :add_karma, /\S\s*(\+\+|\+1)/ do |msg,options|
-    to_karma = options.karma.downcase.gsub(":","").gsub(",","")
+  on :msg, :add_karma, /\S\s*(\+\+|\+1)/ do |msg, options|
+    to_karma = options.karma.downcase.delete(":").delete(",")
     @karma[to_karma] = @karma[to_karma] + 1 unless to_karma == msg.who.downcase
   end
 
-  on :msg, :del_karma, /\S\s*(--|-1)/ do |msg,options|
-    to_karma = options.karma.downcase.gsub(":","").gsub(",","")
+  on :msg, :del_karma, /\S\s*(--|-1)/ do |msg, options|
+    to_karma = options.karma.downcase.delete(":").delete(",")
     @karma[to_karma] = @karma[to_karma] - 1 unless to_karma == msg.who.downcase
   end
 
-  on :cmd, :karma, /^!karma\s/ do |msg,options|
-    answer(msg, t.karma.karma(options.who,@karma[options.who.downcase]))
+  on :cmd, :karma, /^!karma\s/ do |msg, options|
+    answer(msg, t.karma.karma(options.who, @karma[options.who.downcase]))
   end
 
-  value :karma => /(\S*)\s*(\+|-)/
-
+  value karma: /(\S*)\s*(\+|-)/
 end

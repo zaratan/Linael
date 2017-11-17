@@ -1,32 +1,29 @@
 #!/usr/bin/ruby
-# -*- encoding : utf-8 -*-
 
 require_relative 'default_linael'
 
 module Linael
+  # THIS IS A DEFAULT CONFIGURATION PLEASE DO NOT EDIT DIRECTLY FOR YOUR BOT OR YOUR COMMIT WILL BE REFUSED
+  # You are not obliged to use every options this is the default configuration
 
-  #THIS IS A DEFAULT CONFIGURATION PLEASE DO NOT EDIT DIRECTLY FOR YOUR BOT OR YOUR COMMIT WILL BE REFUSED
-  #You are not obliged to use every options this is the default configuration
-
-  #The server adress to join
-  ServerAddress = ''
-  #The connection port
+  # The server adress to join
+  ServerAddress = ''.freeze
+  # The connection port
   Port = 6667
-  #Nick of the bot
-  BotNick = 'Linael'
-  #Name of master user (downcase)
-  Master = 'zaratan'
-  
+  # Nick of the bot
+  BotNick = 'Linael'.freeze
+  # Name of master user (downcase)
+  Master = 'zaratan'.freeze
+
   # Char that will be used for commands
-  CmdChar = '!'
+  CmdChar = '!'.freeze
 
-  #Module in charge of loading others (most of the time you don't want this option)
+  # Module in charge of loading others (most of the time you don't want this option)
   MasterModule = Modules::Module
-  #The names of differents modules you want to autoload
-  ModulesToLoad = ["basic_auth","admin","identify"]
+  # The names of differents modules you want to autoload
+  ModulesToLoad = ["basic_auth", "admin", "identify"].freeze
 
-  Core::start_linael do
-    Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "", url: ServerAddress, nick: BotNick, port: Port
+  Core.start_linael do
+    Core.start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "", url: ServerAddress, nick: BotNick, port: Port
   end
-
 end

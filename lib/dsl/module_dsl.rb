@@ -12,48 +12,43 @@
 # * +:auth+:: A boolean telling if it's an auth module or not
 #
 # +block+:: definition of the module. Everything here will be executed in the scope of the module.
-#   
-#   linael :test, author: "Skizzk", require_auth: true, required_mod: ["admin"] do 
-#   end 
+#
+#   linael :test, author: "Skizzk", require_auth: true, required_mod: ["admin"] do
+#   end
 #   #=> produce a module named Test with Skizzk for author, which require at least an auth method and the module admin.
 class Object
-  def linael(name, config_hash ={}, &block)
-
+  def linael(name, config_hash = {}, &block)
     # Create the class
     new_class = Class.new(Linael::ModuleIRC) do
-
       generate_all_config(name, config_hash)
-      self.const_set("Options",generate_all_options)
-
+      const_set("Options", generate_all_options)
     end # Class.new(Linael::ModuleIRC)
 
     # Link the module to the right part of linael
-    Linael::Modules.const_set(name.to_s.camelize,new_class)
+    Linael::Modules.const_set(name.to_s.camelize, new_class)
 
     # Execute the block
     "Linael::Modules::#{name.to_s.camelize}".constantize.class_eval &block if block_given?
-
   end
 end
-#This is a trick to use t inside help
+# This is a trick to use t inside help
 class Class
   include R18n::Helpers
 end
-R18n.set (if LinaelLanguages.kind_of? Array
-          LinaelLanguages + ['en']
-            else
-              [LinaelLanguages, 'en']
+R18n.set (if LinaelLanguages.is_a? Array
+            LinaelLanguages + ['en']
+          else
+            [LinaelLanguages, 'en']
             end)
 
-#Everything goes there
+# Everything goes there
 module Linael
-
   # Fake interruption for before check
-  class InterruptLinael < Interrupt
+  class InterruptLinael < RuntimeError
   end
 
   # Modification of ModuleIRC class to describe the DSL methods
-  class ModuleIRC 
+  class ModuleIRC
     # Method to describe a feature of the module inside a linael bloc (see Object)
     # Params:
     # +type+:: type of message watched by the method should be in:
@@ -72,31 +67,30 @@ module Linael
     # +regex+:: the regex that the method should match
     # +config_hash+:: an optional configuration hash (for now, there is no configuration option)
     # +block+:: where we describe what the method should do
-    def self.on(type, name, regex=//, config_hash = {}, &block)
-
+    def self.on(type, name, regex = //, _config_hash = {}, &block)
       # Generate regex catching in Options class
       self::Options.class_eval do
         generate_to_catch(name => regex)
       end
 
-      generate_define_method_on(type,name,regex,&block) if block_given?
+      generate_define_method_on(type, name, regex, &block) if block_given?
 
       # Define the method which will be really called
       # Add the feature to module start
       # TODO add doc here (why unless)
-      self.const_set("ToStart",{}) unless defined?(self::ToStart)
+      const_set("ToStart", {}) unless defined?(self::ToStart)
       self::ToStart[type] ||= []
       self::ToStart[type] = self::ToStart[type] << name
     end
 
     def execute_method(type, msg, options, &block)
       if type == :auth
-        instance_exec(msg,options,&block)
+        instance_exec(msg, options, &block)
       else
-        #execute block
+        # execute block
         Thread.new do
           begin
-            instance_exec(msg,options,&block)
+            instance_exec(msg, options, &block)
           rescue InterruptLinael
           rescue Exception => e
             puts e.to_s.red
@@ -104,18 +98,16 @@ module Linael
           end
         end
       end
-
     end
 
-
     # TODO add it to protected
-    def self.generate_define_method_on(type,name,regex,&block)
-      self.send("define_method",name) do |msg|
+    def self.generate_define_method_on(type, name, _regex, &block)
+      send("define_method", name) do |msg|
         # Is it matching the regex?
-        if self.class::Options.send("#{name}?",msg.message)
+        if self.class::Options.send("#{name}?", msg.message)
           # if it's a message: generate options
-          options = self.class::Options.new msg.element if msg.element.kind_of? Linael::Irc::Privmsg
-          execute_method(type,msg,options,&block)
+          options = self.class::Options.new msg.element if msg.element.is_a? Linael::Irc::Privmsg
+          execute_method(type, msg, options, &block)
         end
       end
     end
@@ -133,8 +125,8 @@ module Linael
     # Wrapper to add values regex with a default value
     # Params:
     # +key+:: is the name of the method (options.name)
-    # +value+:: is a hash with 2 keys: 
-    # * +:regexp+:: the matching regex 
+    # +value+:: is a hash with 2 keys:
+    # * +:regexp+:: the matching regex
     # * +:default+:: the default value
     def self.value_with_default(hash)
       self::Options.class_eval do
@@ -154,22 +146,22 @@ module Linael
 
     # Instruction used at the start of the module
     def self.on_init(&block)
-      self.const_set("At_launch",block)
+      const_set("At_launch", block)
     end
 
-    # Instructions used at load (from save module) 
+    # Instructions used at load (from save module)
     def self.on_load(&block)
-      self.const_set("At_load",block)
+      const_set("At_load", block)
     end
 
     # An array of strings for help
     def self.help(help_array)
-      self.const_set("Help",help_array)
+      const_set("Help", help_array)
     end
 
     # Override of normal method
     def load_mod
-      self.instance_eval(&self.class::At_load) if defined?(self.class::At_load)
+      instance_eval(&self.class::At_load) if defined?(self.class::At_load)
     end
 
     # Overide of normal method
@@ -178,34 +170,32 @@ module Linael
     end
 
     def launch
-      @master.act_types.each {|t| add_module_irc_behavior t}
+      @master.act_types.each { |t| add_module_irc_behavior t }
     end
 
     # Overide of normal method
     def initialize(master)
       @master = master
-      self.instance_eval(&self.class::At_launch) if defined?(self.class::At_launch)
+      instance_eval(&self.class::At_launch) if defined?(self.class::At_launch)
       launch
     end
 
     # A method used to describe preliminary tests in a method
-    def before(msg,&block)
-      raise(InterruptLinael, "not matching") unless block.call(msg)
+    def before(msg)
+      raise(InterruptLinael, "not matching") unless yield(msg)
     end
 
     # Execute something later
     # Params:
     # +time+:: The time of the execution
     # +hash+:: Params sended to the block
-    def at(time,hash=nil,&block)
+    def at(time, hash = nil, &block)
       Thread.new do
         sleep(time - Time.now)
-        self.instance_exec(hash,&block)
+        instance_exec(hash, &block)
       end
     end
 
-
     protected
   end
-
 end

@@ -1,11 +1,8 @@
-# -*- encoding : utf-8 -*-
-
 require('open-uri')
 require('htmlentities')
 
 # A module to get dev excuses (french)
 linael :excuse_fr do
-
   help [
     t.excuse.help.description,
     t.excuse.help.source,
@@ -14,11 +11,10 @@ linael :excuse_fr do
     t.excuse.help.function.excuse
   ]
 
-  on :cmd, :excuse, /^!excuse/ do |msg,options|
+  on :cmd, :excuse, /^!excuse/ do |msg, _options|
     page = open("http://www.excusesdedev.com/").read
     page =~ /div[^>]*quote[^>]*>([^<]*)/
     excuse = $1
-    answer(msg,excuse)
+    answer(msg, excuse)
   end
-
 end

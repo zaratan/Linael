@@ -1,10 +1,9 @@
 require_relative '../../lib/core/handler.rb'
 
 describe Linael::Handler do
-
   before(:each) do
     @instance = Linael::Handler.instance
-      
+
     @handler = double("handler")
     allow(@handler).to receive(:delete) { :delete }
     allow(@handler).to receive(:[]=) { :[]= }
@@ -14,7 +13,7 @@ describe Linael::Handler do
 
   describe "is a Singleton" do
     it "has private new" do
-      expect{Linael::Handler.new}.to raise_exception NoMethodError
+      expect{ Linael::Handler.new }.to raise_exception NoMethodError
     end
 
     it "respond to ::instance" do
@@ -26,8 +25,7 @@ describe Linael::Handler do
     before(:each) do
       @message = Struct.new(:element).new(:e)
       @instance.class.to_do << :owi_act
-      allow(@instance).to receive(:format_message) {@message}
-
+      allow(@instance).to receive(:format_message) { @message }
     end
 
     it "format the message" do
@@ -41,38 +39,36 @@ describe Linael::Handler do
     end
   end
 
-
   describe "#format_message" do
     it "fail because it's an abstract class" do
-      expect{@instance.format_message ""}.to raise_exception NotImplementedError 
+      expect{ @instance.format_message "" }.to raise_exception NotImplementedError
     end
   end
 
   describe "::to_do" do
     it "return class instance variable @to_do" do
-      Linael::Handler.instance_variable_set(:@to_do,:todo)
+      Linael::Handler.instance_variable_set(:@to_do, :todo)
       Linael::Handler.to_do.should eq :todo
     end
 
     it "set @to_do to [] if not setted" do
-      Linael::Handler.instance_variable_set(:@to_do,nil)
+      Linael::Handler.instance_variable_set(:@to_do, nil)
       Linael::Handler.to_do.should eq []
     end
   end
 
   describe "::to_handle" do
     it "return class instance variable @to_handle" do
-      Linael::Handler.instance_variable_set(:@to_handle,:tohandle)
+      Linael::Handler.instance_variable_set(:@to_handle, :tohandle)
       Linael::Handler.to_handle.should eq :tohandle
     end
     it "set @to_handle to [] if not setted" do
-      Linael::Handler.instance_variable_set(:@to_handle,nil)
+      Linael::Handler.instance_variable_set(:@to_handle, nil)
       Linael::Handler.to_handle.should eq []
     end
   end
 
   describe "::add_act" do
-
     before(:each) do
       allow(Linael::Handler).to receive(:define_method) { :define }
       allow(Linael::Handler).to receive(:attr_accessor) { :attr_accessor }
@@ -109,20 +105,19 @@ describe Linael::Handler do
       allow(@testh).to receive(:name) { "test" }
 
       @act = double("act")
-      allow(@act).to receive(:call) {true}
-      
+      allow(@act).to receive(:call) { true }
+
       allow(@instance).to receive(:pretty_print_message) { :pretty }
 
       Linael::Handler.add_act(@testh)
-      @instance.instance_variable_set(:@test_act,{first: @act})
+      @instance.instance_variable_set(:@test_act, first: @act)
     end
 
     it "do nothing if the message do not match the handler type" do
       allow(@testh).to receive(:match?) { false }
       @instance.handle_test(@message).should be nil
-      
     end
-      
+
     it "pretty print the message" do
       @instance.handle_test(@message).should be true
       expect(@instance).to have_received(:pretty_print_message).with @message
@@ -130,7 +125,7 @@ describe Linael::Handler do
 
     it "send the message at all the action of the handler" do
       @instance.handle_test(@message).should be true
-      expect(@act).to have_received(:call).with @message 
+      expect(@act).to have_received(:call).with @message
     end
   end
 
@@ -149,9 +144,8 @@ describe Linael::Handler do
 
   describe "#act_types" do
     it "return every type of action handled" do
-      
-      @instance.instance_variable_set(:@owi_act,"")
-      @instance.instance_variable_set(:@onoes_act,"")
+      @instance.instance_variable_set(:@owi_act, "")
+      @instance.instance_variable_set(:@onoes_act, "")
       @instance.act_types.should include :owi
       @instance.act_types.should include :onoes
     end
@@ -159,14 +153,14 @@ describe Linael::Handler do
 
   describe "#add_act" do
     it "add an action to a handler" do
-      @instance.add_act("owi","test",:prok)
-      expect(@handler).to have_received(:[]=).with(:test,:prok)
+      @instance.add_act("owi", "test", :prok)
+      expect(@handler).to have_received(:[]=).with(:test, :prok)
     end
   end
 
   describe "#del_act" do
     it "revome an action from a handler" do
-      @instance.del_act("owi","test")
+      @instance.del_act("owi", "test")
 
       expect(@handler).to have_received(:delete).with(:test)
     end
@@ -174,8 +168,8 @@ describe Linael::Handler do
 
   describe "#initialize" do
     before(:each) do
-      allow(Linael::Handler).to receive(:create_handle) {:ch}
-      allow(Linael::Handler).to receive(:to_handle) {[String]}
+      allow(Linael::Handler).to receive(:create_handle) { :ch }
+      allow(Linael::Handler).to receive(:to_handle) { [String] }
       @instance.send(:initialize)
     end
 
@@ -184,7 +178,7 @@ describe Linael::Handler do
     end
 
     it "only take the class name (nothing before \":\")" do
-      allow(Linael::Handler).to receive(:to_handle) {[Linael::Handler]}
+      allow(Linael::Handler).to receive(:to_handle) { [Linael::Handler] }
       @instance.send(:initialize)
       @instance.instance_variable_get(:@handler_act).should be {}
     end
@@ -200,7 +194,7 @@ describe Linael::Handler do
       allow(@masta).to receive(:new) { @masta }
       allow(@masta).to receive(:start!) { :start! }
       allow(@masta).to receive(:add_action) { :add_action }
-      @instance.configure master_module: @masta, modules: [:mod1,:mod2]
+      @instance.configure master_module: @masta, modules: %i[mod1 mod2]
     end
 
     it "set master module" do
@@ -219,8 +213,7 @@ describe Linael::Handler do
 
   describe "#pretty_print_message" do
     it "fail because it's an abstract class" do
-      expect{@instance.send(:pretty_print_message, "")}.to raise_exception NotImplementedError
+      expect{ @instance.send(:pretty_print_message, "") }.to raise_exception NotImplementedError
     end
   end
-
 end

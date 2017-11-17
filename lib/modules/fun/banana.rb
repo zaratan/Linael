@@ -1,10 +1,7 @@
-# -*- encoding : utf-8 -*-
-
 # Sing the banana song :)
-linael :banana,require_auth: true do 
-
-  #Lyrics of the banana song
-  Linael::Lyrics=[
+linael :banana, require_auth: true do
+  # Lyrics of the banana song
+  Linael::Lyrics = [
     "http://www.youtube.com/watch?v=vNie6hVM8ZI",
     " ",
     "ba-ba-ba-ba-ba-nana (2x)",
@@ -23,7 +20,7 @@ linael :banana,require_auth: true do
     "PO-TAE-TOH-OH-OH (ba-ba-ba-ba-banana)",
     "togari noh pocato li kani malo mani kano",
     "chi ka-ba-ba, ba-ba-naNAAAHHHH!!!!"
-  ]
+  ].freeze
 
   help [
     t.banana.help.description,
@@ -36,28 +33,26 @@ linael :banana,require_auth: true do
   ]
 
   on_init do
-    @user=[Linael::Master]
+    @user = [Linael::Master]
   end
 
-  #sing
-  on :cmd, :song, /^!banana[^A-z]*$/ do |msg,options|
+  # sing
+  on :cmd, :song, /^!banana[^A-z]*$/ do |msg, _options|
     before(msg) do |msg|
-      ((@user.detect {|user| msg.who.downcase.match(user)}) || (msg.private_message?))
+      ((@user.detect { |user| msg.who.downcase.match(user) }) || msg.private_message?)
     end
-    Linael::Lyrics.each{|line| answer(msg,line);sleep(0.5)}
+    Linael::Lyrics.each{ |line| answer(msg, line); sleep(0.5) }
   end
 
-  #add a user
-  on :cmd_auth, :add_user, /!banana\s-add\s/ do |msg,options|
+  # add a user
+  on :cmd_auth, :add_user, /!banana\s-add\s/ do |msg, options|
     answer(msg, t.banana.user.add(options.who))
     @user << options.who.downcase
-
   end
 
-  #del a user
-  on :cmd_auth, :del_user, /!banana\s-del\s/ do |msg,options|
+  # del a user
+  on :cmd_auth, :del_user, /!banana\s-del\s/ do |msg, options|
     answer(msg, t.banana.user.del(options.who))
     @user.delete options.who.downcase
   end
-
 end
