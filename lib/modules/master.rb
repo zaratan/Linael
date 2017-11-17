@@ -115,7 +115,7 @@ module Linael
       !required_modules || required_modules.all? { |mod| key? mod }
     end
 
-    def has_key?(key)
+    def key?(key)
       any? { |mod| mod.name == key }
     end
 

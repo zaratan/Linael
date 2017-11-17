@@ -12,6 +12,8 @@ gem 'weather-underground'
 gem 'ya2yaml'
 
 group :development do
+  gem 'byebug', platforms: %i[mri]
+  gem 'pry-byebug'
   gem 'rubocop'
 end
 

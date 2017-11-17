@@ -7,6 +7,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     ast (2.3.0)
+    byebug (9.1.0)
     coderay (1.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
@@ -70,6 +71,9 @@ GEM
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    pry-byebug (3.5.0)
+      byebug (~> 9.1)
+      pry (~> 0.10)
     r18n-core (2.1.8)
     r18n-desktop (2.1.8)
       r18n-core (= 2.1.8)
@@ -137,12 +141,14 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
+  byebug
   colorize
   coveralls
   google-search
   guard-rspec
   hpricot
   htmlentities
+  pry-byebug
   r18n-desktop
   rake
   reverso

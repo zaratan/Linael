@@ -24,7 +24,7 @@ module Linael
   # The server to join
   ServerAddress = ''.freeze
   # The connection port
-  PORT = 6667
+  Port = '6667'.to_i
   # Nick of the bot
   BotNick = 'Linael'.freeze
   # Name of master user
@@ -35,5 +35,5 @@ module Linael
 
   # Module which
   MasterModule = Modules::Master
-  ModulesToLoad = ['basic_auth', 'admin', 'ping'].freeze
+  ModulesToLoad = %w[basic_auth admin ping version lovely].freeze
 end

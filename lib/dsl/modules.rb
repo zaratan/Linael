@@ -33,15 +33,13 @@ module Linael
       behaviors.each { |type, ident| ident.each { |id| send "del_#{type}_behavior", self, id } }
     end
 
-    protected
-
     def message_handler(msg, result_message = nil)
       begin
         yield
       rescue MessagingException => error_message
         answer(msg, error_message.message)
         return
-      rescue Exception => error
+      rescue StandardError => error
         talk(msg.who, error.to_s, msg.server_id)
         puts error.backtrace.join("\n").red
         return
@@ -182,7 +180,9 @@ module Linael
     # +:default+:: default value
     def self.generate_meth(args)
       define_method args[:name] do
-        return $1 if message.match?(args[:regexp])
+        if match = message.match(args[:regexp])
+          return match[1]
+        end
         return send args[:default_meth] if args[:default_meth]
         return args[:default] unless args[:default].nil?
         ""

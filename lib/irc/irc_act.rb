@@ -21,7 +21,7 @@ module Linael::Irc
     def method_missing(name, *args, &block)
       if name =~ /(.*)_channel/
         define_send(name, $1)
-        return send name, args[0], args[1]
+        return self.send(name, args[0], args[1])
       end
       super
     end
