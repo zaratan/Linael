@@ -1,19 +1,24 @@
 #!/usr/bin/env ruby
 
-LinaelLanguages = 'fr'
+LinaelLanguages = 'fr'.freeze
 require_relative 'default_linael'
 
+# Launch all
 module Linael
+  # The server to join
+  ServerAddress = 'irc.rizon.net'.freeze
+  # Nick of the bot
+  BotNick = 'LinaelTest'.freeze
 
-  #The server to join
-  ServerAddress = 'irc.rizon.net'
-  #Nick of the bot
-  BotNick = 'LinaelTest'
-  
-
-  Core::start_linael do
-    Core::start_server :irc, master_module: MasterModule, modules: ModulesToLoad, name: "rizon", url: ServerAddress, nick: BotNick, port: Port
+  Core.start_linael do
+    Core.start_server(
+      :irc,
+      master_module: MasterModule,
+      modules: ModulesToLoad,
+      name: 'rizon',
+      url: ServerAddress,
+      nick: BotNick,
+      port: Port
+    )
   end
-
-
 end
