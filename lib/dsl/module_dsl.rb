@@ -102,6 +102,7 @@ module Linael
 
     # TODO add it to protected
     def self.generate_define_method_on(type, name, _regex, &block)
+      p type, name, _regex, block
       send("define_method", name) do |msg|
         # Is it matching the regex?
         if self.class::Options.send("#{name}?", msg.message)
@@ -159,6 +160,33 @@ module Linael
       const_set("Help", help_array)
     end
 
+    def self.db_list(*lists)
+      lists.each do |list|
+        class_name = name
+        define_method(list) do
+          Redis::List.new("#{class_name}:#{list}", marshal: true)
+        end
+      end
+    end
+
+    def self.db_value(*values)
+      values.each do |value|
+        class_name = name
+        define_method(value) do
+          Redis::Value.new("#{class_name}:#{value}", marshal: true)
+        end
+      end
+    end
+
+    def self.db_hash(*hashes)
+      hashes.each do |hash|
+        class_name = name
+        define_method(hash) do
+          Redis::HashKey.new("#{class_name}:#{hash}", marshal: true)
+        end
+      end
+    end
+
     # Override of normal method
     def load_mod
       instance_eval(&self.class::At_load) if defined?(self.class::At_load)
@@ -196,6 +224,5 @@ module Linael
       end
     end
 
-    protected
   end
 end

@@ -7,15 +7,11 @@ linael :tell do
     t.tell.help.function.tell
   ]
 
-  on_init do
-    @tell_list = {}
-  end
-
-  attr_accessor :tell_list
+  db_hash :tell_list
 
   def add_tell(who_tell, from, message)
-    @tell_list[who_tell] ||= []
-    @tell_list[who_tell] << [from, message, Time.now.strftime(t.tell.time)]
+    tell_list[who_tell] ||= []
+    tell_list[who_tell] = tell_list[who_tell] << [from, message, Time.now.strftime(t.tell.time)]
   end
 
   # add a tell
@@ -32,9 +28,9 @@ linael :tell do
       who = msg.newNick.downcase if type == :nick
       who = msg.who.downcase if type == :msg
 
-      if @tell_list.key?(who)
-        to_tell = @tell_list[who]
-        @tell_list.delete(who)
+      if tell_list.key?(who)
+        to_tell = tell_list[who]
+        tell_list.delete(who)
         to_tell.each do |message|
           talk(who, t.tell.act.do(message[0], message[1], message[2]), msg.server_id)
           sleep(1)

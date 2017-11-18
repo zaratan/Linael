@@ -12,16 +12,13 @@ linael :admin, require_auth: true do
     t.admin.help.function.reload
   ]
 
-  on_init do
-    @chans = []
-  end
-
-  # List of joined chan
-  attr_accessor :chans
+  db_list :chans
 
   # on load rejoin all the chan
-  on_load do
-    @chans.each { |server_id, chan| join_channel server_id, dest: chan }
+  on_init do
+    at(10.seconds.from_now) do
+      chans.each { |server_id, chan| join_channel server_id, dest: chan }
+    end
   end
 
   def join_act(server_id, chan)

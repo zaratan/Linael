@@ -1,7 +1,8 @@
-require 'active_support/all'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
+Bundler.require(:development) if ENV['DEBUG']
 require 'socket'
-require 'colorize'
-require 'r18n-desktop'
 
 # default translation you can either declare an array or a single string
 LinaelLanguages = 'en'.freeze unless defined? LinaelLanguages
@@ -33,7 +34,12 @@ module Linael
   # Char that will be used for commands
   CmdChar = '!'.freeze
 
+  REDIS_ADDRESS = ENV.fetch('REDIS_ADDRESS', '127.0.0.1')
+  REDIS_PORT = ENV.fetch('REDIS_PORT', '6379')
+
+  Redis::Objects.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(host: REDIS_ADDRESS, port: REDIS_PORT) }
+
   # Module which
   MasterModule = Modules::Master
-  ModulesToLoad = %w[basic_auth admin ping version lovely].freeze
+  ModulesToLoad = %w[basic_auth admin ping version lovely test].freeze
 end

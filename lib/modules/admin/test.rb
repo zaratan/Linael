@@ -24,6 +24,15 @@ linael :test, constructor: "Skizzk", require_auth: true, required_mod: ["admin"]
     answer(msg, options.who)
   end
 
+  db_list :list_1, :list_2
+
+  on :cmd, :test_db, /^!test_db/ do |msg, _|
+    answer(msg, list_1)
+    list_1 << "Test"
+    answer(msg, list_1)
+    answer(msg, list_2)
+  end
+
   on :cmd, :test2, /^!test2\s/ do |msg, options|
     at(4.seconds.from_now, options) do |options|
       talk(options.from_who, "A kikoo from 4 seconds in the past", msg.server_id)

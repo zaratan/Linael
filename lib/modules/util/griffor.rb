@@ -7,18 +7,14 @@ linael :griffor do
     t.griffor.function.add
   ]
 
-  attr_accessor :scores
-
-  on_init do
-    @scores = {}
-  end
+  db_hash :scores
 
   on :cmd, :griffor, /^!griffor\s/ do |msg, options|
-    before(options) do |options|
-      options.type != "add"
+    before(options) do |before_options|
+      before_options.type != "add"
     end
 
-    if @scores.key? options.who
+    if scores.key? options.who
       answer(msg, t.griffor.act.show(options.who, scores[options.who]))
     else
       answer(msg, t.griffor.not.score(options.who))
@@ -26,11 +22,11 @@ linael :griffor do
   end
 
   on :cmd, :griffor_add, /^!griffor\s-add\s/ do |msg, options|
-    before(options) do |options|
-      options.who =~ /^\d*$/
+    before(options) do |before_options|
+      before_options.who =~ /^\d*$/
     end
 
-    @scores[options.from_who] = options.who
+    scores[options.from_who] = options.who
     answer(msg, t.griffor.act.add(options.from_who, options.who))
   end
 end

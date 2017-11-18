@@ -7,6 +7,8 @@ linael :seen do
     t.seen.help.function.first
   ]
 
+  db_hash :users
+
   on :cmd, :seen, /^!seen\s/ do |msg, options|
     to_print = find_user(options) { |seens| seens.max_by { |_k, u| u.last_seen } }
     answer(msg, t.seen.seen(to_print.last_seen.ago, to_print.last_act.to_s))
@@ -31,17 +33,12 @@ linael :seen do
   end
 
   def update_user(user_name, msg)
-    if users[user_name]
-      users[user_name].update(msg)
-    else
-      users[user_name] = Linael::User.new(msg)
-    end
-  end
-
-  attr_accessor :users
-
-  on_init do
-    @users = {}
+    users[user_name] =
+      if users[user_name]
+        users[user_name].update(msg)
+      else
+        Linael::User.new(msg)
+      end
   end
 end
 
@@ -50,7 +47,7 @@ class Time
 
   def ago
     sec = (Time.now - self).round
-    sec = 1 if sec == 0
+    sec = 1 if sec.to_i.zero?
 
     mm, ss = sec.divmod(60)
     hh, mm = mm.divmod(60)
@@ -81,5 +78,6 @@ class Linael::User
     @host = msg.identification.downcase
     @last_seen = Time.now
     @last_act = msg.element
+    self
   end
 end

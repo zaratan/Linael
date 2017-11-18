@@ -15,34 +15,40 @@ linael :remind, require_auth: true do
     t.remind.help.time.line3
   ]
 
+  db_list :reminds
+
   # transform string to date
   def make_time(stime)
     stime.gsub!(/\s+and\s+/, "+")
     stime.gsub!(/\s+/, ".")
     stime = "(" + stime
     stime += ").seconds.from_now"
-    eval(stime)
+    t = Thread.new do
+      $SAFE = 1
+      eval(stime.untaint)
+    end
+    t.value
   end
 
   def remind_aux(options, time, who, server_id = nil)
     who ||= options.from_who
     unless time
       time = make_time(options.time)
-      @reminds << [options, time, server_id]
+      reminds << [options, time, server_id]
     end
     at(time, options) do |options|
       talk(who, t.remind.remind(options.action.delete("\r")), server_id)
-      @reminds.delete_if { |rem| rem[1] < Time.now }
+      reminds.delete_if { |rem| rem[1] < Time.now }
     end
   end
 
   on_init do
-    @reminds = []
-  end
-
-  on_load do
-    @reminds.each do |rem|
-      remind_aux(rem[0], rem[1], nil, rem[2]) if Time.now < rem[1]
+    reminds.each do |rem|
+      if rem[1] && Time.now < rem[1]
+        remind_aux(rem[0], rem[1], nil, rem[2]) if Time.now < rem[1]
+      else
+        reminds.delete(rem)
+      end
     end
   end
 

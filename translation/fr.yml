@@ -292,8 +292,8 @@ remind:
       line3:     "Exemple: 1 day and 2 hours and 30 minutes"
   remind: Rappelle toi de %1.
   act:
-    me:   Je vous rappellerai ca dans %1.
-    else: Je rappellerai ca à %1 dans %2.
+    me:   Je vous rappellerai ça dans %1.
+    else: Je rappellerai ça à %1 dans %2.
 
 seen:
   help:

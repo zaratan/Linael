@@ -10,26 +10,22 @@ linael :karma do
     t.karma.help.function.minus_one
   ]
 
-  on_init do
-    @karma = Hash.new(0)
-  end
-
-  on_load do
-    @karma.default = 0
-  end
+  db_hash :karmas
 
   on :msg, :add_karma, /\S\s*(\+\+|\+1)/ do |msg, options|
     to_karma = options.karma.downcase.delete(":").delete(",")
-    @karma[to_karma] = @karma[to_karma] + 1 unless to_karma == msg.who.downcase
+    karmas[to_karma] ||= 0
+    karmas[to_karma] = karmas[to_karma] + 1 unless to_karma == msg.who.downcase
   end
 
   on :msg, :del_karma, /\S\s*(--|-1)/ do |msg, options|
     to_karma = options.karma.downcase.delete(":").delete(",")
-    @karma[to_karma] = @karma[to_karma] - 1 unless to_karma == msg.who.downcase
+    karmas[to_karma] ||= 0
+    karmas[to_karma] = karmas[to_karma] - 1 unless to_karma == msg.who.downcase
   end
 
   on :cmd, :karma, /^!karma\s/ do |msg, options|
-    answer(msg, t.karma.karma(options.who, @karma[options.who.downcase]))
+    answer(msg, t.karma.karma(options.who, (karmas[options.who.downcase] || 0)))
   end
 
   value karma: /(\S*)\s*(\+|-)/

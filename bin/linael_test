@@ -8,7 +8,7 @@ module Linael
   # The server to join
   ServerAddress = 'irc.rizon.net'.freeze
   # Nick of the bot
-  BotNick = 'LinaelTest'.freeze
+  BotNick = 'LinaelTest2'.freeze
 
   Core.start_linael do
     Core.start_server(

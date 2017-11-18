@@ -1,0 +1,11 @@
+version: '3'
+services:
+  redis:
+    image: 'redis'
+  linael:
+    build: '.'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_ADDRESS=redis
+      - DEBUG=true
