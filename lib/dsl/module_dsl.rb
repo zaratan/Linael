@@ -102,7 +102,6 @@ module Linael
 
     # TODO add it to protected
     def self.generate_define_method_on(type, name, _regex, &block)
-      p type, name, _regex, block
       send("define_method", name) do |msg|
         # Is it matching the regex?
         if self.class::Options.send("#{name}?", msg.message)

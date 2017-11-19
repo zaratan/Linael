@@ -36,8 +36,6 @@ linael :rejoin, require_auth: true do
 
   on :join, :do_i_join? do |msg|
     before(msg) do |msg|
-      p msg.who
-      p Linael::BotNick.downcase
       msg.who.casecmp(Linael::BotNick.downcase).zero?
     end
     chan_to_rejoin.delete([msg.server_id, msg.where])
