@@ -12,7 +12,7 @@ linael :karma do
 
   db_hash :karmas
 
-  on :msg, :add_karma, /\S\s*(\+\+|\+1)/ do |msg, options|
+  on :msg, :add_karma, /\S\s*(\+\+|\+1|♥|<3)/ do |msg, options|
     to_karma = options.karma.downcase.delete(":").delete(",")
     karmas[to_karma] ||= 0
     karmas[to_karma] = karmas[to_karma] + 1 unless to_karma == msg.who.downcase
@@ -28,5 +28,5 @@ linael :karma do
     answer(msg, t.karma.karma(options.who, (karmas[options.who.downcase] || 0)))
   end
 
-  value karma: /(\S*)\s*(\+|-)/
+  value karma: /(\S*)\s*(\+|-|<3|♥)/
 end
