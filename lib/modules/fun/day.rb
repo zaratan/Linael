@@ -5,6 +5,6 @@ linael :day do
 
   # add a day command
   on :cmd, :day, /^!day/ do |msg, _|
-    answer(msg, t.day.act.day)
+    answer(msg, t.module_day.act.day)
   end
 end

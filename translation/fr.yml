@@ -196,7 +196,7 @@ lovely:
   act:
     love: Moi aussi je t'aime, %1.
 
-day:
+module_day:
   help:
     description: Un module pour répondre mardi.
   act:

@@ -201,7 +201,7 @@ lovely:
   act:
     love: I love you too %1.
 
-day:
+module_day:
   help:
     description: A module to answer tuesday.
   act:
