@@ -196,6 +196,12 @@ lovely:
   act:
     love: Moi aussi je t'aime, %1.
 
+day:
+  help:
+    description: Un module pour répondre mardi.
+  act:
+    day: Nous sommes mardi.
+
 morse:
   help:
     description: Un module pour encoder les messages en morse.
