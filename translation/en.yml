@@ -201,6 +201,12 @@ lovely:
   act:
     love: I love you too %1.
 
+day:
+  help:
+    description: A module to answer tuesday.
+  act:
+    day: It's tuesday.
+
 morse:
   help:
     description: A module to encode a message in morse.
