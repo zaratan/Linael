@@ -77,7 +77,7 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
   end
 
   on :cmd_auth, :birthday_del, /^!birthday\s+-del\s/ do |msg, options|
-    birthdays[options.who] = nil
+    birthdays.delete(options.who)
     answer(msg, t.birthday.act.del(options.who))
   end
 
@@ -115,6 +115,7 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
   end
 
   def remind
+    birthdays.each { |k, v| birthdays.delete(k) unless v }
     birthdays.each_value do |v|
       next unless (Time.now.day == v.day.to_i) && (Time.now.month == v.month.to_i)
       v.remind.each do |who|
