@@ -4,8 +4,8 @@ linael :ping do
   on :ping, :ping do |msg|
     pong_channel msg.server_id, dest: msg.who
     ping_time.value = Time.now.to_i
-    at(5.minutes.from_now) do
-      exit!(0) if ping_time.value < 4.minutes.ago.to_i
+    at(10.minutes.from_now) do
+      exit!(0) if ping_time.value < 9.minutes.ago.to_i
     end
   end
 
