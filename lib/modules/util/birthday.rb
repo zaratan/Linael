@@ -126,7 +126,7 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
 
   def age(year)
     if year.to_i != 0
-      t.birtday.age(Time.now.year - year.to_i)
+      t.birthday.age(Time.now.year - year.to_i)
     else
       ""
     end
