@@ -32,7 +32,7 @@ linael :tell do
         to_tell = tell_list[who]
         tell_list.delete(who)
         to_tell.each do |message|
-          talk(who, t.tell.act.do(message[0], message[1], message[2]), msg.server_id)
+          talk(who, t.tell.act.do(message[0], message[1], message[2]).gsub(/&#39;/, "'"), msg.server_id)
           sleep(1)
         end
       end

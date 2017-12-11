@@ -4,6 +4,8 @@ services:
     image: 'redis'
   linael:
     build: '.'
+    volumes:
+      - .:/app
     depends_on:
       - redis
     environment:

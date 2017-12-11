@@ -13,50 +13,35 @@ module Linael
       @remind = []
     end
 
+    TIME_REGEX = /([0-9]+)\/([0-9]+)\/([0-9]+)/
+
     def unparse_day(whenz)
-      if whenz =~ /([0-9]+)\/[0-9]+\/?[0-9]*/
-        $1
-      else
-        0
-      end
+      whenz.match(TIME_REGEX)[1] || 0
     end
 
     def unparse_month(whenz)
-      if whenz =~ /[0-9]+\/([0-9]+)\/?[0-9]*/
-        $1
-      else
-        0
-      end
+      whenz.match(TIME_REGEX)[2] || 0
     end
 
     def unparse_year(whenz)
-      if whenz =~ /[0-9]+\/[0-9]+\/([0-9]+)/
-        $1
-      else
-        0
-      end
-    end
-
-    def print_birthday
-      t.birthday.print(nick, Time.now.strftime("%d/%m/%Y")) + if year.to_i != 0
-                                                                t.birtday.age(Time.now.year - year.to_i)
-                                                              else
-                                                                ""
-            end
+      whenz.match(TIME_REGEX)[3] || 0
     end
 
     def add_remind(nick)
       remind << nick.downcase unless remind.include?(nick.downcase)
+      self
     end
 
     def del_remind(nick)
       remind.delete(nick.downcase)
+      self
     end
 
     def change_date(whenz)
       @day = unparse_day(whenz)
       @month = unparse_month(whenz)
       @year = unparse_year(whenz)
+      self
     end
   end
 end
@@ -66,51 +51,48 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
     t.birthday.help.description,
     t.help.helper.line.white,
     t.help.helper.line.functions,
-    t.birthday.function.add,
-    t.birthday.function.tell,
-    t.birthday.function.remind,
-    t.birthday.function.unremind,
+    t.birthday.help.function.add,
+    t.birthday.help.function.tell,
+    t.birthday.help.function.remind,
+    t.birthday.help.function.unremind,
     t.help.helper.line.white,
     t.help.helper.line.admin,
-    t.birthday.function.del,
-    t.birthday.function.start
+    t.birthday.help.function.del,
   ]
 
   on_init do
-    @birthday = {}
-    @started = false
+    start_remind
   end
 
-  on_load do
-    @started = false
-  end
+  db_hash :birthdays
 
   on :cmd, :birthday_add, /^!birthday\s+-add\s/ do |msg, options|
-    if !@birthday[options.who].nil?
-      @birthday[options.who].change_date(options.date)
-    else
-      @birthday[options.who] = Linael::Birthday.new(options.who, options.date)
-    end
+    birthdays[options.who] =
+      if birthdays[options.who]
+        birthdays[options.who].change_date(options.date)
+      else
+        Linael::Birthday.new(options.who, options.date)
+      end
     answer(msg, t.birthday.act.add(options.who, options.date))
   end
 
   on :cmd_auth, :birthday_del, /^!birthday\s+-del\s/ do |msg, options|
-    @birthday[options.who] = nil
+    birthdays[options.who] = nil
     answer(msg, t.birthday.act.del(options.who))
   end
 
   on :cmd, :birthday_remind, /^!birthday\s+-remind\s/ do |msg, options|
-    @birthday[options.who].add_remind(options.from_who)
+    birthdays[options.who] = birthdays[options.who].add_remind(options.from_who)
     answer(msg, t.birthday.act.remind(options.who))
   end
 
   on :cmd, :birthday_unremind, /^!birthday\s+-unremind\s/ do |msg, options|
-    @birthday[options.who].del_remind(options.from_who)
+    birthdays[options.who] = birthdays[options.who].del_remind(options.from_who)
     answer(msg, t.birthday.act.unremind(options.who))
   end
 
   on :cmd, :birthday_tell, /^!birthday\s+[A-Za-z]/ do |msg, options|
-    birthday = @birthday[options.who.downcase]
+    birthday = birthdays[options.who.downcase]
     before(options) do
       !birthday.nil?
     end
@@ -125,12 +107,6 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
     Time.now.to_date.next_day.to_time
   end
 
-  on :cmd_auth, :start, /^!start/ do
-    before(@started, &:!)
-    @started = true
-    start_remind
-  end
-
   def start_remind
     remind
     at(tommorow_midnight) do
@@ -139,11 +115,20 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
   end
 
   def remind
-    @birthday.each do |_k, v|
+    birthdays.each_value do |v|
       next unless (Time.now.day == v.day.to_i) && (Time.now.month == v.month.to_i)
       v.remind.each do |who|
-        mod("tell").add_tell(who, Linael::BotNick, v.print_birthday)
+        birthday_string = t.birthday.print(v.nick, Time.now.strftime("%d/%m/%Y")) + age(v.year)
+        mod("tell").add_tell(who, Linael::BotNick, birthday_string)
       end
+    end
+  end
+
+  def age(year)
+    if year.to_i != 0
+      t.birtday.age(Time.now.year - year.to_i)
+    else
+      ""
     end
   end
 
