@@ -96,7 +96,7 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
     before(options) do
       !birthday.nil?
     end
-    answer(msg, t.birthday.act.tell(birthday.day, birthday.month, birthday.year))
+    answer(msg, "#{t.birthday.act.tell(birthday.day, birthday.month, birthday.year)} #{age(birthday.year)}")
   end
 
   on :cmd, :birthday_test, /^!test_birthday/ do |_msg, _options|
@@ -118,7 +118,7 @@ linael :birthday, require_auth: true, required_mod: ["tell"] do
     birthdays.each_value do |v|
       next unless (Time.now.day == v.day.to_i) && (Time.now.month == v.month.to_i)
       v.remind.each do |who|
-        birthday_string = t.birthday.print(v.nick, Time.now.strftime("%d/%m/%Y")) + age(v.year)
+        birthday_string = "#{t.birthday.print(v.nick, Time.now.strftime("%d/%m/%Y"))} #{age(v.year)}"
         mod("tell").add_tell(who, Linael::BotNick, birthday_string)
       end
     end
