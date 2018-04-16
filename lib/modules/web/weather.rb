@@ -16,7 +16,7 @@ linael :weather do
 
   def weather_from(location)
     w = Weather.lookup_by_location(location, Weather::Units::CELSIUS)
-    t.weather.act.weather(w.title, w.text, w.condition.temp)
+    t.weather.act.weather(w.title, w.condition.text, w.condition.temp)
   rescue NoMethodError
     raise MessagingException, t.weather.not.location(location.delete("\r"))
   end
