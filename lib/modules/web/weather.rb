@@ -16,13 +16,13 @@ linael :weather do
 
   def weather_from(location)
     w = Weather.lookup_by_location(location, Weather::Units::CELSIUS)
-    t.weather.act.weather(w.title, w.weather, w.condition.temp)
+    t.weather.act.weather(w.title, w.text, w.condition.temp)
   rescue NoMethodError
     raise MessagingException, t.weather.not.location(location.delete("\r"))
   end
 
   def forecast_from(location)
-    f = Weather.lookup_by_location(location, Weather::Units::CELSIUS).forecasts
+    f = Weather.lookup_by_location(location, Weather::Units::CELSIUS)
     result = t.weather.act.forecast.main "#{f.location.city} #{f.location.region} #{f.location.country}"
     f.forecasts.first(4).each do |d|
       result += t.weather.act.forecast.day(d.day, "#{d.text}, #{d.low}°C / #{d.high}°C")
