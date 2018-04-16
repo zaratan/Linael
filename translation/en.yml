@@ -407,7 +407,7 @@ weather:
     location: "No location for: %1"
     register: "No location registered for %1. Use !location to register your location."
   act:
-    weather: "Weather for %1: \u0002Condition\u000F: %2 %3°C (%4°F). \u0002Wind\u000F: From %5 at %6 (%7 mi/h). \u0002Pressure\u000F: %8 mb. \u0002Humidity\u000F: %9"
+    weather: "%1: %2 %3°C."
     forecast:
       main: "Forecast for %1: "
       day: "\u0002%1\u000F: %2. "

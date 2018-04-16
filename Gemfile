@@ -9,7 +9,7 @@ gem 'r18n-desktop'
 gem 'redis-objects'
 gem 'reverso'
 gem 'ruby-units'
-gem 'weather-underground'
+gem 'weather-api'
 gem 'ya2yaml'
 
 group :development do
